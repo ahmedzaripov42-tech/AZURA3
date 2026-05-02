@@ -1,0 +1,24 @@
+/* AZURA V17 critical production fixes: mobile nav + auth click reliability + media mute */
+html, body { -webkit-tap-highlight-color: transparent; }
+@media (max-width: 768px) {
+  .mobile-bottom-nav,
+  body .mobile-bottom-nav,
+  body.az-device-mobile .mobile-bottom-nav {
+    position: fixed !important;
+    top: auto !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    transform: none !important;
+    z-index: 2147483000 !important;
+    display: flex !important;
+    pointer-events: auto !important;
+  }
+  .mobile-bottom-nav + .mobile-bottom-nav { display: none !important; }
+  .page, .main-content { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 104px) !important; }
+  .auth-modal, #auth-modal { z-index: 2147483600 !important; }
+  .azura-modal-box { pointer-events: auto !important; }
+  #btn-login, #btn-register, .azura-btn-primary { pointer-events: auto !important; cursor: pointer !important; touch-action: manipulation !important; }
+}
+.az-bn-video-wrap video, video.az-bn-media, .azura-banner-item video, .banner-video video { volume: 0; }

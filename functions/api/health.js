@@ -1,22 +1,15 @@
-import { json, route, OWNER_UID } from './_common.js';
+import { json, route } from './_common.js';
 
 export async function onRequestGet({ request, env }) {
   return route(async () => {
-    const [usersRow, ownerRow, uploadsRow] = await Promise.all([
-      env.DB.prepare('SELECT COUNT(*) c FROM users').first().catch(() => ({ c: 0 })),
-      env.DB.prepare('SELECT uid FROM users WHERE uid=? LIMIT 1').bind(OWNER_UID).first().catch(() => null),
-      env.DB.prepare("SELECT COUNT(*) c FROM sqlite_master WHERE type='table' AND name IN ('multipart_uploads','multipart_upload_parts','media_assets')").first().catch(() => ({ c: 0 })),
-    ]);
-
-    return json({
-      ok:true,
-      db:true,
-      media: !!env.MEDIA,
-      users:Number(usersRow?.c || 0),
-      ownerReady: !!ownerRow,
-      schema: { mediaTablesReady: Number(uploadsRow?.c || 0) >= 3 },
-      time:Date.now(),
-    });
+    const bindings = { DB: !!env.DB, MEDIA: !!env.MEDIA };
+    let db = { ok:false };
+    if (env.DB) {
+      const users = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='users' LIMIT 1").first();
+      const appData = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='app_data' LIMIT 1").first();
+      db = { ok:true, usersTable: !!users, appDataTable: !!appData };
+    }
+    return json({ ok:true, bindings, db, version:'v17' });
   }, request, env);
 }
 

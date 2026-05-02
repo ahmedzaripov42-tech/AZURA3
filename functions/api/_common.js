@@ -361,6 +361,8 @@ export async function ensureSchema(env) {
   if (!env || !env.DB) throw new Error('D1 binding DB topilmadi');
   const db = env.DB;
   const t = now();
+  // D1 may contain older manual tables from previous deployments. Keep schema boot idempotent.
+  try { await db.prepare('PRAGMA foreign_keys=OFF').run(); } catch (_) {}
 
   const run = async (sql, args = []) => {
     try {
@@ -407,6 +409,7 @@ export async function ensureSchema(env) {
       ? `COALESCE(NULLIF(uid,''), CASE WHEN ${expr('username', "''")} LIKE 'AZR-%' THEN upper(${expr('username', "''")}) ELSE 'USR_' || rowid END)`
       : `CASE WHEN ${expr('username', "''")} LIKE 'AZR-%' THEN upper(${expr('username', "''")}) ELSE 'USR_' || rowid END`;
 
+    await run(`DROP TABLE IF EXISTS users__azura_fix`);
     await run(`CREATE TABLE IF NOT EXISTS users__azura_fix (
       uid TEXT PRIMARY KEY,
       username TEXT,
@@ -831,9 +834,10 @@ export async function route(handler, request, env) {
     const status = Number(error?.statusCode || 0)
       || (/Autentifikatsiya/i.test(error?.message || '') ? 401 : 500);
     const code = String(error?.code || (status >= 500 ? 'server_error' : 'request_error'));
+    const rawMessage = String(error?.message || 'So‘rov bajarilmadi');
     const message = status >= 500
-      ? 'Server xatosi'
-      : String(error?.message || 'So‘rov bajarilmadi');
+      ? (/D1 binding|DB topilmadi|no such table|no such column|database|constraint|SQLITE/i.test(rawMessage) ? 'D1 bazasi tayyor emas yoki binding noto‘g‘ri' : 'Server xatosi')
+      : rawMessage;
     return json({ ok:false, error:message, code, requestId:reqId }, status, { 'x-azura-request-id': reqId });
   }
 }
