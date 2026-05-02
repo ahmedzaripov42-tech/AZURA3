@@ -1,9 +1,0 @@
-name = "azura3"
-compatibility_date = "2026-05-02"
-pages_build_output_dir = "."
-
-# Cloudflare Pages bindings are managed from the Dashboard in this version.
-# This keeps the Settings → Bindings → + Add button active.
-# Add these in Cloudflare Dashboard:
-#   D1 database:  Name = DB     Value = azura_db
-#   R2 bucket:    Name = MEDIA  Value = azura-media

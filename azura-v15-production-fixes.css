@@ -1,0 +1,25 @@
+/* AZURA V15 production fixes: original design preserved */
+html.az-file-blocked body > * { display: none !important; }
+@media (max-width: 820px) {
+  body { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important; }
+  body .mobile-bottom-nav,
+  body.az-device-mobile .mobile-bottom-nav,
+  body.az-layout-mobile .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed !important;
+    top: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    z-index: 10050 !important;
+    margin: 0 !important;
+  }
+  body .mobile-topbar { position: sticky !important; top: 0 !important; bottom: auto !important; z-index: 1000 !important; }
+  body .page, body .main-content { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)) !important; }
+  body .mobile-bottom-nav .bot-nav-item,
+  body .mobile-bottom-nav .bot-add-btn { flex: 1 1 0 !important; min-width: 0 !important; }
+}
+.az-bn-audio-btn[data-muted="true"] .az-bn-audio-icon::after { content: ''; }

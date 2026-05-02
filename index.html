@@ -117,6 +117,17 @@
 <link rel="stylesheet" href="azura-stage4-hardening.css?v=1">
 <link rel="stylesheet" href="azura-stage5-rootfix.css?v=1">
 
+
+<script>
+(function(){
+  if (location.protocol !== 'file:') return;
+  document.documentElement.classList.add('az-file-blocked');
+  document.addEventListener('DOMContentLoaded', function(){
+    document.body.innerHTML = '<main style="min-height:100vh;display:grid;place-items:center;background:#060814;color:#eef1ff;font-family:Arial,sans-serif;padding:24px;text-align:center"><section style="max-width:560px;border:1px solid rgba(120,245,255,.25);border-radius:24px;padding:28px;background:rgba(12,16,32,.94)"><h1 style="margin:0 0 12px;font-size:30px">AZURA faqat serverda ishlaydi</h1><p style="line-height:1.7;color:#b9c4df">Bu faylni ikki marta bosib ochmang. D1/R2, login, media va admin API faqat Cloudflare Pages yoki dev server orqali ishlaydi.</p><code style="display:inline-block;margin-top:12px;padding:10px 12px;border-radius:12px;background:#111a2b;color:#79f5ff">https://azura4.pages.dev</code></section></main>';
+  });
+})();
+</script>
+<link rel="stylesheet" href="azura-v15-production-fixes.css?v=15">
 </head>
 <body>
 
@@ -1579,6 +1590,7 @@
 <script defer src="js/03-navigation.js?v=14"></script>
 <script defer src="js/04-admin.js?v=16"></script>
 <script defer src="js/05-banner.js?v=17"></script>
+<script defer src="js/azura-v15-production-fixes.js?v=15"></script>
 <script defer src="js/06-reader.js?v=14"></script>
 <script defer src="js/07-adult.js?v=14"></script>
 <script defer src="js/08-premium-ui.js?v=14"></script>
