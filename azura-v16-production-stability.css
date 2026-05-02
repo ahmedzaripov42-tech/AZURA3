@@ -1,0 +1,29 @@
+/* AZURA V16 — production stability fixes, original design preserved */
+@media (max-width: 768px) {
+  html, body { min-height: 100%; }
+  body { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)) !important; }
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed !important;
+    top: auto !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    z-index: 2147483000 !important;
+    transform: none !important;
+    margin: 0 !important;
+  }
+  .page, .main-content { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important; }
+  .mobile-topbar { z-index: 2147480000 !important; }
+}
+@media (min-width: 769px) {
+  .mobile-bottom-nav { display: none !important; }
+}
+.az-bn-video-wrap video,
+video.az-bn-media,
+.azura-banner-item video,
+.banner-video video {
+  object-fit: cover;
+}

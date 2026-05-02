@@ -375,15 +375,72 @@ export async function ensureSchema(env) {
     }
   };
 
-  const tableInfo = async (table) => {
+  const tableInfoRows = async (table) => {
     const safeTable = String(table || '').replace(/[^a-zA-Z0-9_]/g, '');
-    if (!safeTable) return new Set();
+    if (!safeTable) return [];
     try {
       const res = await db.prepare(`PRAGMA table_info(${safeTable})`).all();
-      return new Set((res?.results || []).map(row => String(row.name || '')));
+      return res?.results || [];
     } catch {
-      return new Set();
+      return [];
     }
+  };
+
+  const tableInfo = async (table) => {
+    const rows = await tableInfoRows(table);
+    return new Set(rows.map(row => String(row.name || '')));
+  };
+
+  const ensureUsersTableShape = async () => {
+    const rows = await tableInfoRows('users');
+    if (!rows.length) return;
+    const names = new Set(rows.map(row => String(row.name || '')));
+    const uidRow = rows.find(row => String(row.name || '') === 'uid');
+    const uidIsPk = !!(uidRow && Number(uidRow.pk || 0) > 0);
+    // Some earlier manual fixes created users(id, username, password, coins) without uid.
+    // The API requires uid to be the primary key, so rebuild only when the table shape is incompatible.
+    if (names.has('uid') && uidIsPk) return;
+
+    const has = (name) => names.has(name);
+    const expr = (name, fallback) => has(name) ? name : fallback;
+    const uidExpr = has('uid')
+      ? `COALESCE(NULLIF(uid,''), CASE WHEN ${expr('username', "''")} LIKE 'AZR-%' THEN upper(${expr('username', "''")}) ELSE 'USR_' || rowid END)`
+      : `CASE WHEN ${expr('username', "''")} LIKE 'AZR-%' THEN upper(${expr('username', "''")}) ELSE 'USR_' || rowid END`;
+
+    await run(`CREATE TABLE IF NOT EXISTS users__azura_fix (
+      uid TEXT PRIMARY KEY,
+      username TEXT,
+      email TEXT,
+      password TEXT,
+      role TEXT DEFAULT 'user',
+      coins INTEGER DEFAULT 0,
+      vip INTEGER DEFAULT 0,
+      provider TEXT,
+      avatar TEXT,
+      createdAt INTEGER,
+      updatedAt INTEGER,
+      extra TEXT
+    )`);
+
+    await run(`INSERT OR IGNORE INTO users__azura_fix
+      (uid, username, email, password, role, coins, vip, provider, avatar, createdAt, updatedAt, extra)
+      SELECT
+        ${uidExpr},
+        COALESCE(NULLIF(${expr('username', "''")},''), ${uidExpr}),
+        COALESCE(${expr('email', "''")}, ''),
+        COALESCE(${expr('password', "''")}, ''),
+        CASE WHEN upper(${uidExpr})='${OWNER_UID}' THEN 'owner' ELSE COALESCE(NULLIF(${expr('role', "''")},''), 'user') END,
+        CASE WHEN upper(${uidExpr})='${OWNER_UID}' THEN MAX(COALESCE(${expr('coins', '0')},0), 99999) ELSE COALESCE(${expr('coins', '0')},0) END,
+        CASE WHEN upper(${uidExpr})='${OWNER_UID}' THEN 1 ELSE COALESCE(${expr('vip', '0')},0) END,
+        COALESCE(NULLIF(${expr('provider', "''")},''), 'local'),
+        COALESCE(${expr('avatar', "''")}, ''),
+        COALESCE(${expr('createdAt', str(t))}, ${t}),
+        ${t},
+        COALESCE(${expr('extra', "'{}'")}, '{}')
+      FROM users`);
+
+    await run(`DROP TABLE users`);
+    await run(`ALTER TABLE users__azura_fix RENAME TO users`);
   };
 
   const ensureColumns = async (table, columns) => {
@@ -396,8 +453,10 @@ export async function ensureSchema(env) {
   };
 
   // Create base tables first. Keep these minimal and compatible with old D1 SQLite.
+  await ensureUsersTableShape();
   await run(`CREATE TABLE IF NOT EXISTS users (uid TEXT PRIMARY KEY)`);
   await ensureColumns('users', [
+    ['uid', 'TEXT'],
     ['username', 'TEXT'],
     ['email', 'TEXT'],
     ['password', 'TEXT'],
