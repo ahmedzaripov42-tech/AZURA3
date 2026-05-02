@@ -1,0 +1,16 @@
+name = "azura"
+pages_build_output_dir = "."
+compatibility_date = "2026-05-02"
+
+# Production secret kerak:
+# wrangler pages secret put OWNER_PASSWORD
+# wrangler pages secret put ALLOWED_ORIGINS  # masalan: https://azura.pages.dev,https://azura.uz
+
+[[d1_databases]]
+binding = "DB"
+database_name = "azura-db"
+database_id = "YOUR_D1_DATABASE_ID"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "azura-media"

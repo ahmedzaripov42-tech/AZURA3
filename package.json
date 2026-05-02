@@ -1,0 +1,15 @@
+{
+  "name": "azura-cloudflare-pages",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev . --compatibility-date=2026-05-02 --d1 DB=azura-db --r2 MEDIA=azura-media",
+    "deploy": "wrangler pages deploy .",
+    "d1:migrate:local": "wrangler d1 migrations apply azura-db --local",
+    "d1:migrate:remote": "wrangler d1 migrations apply azura-db --remote"
+  },
+  "devDependencies": {
+    "wrangler": "latest"
+  }
+}
