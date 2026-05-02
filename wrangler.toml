@@ -2,12 +2,8 @@ name = "azura3"
 compatibility_date = "2026-05-02"
 pages_build_output_dir = "."
 
-# D1 is intentionally NOT declared here to avoid invalid placeholder UUID deploy errors.
-# Add it in Cloudflare Pages dashboard:
-# Settings → Bindings → Add → D1 database
-# Variable name: DB
-# Database: azura-db
-
-[[r2_buckets]]
-binding = "MEDIA"
-bucket_name = "azura-media"
+# Cloudflare Pages bindings are managed from the Dashboard in this version.
+# This keeps the Settings → Bindings → + Add button active.
+# Add these in Cloudflare Dashboard:
+#   D1 database:  Name = DB     Value = azura_db
+#   R2 bucket:    Name = MEDIA  Value = azura-media
