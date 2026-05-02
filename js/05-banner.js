@@ -5,7 +5,7 @@
 // • 8 slots: home-hero, home-mid, home-bottom,
 //            detail-top, detail-bottom,
 //            reader-top, reader-between, reader-bottom
-// • Dismiss: per-banner ID, 20 min (AZURA_STORE)
+// • Dismiss: per-banner ID, 20 min (localStorage)
 // • Admin force-refresh: clears entire dismiss cache instantly
 // • Video: starts muted (autoplay policy), floating 🔇/🔊 toggle
 // • Carousel: auto-rotate 5s, dot nav, touch-swipe, per-banner X
@@ -263,13 +263,13 @@
       .replace(/'/g, '&#39;');
   }
 
-  /* ══ DISMISS SYSTEM (per-banner ID, AZURA_STORE) ═════════════ */
+  /* ══ DISMISS SYSTEM (per-banner ID, localStorage) ═════════════ */
   function getDismissMap() {
-    try { return JSON.parse(AZURA_STORE.getItem(DISMISS_KEY) || '{}'); }
+    try { return JSON.parse(localStorage.getItem(DISMISS_KEY) || '{}'); }
     catch (e) { return {}; }
   }
   function saveDismissMap(map) {
-    try { AZURA_STORE.setItem(DISMISS_KEY, JSON.stringify(map)); } catch (e) {}
+    try { localStorage.setItem(DISMISS_KEY, JSON.stringify(map)); } catch (e) {}
   }
   function pruneOldDismisses() {
     var map = getDismissMap();
@@ -296,7 +296,7 @@
 
   /* ── Admin force-clear: remove all dismiss state ─────────────── */
   window._azBnClearAllDismiss = function () {
-    try { AZURA_STORE.removeItem(DISMISS_KEY); } catch (e) {}
+    try { localStorage.removeItem(DISMISS_KEY); } catch (e) {}
   };
 
   /* ══ VIDEO AUDIO TOGGLE ════════════════════════════════════════ */
@@ -304,15 +304,15 @@
   window.__azuraBannerAudioUnlocked = !!window.__azuraBannerAudioUnlocked;
 
   function getPreferredAudibleBannerId() {
-    try { return String(window.__azuraAudibleBannerId || AZURA_STORE.getItem('azura_banner_audio_banner_id') || ''); }
+    try { return String(window.__azuraAudibleBannerId || localStorage.getItem('azura_banner_audio_banner_id') || ''); }
     catch (_) { return String(window.__azuraAudibleBannerId || ''); }
   }
 
   function setPreferredAudibleBannerId(bannerId) {
     window.__azuraAudibleBannerId = bannerId ? String(bannerId) : '';
     try {
-      if (bannerId) AZURA_STORE.setItem('azura_banner_audio_banner_id', String(bannerId));
-      else AZURA_STORE.removeItem('azura_banner_audio_banner_id');
+      if (bannerId) localStorage.setItem('azura_banner_audio_banner_id', String(bannerId));
+      else localStorage.removeItem('azura_banner_audio_banner_id');
     } catch (_) {}
   }
 
@@ -362,7 +362,7 @@
     }
 
     var preferredAudio = !!window.__azuraBannerAudioUnlocked
-      && AZURA_STORE.getItem('azura_banner_audio_pref') === 'on'
+      && localStorage.getItem('azura_banner_audio_pref') === 'on'
       && String(bannerId || video.dataset.bannerId || '') === getPreferredAudibleBannerId();
     video.muted = !preferredAudio;
     video.volume = preferredAudio ? 1 : 0;
@@ -394,7 +394,7 @@
       window._azBnMuteAllExcept(video);
       video.muted = false;
       video.volume = 1;
-      try { AZURA_STORE.setItem('azura_banner_audio_pref', 'on'); } catch (_) {}
+      try { localStorage.setItem('azura_banner_audio_pref', 'on'); } catch (_) {}
       setPreferredAudibleBannerId(bannerId);
       syncAudioButton(btn, true);
       var playPromise = video.play && video.play();
@@ -408,7 +408,7 @@
           finalize();
         }).catch(function (err) {
           muteBannerVideo(video);
-          try { AZURA_STORE.setItem('azura_banner_audio_pref', 'off'); } catch (_) {}
+          try { localStorage.setItem('azura_banner_audio_pref', 'off'); } catch (_) {}
           setPreferredAudibleBannerId('');
           try { document.dispatchEvent(new CustomEvent('azura:banner-audio-off', { detail: { video: video, wrap: wrap, bannerId: bannerId, error: err } })); } catch (_) {}
           if (typeof showToast === 'function') showToast('Brauzer ovozni faqat tugmani bosgandan keyin yoqadi. Yana bir marta bosing.', 'info');
@@ -423,7 +423,7 @@
       }
     } else {
       muteBannerVideo(video);
-      try { AZURA_STORE.setItem('azura_banner_audio_pref', 'off'); } catch (_) {}
+      try { localStorage.setItem('azura_banner_audio_pref', 'off'); } catch (_) {}
       if (getPreferredAudibleBannerId() === bannerId) setPreferredAudibleBannerId('');
       try { document.dispatchEvent(new CustomEvent('azura:banner-audio-off', { detail: { video: video, wrap: wrap, bannerId: bannerId } })); } catch (_) {}
       if (typeof showToast === 'function') showToast('🔇 Ovoz o\'chirildi', 'info');
@@ -578,7 +578,7 @@
         e.stopPropagation();
         dismissBanner(b.id);
         if (String(b.id || '') === getPreferredAudibleBannerId()) {
-          try { AZURA_STORE.setItem('azura_banner_audio_pref', 'off'); } catch (_) {}
+          try { localStorage.setItem('azura_banner_audio_pref', 'off'); } catch (_) {}
           setPreferredAudibleBannerId('');
         }
         collapseSlot(el);
@@ -648,7 +648,7 @@
       }
       for (var j = 0; j < dt.length; j++) dt[j].classList.toggle('active', j === cur);
       audioPinned = !!window.__azuraBannerAudioUnlocked
-        && AZURA_STORE.getItem('azura_banner_audio_pref') === 'on'
+        && localStorage.getItem('azura_banner_audio_pref') === 'on'
         && String((live[cur] && live[cur].id) || '') === getPreferredAudibleBannerId();
     }
 
@@ -702,7 +702,7 @@
 
         dismissBanner(activeBanner.id);
         if (String(activeBanner.id || '') === getPreferredAudibleBannerId()) {
-          try { AZURA_STORE.setItem('azura_banner_audio_pref', 'off'); } catch (_) {}
+          try { localStorage.setItem('azura_banner_audio_pref', 'off'); } catch (_) {}
           setPreferredAudibleBannerId('');
         }
         if (typeof showToast === 'function') showToast('Banner 20 daqiqa yashirildi', 'info');
@@ -817,21 +817,21 @@
   /* ══ STARTUP CLEANUP ═══════════════════════════════════════════ */
   (function cleanup() {
     // Remove deprecated storage keys
-    try { AZURA_STORE.removeItem('azura_banners_v5'); }    catch (e) {}
-    try { AZURA_STORE.removeItem('azura_promo_banners_old'); } catch (e) {}
-    try { AZURA_STORE.removeItem('azura_bn_dismissed'); }  catch (e) {} // old slot-level key
+    try { localStorage.removeItem('azura_banners_v5'); }    catch (e) {}
+    try { localStorage.removeItem('azura_promo_banners_old'); } catch (e) {}
+    try { localStorage.removeItem('azura_bn_dismissed'); }  catch (e) {} // old slot-level key
 
     // Strip banners with no media from v4 store
     try {
       var key     = 'azura_banners_v4';
-      var list    = JSON.parse(AZURA_STORE.getItem(key) || '[]');
+      var list    = JSON.parse(localStorage.getItem(key) || '[]');
       var cleaned = list.filter(function (b) {
         if (!b) return false;
         var media = b.media || b.image || b.video || b.src || '';
         return mediaLooksUsable(media);
       });
       if (cleaned.length !== list.length) {
-        AZURA_STORE.setItem(key, JSON.stringify(cleaned));
+        localStorage.setItem(key, JSON.stringify(cleaned));
         console.log('[Banner] Tozalandi:', list.length - cleaned.length, 'ta eski banner olib tashlandi');
       }
     } catch (e) {}

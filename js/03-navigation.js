@@ -10,7 +10,7 @@ function renderContinueReading() {
   if (!currentUser) { hideHomeStrip('continue-reading-wrap'); return; }
   const progressKey = 'azura_reading_progress_' + currentUser.uid;
   let progress = {};
-  try { progress = JSON.parse(AZURA_STORE.getItem(progressKey) || '{}'); } catch(e) {}
+  try { progress = JSON.parse(localStorage.getItem(progressKey) || '{}'); } catch(e) {}
   const entries = Object.values(progress)
     .filter(p => p && p.manhwaId && p.chapterId)
     .sort((a, b) => (b.lastRead || 0) - (a.lastRead || 0))
@@ -57,7 +57,7 @@ function saveReadingProgress(percent) {
   if (!currentUser || !currentManhwa || !currentChapter) return;
   const key = 'azura_reading_progress_' + currentUser.uid;
   let progress = {};
-  try { progress = JSON.parse(AZURA_STORE.getItem(key) || '{}'); } catch(e) {}
+  try { progress = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
   progress[currentManhwa.id] = {
     manhwaId:      currentManhwa.id,
     chapterId:     currentChapter.id,
@@ -65,7 +65,7 @@ function saveReadingProgress(percent) {
     percent:       Math.max(0, Math.min(100, percent)),
     lastRead:      Date.now(),
   };
-  try { AZURA_STORE.setItem(key, JSON.stringify(progress)); } catch(e) {}
+  try { localStorage.setItem(key, JSON.stringify(progress)); } catch(e) {}
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -77,11 +77,11 @@ function renderHomeQuickStats() {
   // Gather stats
   const libKey = 'azura_library_' + currentUser.uid;
   let lib = [];
-  try { lib = JSON.parse(AZURA_STORE.getItem(libKey) || '[]'); } catch(e) {}
+  try { lib = JSON.parse(localStorage.getItem(libKey) || '[]'); } catch(e) {}
 
   const progKey = 'azura_reading_progress_' + currentUser.uid;
   let prog = {};
-  try { prog = JSON.parse(AZURA_STORE.getItem(progKey) || '{}'); } catch(e) {}
+  try { prog = JSON.parse(localStorage.getItem(progKey) || '{}'); } catch(e) {}
   const chaptersRead = Object.values(prog).filter(p => (p.percent || 0) > 85).length;
 
   const coin = currentUser.coins || 0;
@@ -218,7 +218,7 @@ function heroReadAction() {
   if(!featuredHeroId) return;
   openManhwa(featuredHeroId);
   // Try to open first available chapter
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const first = all.filter(c => c.manhwaId === featuredHeroId && !c.scheduled && !c._isDemo)
                     .sort((a,b) => a.number - b.number)[0];
   if(first) { openChapter(first.id); }
@@ -291,7 +291,7 @@ function renderDiscoverGrid() {
 function renderChapters() {
   const cl = document.getElementById('chapter-list');
   if (!cl || !currentManhwa) return;
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const chapters = all.filter(c => c.manhwaId === currentManhwa.id && !c._isDemo)
                       .sort((a,b) => b.number - a.number);
   if (chapters.length === 0) {
@@ -308,7 +308,7 @@ function renderChapters() {
   const isAdmin = currentUser && (getUserRole(currentUser.uid)==='owner'||getUserRole(currentUser.uid)==='admin');
   cl.innerHTML = chapters.map(ch => {
     const purchasedKey = currentUser ? 'azura_purchased_' + currentUser.uid : null;
-    const purchased = purchasedKey ? JSON.parse(AZURA_STORE.getItem(purchasedKey)||'[]') : [];
+    const purchased = purchasedKey ? JSON.parse(localStorage.getItem(purchasedKey)||'[]') : [];
     const isPurchased = purchased.includes(ch.id);
     const isScheduledFuture = ch.scheduled && ch.publishDate && new Date(ch.publishDate).getTime() > now;
     if (!isAdmin && isScheduledFuture) return '';
@@ -371,7 +371,7 @@ function renderDetailAdminPanel() {
   }
 }
 
-// Legacy admin panel helpers are implemented below.
+
 // Switch admin panel tab
 function dapSwitchTab(name) {
   const panes = { add:'dap-pane-add', list:'dap-pane-list', vip:'dap-pane-vip', sched:'dap-pane-sched' };
@@ -440,27 +440,27 @@ function dapSubmitChapter() {
 
 // VIP/Coin per-chapter updates
 function dapUpdateAccess(chId, newType) {
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const ch = all.find(x => x.id === chId);
   if (ch) { ch.accessType = newType; if (newType !== 'coin') ch.coinPrice = 0; }
-  AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(all));
+  localStorage.setItem('azura_chapters_pending', JSON.stringify(all));
   renderChapters();
   renderDetailAdminPanel();
   dapSwitchTab('vip');
 }
 
 function dapUpdateCoinPrice(chId, price) {
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const ch = all.find(x => x.id === chId);
   if (ch) ch.coinPrice = parseInt(price) || 50;
-  AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(all));
+  localStorage.setItem('azura_chapters_pending', JSON.stringify(all));
 }
 
 function dapSetAllAccess(type) {
   if (!currentManhwa) return;
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   all.forEach(ch => { if (ch.manhwaId === currentManhwa.id && !ch._isDemo) { ch.accessType = type; if (type !== 'coin') ch.coinPrice = 0; } });
-  AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(all));
+  localStorage.setItem('azura_chapters_pending', JSON.stringify(all));
   showToast('✅ Barcha boblar ' + type + ' ga o\'zgartirildi');
   renderChapters();
   renderDetailAdminPanel();
@@ -469,24 +469,24 @@ function dapSetAllAccess(type) {
 
 // Schedule per-chapter
 function dapToggleSchedule(chId, on) {
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const ch = all.find(x => x.id === chId);
   if (ch) ch.scheduled = on;
-  AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(all));
+  localStorage.setItem('azura_chapters_pending', JSON.stringify(all));
   renderDetailAdminPanel();
   dapSwitchTab('sched');
 }
 
 function dapSetPublishDate(chId, val) {
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const ch = all.find(x => x.id === chId);
   if (ch) { ch.publishDate = val; ch.scheduled = !!val; }
-  AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(all));
+  localStorage.setItem('azura_chapters_pending', JSON.stringify(all));
 }
 
 // Detail admin panel uchun boblar ro'yxati HTML
 function getDetailAdminChaptersList(manhwaId) {
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const chapters = all.filter(ch => ch.manhwaId === manhwaId && !ch._isDemo)
     .sort((a,b) => a.number - b.number);
 
@@ -515,9 +515,9 @@ function getDetailAdminChaptersList(manhwaId) {
 // Detail bob o'chirish
 function deleteDetailChapter(chId) {
   if(!confirm("Bu bobni o\'chirasizmi?")) return;
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const updated = all.filter(x => x.id !== chId);
-  AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(updated));
+  localStorage.setItem('azura_chapters_pending', JSON.stringify(updated));
   showToast('Bob o\'chirildi');
   renderChapters();
   renderDetailAdminPanel();
@@ -565,15 +565,15 @@ function openDetailAddChapter() {
 
         <!-- PDF Yuklash -->
         <div>
-          <div class="form-label">WebP/JPG Rasm (→ WebP)</div>
+          <div class="form-label">PDF Fayl (→ WebP)</div>
           <div id="dac-pdf-zone" style="border:2px dashed rgba(212,175,55,0.25);border-radius:10px;height:90px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;background:rgba(212,175,55,0.03);" onclick="document.getElementById('dac-pdf-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--gold)'" ondragleave="this.style.borderColor='rgba(212,175,55,0.25)'" ondrop="handleDacPdfDrop(event)">
             <div id="dac-pdf-content" style="text-align:center;pointer-events:none;">
               <svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:var(--gold-dim);margin:0 auto 5px;display:block;"><path d="M20 6h-2.18c.07-.25.18-.49.18-.75C18 3.45 16.55 2 14.75 2c-.99 0-1.88.49-2.43 1.24L12 4l-.32-.76C11.13 2.49 10.24 2 9.25 2 7.45 2 6 3.45 6 5.25c0 .26.11.5.18.75H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
-              <div style="font-size:10px;color:var(--text-dim);">WebP/JPG rasmlarni tashlang yoki bosing</div>
+              <div style="font-size:10px;color:var(--text-dim);">PDF tashlang yoki bosing</div>
               <div style="font-size:9px;color:var(--text-muted);margin-top:2px;">→ WebP ga aylantiriladi</div>
             </div>
           </div>
-          <input type="file" id="dac-pdf-input" accept="image/webp,image/jpeg,image/png,.webp,.jpg,.jpeg,.png" style="display:none;" onchange="handleDacPdfSelect(this)">
+          <input type="file" id="dac-pdf-input" accept=".pdf" style="display:none;" onchange="handleDacPdfSelect(this)">
         </div>
 
         <!-- Kirish turi -->
@@ -628,7 +628,7 @@ function openDetailAddChapter() {
 
 // Bob tahrirlash modali (detail sahifadan)
 function openDetailEditChapter(chId) {
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const ch = all.find(x => x.id === chId);
   if(!ch) return;
 
@@ -716,7 +716,7 @@ function openDetailEditChapter(chId) {
 }
 
 function saveDetailChapter(chId) {
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const ch = all.find(x => x.id === chId);
   if(!ch) return;
   ch.number = parseInt(document.getElementById('ech-number').value) || ch.number;
@@ -726,7 +726,7 @@ function saveDetailChapter(chId) {
   const schedOn = document.getElementById('ech-sched-toggle')?.dataset.on === '1';
   ch.scheduled = schedOn;
   ch.publishDate = schedOn ? document.getElementById('ech-publish-date')?.value : null;
-  AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(all));
+  localStorage.setItem('azura_chapters_pending', JSON.stringify(all));
   document.getElementById('detail-edit-ch-modal')?.remove();
   showToast('✅ Bob yangilandi');
   renderChapters();
@@ -747,7 +747,7 @@ function openDetailEditManhwa(id) {
 
 // Keyingi bob raqamini aniqlash
 function getNextChapterNumber(manhwaId) {
-  const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const chapters = all.filter(ch => ch.manhwaId === manhwaId && !ch._isDemo);
   if(chapters.length === 0) return 1;
   return Math.max(...chapters.map(ch => ch.number)) + 1;
@@ -833,7 +833,7 @@ function submitDetailChapter() { if(typeof dapSubmitChapter==='function') dapSub
 function payCoinChapter(chapterId, price) {
   if(!currentUser) { openAuth(); return; }
   const purchasedKey = 'azura_purchased_' + currentUser.uid;
-  const purchased = JSON.parse(AZURA_STORE.getItem(purchasedKey) || '[]');
+  const purchased = JSON.parse(localStorage.getItem(purchasedKey) || '[]');
   if(purchased.includes(chapterId)) { openChapter(chapterId); return; }
   if(currentUser.coins < price) {
     showToast('🪙 Yetarli coin yoq!');
@@ -842,11 +842,11 @@ function payCoinChapter(chapterId, price) {
   }
   currentUser.coins -= price;
   purchased.push(chapterId);
-  AZURA_STORE.setItem(purchasedKey, JSON.stringify(purchased));
+  localStorage.setItem(purchasedKey, JSON.stringify(purchased));
   currentUser.read = (currentUser.read || 0) + 1;
-  const payments = JSON.parse(AZURA_STORE.getItem('azura_payments') || '[]');
+  const payments = JSON.parse(localStorage.getItem('azura_payments') || '[]');
   payments.unshift({id:'pay-'+Date.now(),uid:currentUser.uid,type:'Bob Coin: '+price,amount:price,status:'tasdiqlandi',time:Date.now()});
-  AZURA_STORE.setItem('azura_payments', JSON.stringify(payments));
+  localStorage.setItem('azura_payments', JSON.stringify(payments));
   saveUsers(); saveCurrent(); updateUI(); renderChapters();
   openChapter(chapterId);
   showToast('📖 ' + price + ' coin sarflandi. Bob ochildi!');
@@ -1241,11 +1241,11 @@ function buyBundle(bundleId) {
   }
   if (b.includes.unlocks) {
     const key = 'azura_unlock_credits_' + currentUser.uid;
-    const curr = parseInt(AZURA_STORE.getItem(key) || '0');
-    AZURA_STORE.setItem(key, (curr + b.includes.unlocks).toString());
+    const curr = parseInt(localStorage.getItem(key) || '0');
+    localStorage.setItem(key, (curr + b.includes.unlocks).toString());
   }
   if (b.includes.unlocksUnlimited) {
-    AZURA_STORE.setItem('azura_unlock_unlimited_' + currentUser.uid, '1');
+    localStorage.setItem('azura_unlock_unlimited_' + currentUser.uid, '1');
   }
   if (b.includes.badge) {
     currentUser.badge = b.includes.badge;

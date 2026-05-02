@@ -34,8 +34,8 @@
   function parseMaybe(v){ try { return typeof v === 'string' ? JSON.parse(v) : (v || {}); } catch(_) { return {}; } }
   function manhwaGenres(m){ return (m && (m.genres && m.genres.length ? m.genres : (m.genre ? String(m.genre).split(',') : []))) || []; }
   function notifUnread(){ return (state.notifications || []).filter(function(n){ return !n.read; }).length; }
-  function saveLite(){ try { AZURA_STORE.setItem('azura_stage3_cache_' + state.uid, JSON.stringify({ library:state.library, notifications:state.notifications, profile:state.profile, discovery:state.discovery, manhwa:state.manhwa })); } catch(_){} }
-  function loadLite(uid){ try { return JSON.parse(AZURA_STORE.getItem('azura_stage3_cache_' + uid) || 'null') || null; } catch(_) { return null; } }
+  function saveLite(){ try { localStorage.setItem('azura_stage3_cache_' + state.uid, JSON.stringify({ library:state.library, notifications:state.notifications, profile:state.profile, discovery:state.discovery, manhwa:state.manhwa })); } catch(_){} }
+  function loadLite(uid){ try { return JSON.parse(localStorage.getItem('azura_stage3_cache_' + uid) || 'null') || null; } catch(_) { return null; } }
   function upsertLocalItem(item){
     var idx = state.library.findIndex(function(x){ return x.manhwaId === item.manhwaId; });
     if (idx >= 0) state.library[idx] = Object.assign({}, state.library[idx], item);

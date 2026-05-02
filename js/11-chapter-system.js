@@ -10,7 +10,7 @@
 //   - All old IndexedDB systems
 //
 // FEATURES:
-//   - 2 storage formats: WebP (default, fast+small), JPG (vivid)
+//   - 3 storage formats: WebP (default, fast+small), JPG (vivid), PDF (original)
 //   - Auto-detect format on read, render appropriately
 //   - In-modal progress (NEVER full-screen anymore)
 //   - Bulk PDF upload (1-300 files), smart filename parser
@@ -148,7 +148,7 @@
     const direct = Array.isArray(window.AZURA_D1_CHAPTERS) ? window.AZURA_D1_CHAPTERS : [];
     if (direct.length) return direct;
     try {
-      const cached = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+      const cached = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
       return Array.isArray(cached) ? cached : [];
     } catch (_) {
       return [];
@@ -287,8 +287,7 @@
 
   async function convertPdfToImages(file, format, onProgress) {
     if (typeof pdfjsLib === 'undefined') {
-      if (window.AZURA_LOAD_PDF) await window.AZURA_LOAD_PDF();
-      if (typeof pdfjsLib === 'undefined') throw new Error('PDF viewer o‘chirilgan — WebP/JPG rasm yuklang');
+      throw new Error('PDF.js kutubxonasi yuklanmagan');
     }
     const buf = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
@@ -372,7 +371,6 @@ async function saveChapter(meta, file, format, onProgress) {
       let pageCount = 0;
       try {
         const buf = await file.arrayBuffer();
-        if (typeof pdfjsLib === 'undefined' && window.AZURA_LOAD_PDF) await window.AZURA_LOAD_PDF();
         const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
         pageCount = pdf.numPages;
       } catch (_) {}
@@ -559,7 +557,7 @@ async function saveChapter(meta, file, format, onProgress) {
       <div class="az-cm-header">
         <div class="az-cm-title-wrap">
           <div class="az-cm-title">📚 Yangi Bob Qo'shish</div>
-          <div class="az-cm-subtitle">WebP/JPG rasm yuklang — qaysi formatda saqlashni siz tanlaysiz</div>
+          <div class="az-cm-subtitle">PDF yuklang — qaysi formatda saqlashni siz tanlaysiz</div>
         </div>
         <button class="az-cm-close" onclick="window._azCmClose()">✕</button>
       </div>
@@ -611,13 +609,13 @@ async function saveChapter(meta, file, format, onProgress) {
 
         <!-- 4. PDF tashlash -->
         <div class="az-cm-section">
-          <div class="az-cm-step"><span>4</span> WebP/JPG fayl(lar)</div>
+          <div class="az-cm-step"><span>4</span> PDF fayl(lar)</div>
           <div class="az-cm-dropzone" id="az-cm-dropzone">
-            <input type="file" id="az-cm-file-input" accept="image/webp,image/jpeg,image/png,.webp,.jpg,.jpeg,.png" multiple style="display:none"
+            <input type="file" id="az-cm-file-input" accept="application/pdf,.pdf" multiple style="display:none"
                    onchange="window._azCmAddFiles(this.files)"/>
             <div class="az-cm-drop-content">
               <div class="az-cm-drop-icon">⬇</div>
-              <div class="az-cm-drop-title">WebP/JPG rasmlarni tashlang</div>
+              <div class="az-cm-drop-title">PDF fayllarni tashlang</div>
               <div class="az-cm-drop-sub">yoki <a onclick="document.getElementById('az-cm-file-input').click()">bosing</a></div>
               <div class="az-cm-drop-hint">💡 1-300 ta birdan · Smart raqamlash</div>
             </div>
@@ -1045,7 +1043,7 @@ async function saveChapter(meta, file, format, onProgress) {
         }
       } else if (ch.access === 'coin' || ch.coinPrice > 0) {
         if (!currentUser) { if (typeof openAuth === 'function') openAuth(); return; }
-        const unlocked = JSON.parse(AZURA_STORE.getItem('azura_unlocked_' + currentUser.uid) || '[]');
+        const unlocked = JSON.parse(localStorage.getItem('azura_unlocked_' + currentUser.uid) || '[]');
         if (!unlocked.includes(chapterId)) {
           if (!confirm(`Bu bob ${ch.coinPrice} coin turadi. Sotib olasizmi?`)) return;
           if ((currentUser.coins || 0) < ch.coinPrice) {
@@ -1054,10 +1052,10 @@ async function saveChapter(meta, file, format, onProgress) {
           }
           currentUser.coins -= ch.coinPrice;
           unlocked.push(chapterId);
-          AZURA_STORE.setItem('azura_unlocked_' + currentUser.uid, JSON.stringify(unlocked));
-          const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+          localStorage.setItem('azura_unlocked_' + currentUser.uid, JSON.stringify(unlocked));
+          const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
           const u = users.find(x => x.uid === currentUser.uid);
-          if (u) { u.coins = currentUser.coins; AZURA_STORE.setItem('azura_users', JSON.stringify(users)); }
+          if (u) { u.coins = currentUser.coins; localStorage.setItem('azura_users', JSON.stringify(users)); }
           if (typeof saveCurrent === 'function') saveCurrent();
           if (typeof addCoinHistory === 'function') addCoinHistory('spend', -ch.coinPrice, 'Bob: ' + (ch.title || 'Bob ' + ch.number));
           if (typeof updateUI === 'function') updateUI();
@@ -1161,7 +1159,6 @@ async function saveChapter(meta, file, format, onProgress) {
           buf = await remoteRes.arrayBuffer();
         }
         if (!buf) throw new Error('PDF topilmadi');
-        if (typeof pdfjsLib === 'undefined' && window.AZURA_LOAD_PDF) await window.AZURA_LOAD_PDF();
         const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
         totalPageCount = pdf.numPages;
         pagesContainer.innerHTML = '';
@@ -1486,16 +1483,16 @@ async function saveChapter(meta, file, format, onProgress) {
   window.openChapterModal = openChapterModal;
   window.azuraOpenChapter = openChapter;
   // Public openChapter — the global function called from many places.
-  // Routes to either old AZURA_STORE chapters (legacy "azura_chapters_pending")
+  // Routes to either old localStorage chapters (legacy "azura_chapters_pending")
   // or new IndexedDB chapters by checking the ID prefix.
   window.openChapter = async function(chapterId) {
     if (!chapterId) return;
     if (typeof chapterId === 'string' && (chapterId.startsWith('ch_') || cloudChapterList().some(function(ch){ return ch && ch.id === chapterId; }))) {
       return openChapter(chapterId);
     }
-    // Legacy chapter from AZURA_STORE — try to find it and open via simple flow
+    // Legacy chapter from localStorage — try to find it and open via simple flow
     try {
-      const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+      const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
       const ch = all.find(c => c.id === chapterId);
       if (ch && ch.pages && ch.pages.length) {
         // Build a minimal "fake" chapter and open via overlay
@@ -1547,7 +1544,7 @@ async function saveChapter(meta, file, format, onProgress) {
   window.openChapterUploader = openChapterModal;
   window.openBulkChapterUploader = openChapterModal;
 
-  console.log('[AZURA v15] Chapter system ready ✓ (WebP/JPG image-first supported)');
+  console.log('[AZURA v15] Chapter system ready ✓ (WebP default, JPG, PDF supported)');
 })();
 
 if (typeof window !== 'undefined' && window._azuraMarkLoaded) window._azuraMarkLoaded('11-chapter-system');

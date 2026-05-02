@@ -39,7 +39,7 @@
   }
 
   function tuneMedia(){
-    var bannerAudioOn = AZURA_STORE.getItem('azura_banner_audio_pref') === 'on';
+    var bannerAudioOn = localStorage.getItem('azura_banner_audio_pref') === 'on';
     $all('img').forEach(function(img){
       if (!img.getAttribute('loading')) img.setAttribute('loading','lazy');
       img.decoding = 'async';

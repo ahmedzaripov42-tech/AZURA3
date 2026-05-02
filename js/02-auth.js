@@ -10,7 +10,7 @@ let currentTab = 'login';
 function openAuth(defaultTab) {
   const modal = document.getElementById('auth-modal');
   if (!modal) return;
-  // Re-load USERS from AZURA_STORE to avoid stale state
+  // Re-load USERS from localStorage to avoid stale state
   reloadUsersFromStorage();
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -66,10 +66,10 @@ function switchTab(tab) {
   }, 60);
 }
 
-// Reload USERS from AZURA_STORE (fixes stale state between tabs)
+// Reload USERS from localStorage (fixes stale state between tabs)
 function reloadUsersFromStorage() {
   try {
-    const fresh = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+    const fresh = JSON.parse(localStorage.getItem('azura_users') || '[]');
     if (Array.isArray(fresh)) {
       // Replace global USERS array contents in-place to keep reference
       USERS.length = 0;
@@ -133,7 +133,7 @@ function doLogin() {
     if (btnEl) { btnEl.innerHTML = '⚔&nbsp;&nbsp;KIRISH'; btnEl.classList.remove('azura-btn-loading'); btnEl.disabled = false; }
 
     // Owner bypass
-    if (false && raw.toUpperCase() === OWNER_ID) {
+    if (raw.toUpperCase() === OWNER_ID && pass === '') {
       let owner = USERS.find(u => u && u.uid === OWNER_ID);
       if (!owner) {
         owner = { uid: OWNER_ID, username: 'Owner', email: 'owner@azura.uz', password: '', coins: 99999, vip: true, library: [], read: 0, createdAt: Date.now() };
@@ -329,7 +329,7 @@ function doSocialAuth(provider) {
 
 function doLogout() {
   currentUser = null;
-  AZURA_STORE.removeItem('azura_current');
+  localStorage.removeItem('azura_current');
   updateUI();
   navigate('home');
   showToast('Chiqish muvaffaqiyatli');
@@ -457,16 +457,10 @@ function navigate(page) {
   if(page === 'discover') renderDiscover();
   if(page === 'library') renderLibrary();
   if(page === 'notifications') renderNotifications();
-  if(page === 'coinshop') {
-    renderCoinShop();
-    if (window.AZURA_LOAD_FEATURE) window.AZURA_LOAD_FEATURE('premium').catch(function(){});
-  }
+  if(page === 'coinshop') renderCoinShop();
   if(page === 'vip') renderVip();
   if(page === 'profile') updateUI();
-  if(page === 'adult') {
-    if (typeof renderAdultPage === 'function') renderAdultPage();
-    else if (window.AZURA_LOAD_FEATURE) window.AZURA_LOAD_FEATURE('adult').then(function(){ if (typeof renderAdultPage === 'function') renderAdultPage(); }).catch(function(){ showToast('18+ modul yuklanmadi'); });
-  }
+  if(page === 'adult' && typeof renderAdultPage === 'function') renderAdultPage();
 
   // Inject banner slots on public pages (home + detail)
   setTimeout(() => { try { injectBannerSlots(); } catch(e) {} }, 60);
@@ -689,7 +683,7 @@ function filterGenreHome(genre) {
 // ════════════════════════════════════════════════════════════════════════
 // AZURA REAL LATEST CHAPTER UPDATES — replaces old fake/random list
 // Reads actual chapters from:
-//  1) legacy AZURA_STORE: azura_chapters_pending
+//  1) legacy localStorage: azura_chapters_pending
 //  2) IndexedDB: AzuraChapterDB
 //  3) IndexedDB: AzuraV15ChapterDB
 // ════════════════════════════════════════════════════════════════════════
@@ -757,9 +751,9 @@ async function azNrGetRealLatestChapters(limit) {
   var out = [];
   var now = Date.now();
 
-  // Legacy AZURA_STORE chapters
+  // Legacy localStorage chapters
   try {
-    var legacy = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+    var legacy = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
     if (Array.isArray(legacy)) {
       legacy.forEach(function(ch) {
         if (!ch || !ch.manhwaId || ch._isDemo) return;
@@ -998,9 +992,9 @@ if (typeof window.renderContinueReading !== 'function') {
     var out = [];
     var now = Date.now();
 
-    // Legacy AZURA_STORE chapters
+    // Legacy localStorage chapters
     try {
-      var legacy = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+      var legacy = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
       if (Array.isArray(legacy)) {
         legacy.forEach(function(ch) {
           if (!ch || !ch.manhwaId || ch._isDemo) return;

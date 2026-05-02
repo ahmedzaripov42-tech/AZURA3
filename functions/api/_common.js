@@ -1,10 +1,6 @@
 export const OWNER_UID = 'AZR-YJTF-QYGT';
 export const DEFAULT_OWNER_PASSWORD = '';
-export function getOwnerPassword(env) {
-  const value = String(env?.OWNER_PASSWORD || '').trim();
-  if (!value) throw httpError(500, 'OWNER_PASSWORD secret sozlanmagan', 'owner_secret_missing');
-  return value;
-}
+export function getOwnerPassword(env) { return String(env?.OWNER_PASSWORD || DEFAULT_OWNER_PASSWORD || '').trim(); }
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 export const MAX_APP_DATA_BYTES = 1024 * 1024;
 export const MAX_TEXT_BYTES = 8192;
@@ -100,12 +96,9 @@ export function safeParse(v, fallback = null) {
   catch { return fallback; }
 }
 
-export function corsHeaders(extra = {}, request = null, env = null) {
-  const origin = request?.headers?.get?.('origin') || '';
-  const allowed = String(env?.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
-  const allowOrigin = !origin ? '*' : (!allowed.length || allowed.includes(origin) ? origin : (allowed[0] || origin));
+export function corsHeaders(extra = {}) {
   return {
-    'access-control-allow-origin': allowOrigin,
+    'access-control-allow-origin': '*',
     'access-control-allow-methods': 'GET,POST,PATCH,DELETE,HEAD,OPTIONS',
     'access-control-allow-headers': 'authorization,content-type,x-session-token,x-requested-with',
     'access-control-expose-headers': 'etag,content-range,content-length,last-modified,x-azura-request-id',
@@ -315,6 +308,10 @@ export async function ensureOwner(env) {
   await ensureSchema(env);
   const existing = await env.DB.prepare(`SELECT * FROM users WHERE uid=? LIMIT 1`).bind(OWNER_UID).first();
   const ownerPassword = getOwnerPassword(env);
+  if (!ownerPassword) {
+    // Owner bootstrap is disabled until OWNER_PASSWORD secret is set in Cloudflare Pages.
+    return;
+  }
   const hashedOwnerPassword = await hashPassword(ownerPassword);
   const ownerOk = existing
     && await verifyPassword(ownerPassword, existing.password)
@@ -762,11 +759,9 @@ export async function route(handler, request, env) {
   const reqId = requestId();
   try {
     await ensureOwner(env);
-    if (request.method === 'OPTIONS') return new Response(null, { status:204, headers:corsHeaders({ 'x-azura-request-id': reqId }, request, env) });
+    if (request.method === 'OPTIONS') return empty(204, { 'x-azura-request-id': reqId });
     const response = await handler(request, env);
     const headers = new Headers(response.headers);
-    const cors = corsHeaders({}, request, env);
-    Object.keys(cors).forEach((key) => headers.set(key, cors[key]));
     headers.set('x-azura-request-id', reqId);
     return new Response(response.body, {
       status: response.status,
@@ -780,14 +775,7 @@ export async function route(handler, request, env) {
     const message = status >= 500
       ? 'Server xatosi'
       : String(error?.message || 'So‘rov bajarilmadi');
-    return new Response(JSON.stringify({ ok:false, error:message, code, requestId:reqId }), {
-      status,
-      headers: corsHeaders({
-        'content-type': 'application/json; charset=utf-8',
-        'cache-control': 'no-store',
-        'x-azura-request-id': reqId,
-      }, request, env),
-    });
+    return json({ ok:false, error:message, code, requestId:reqId }, status, { 'x-azura-request-id': reqId });
   }
 }
 

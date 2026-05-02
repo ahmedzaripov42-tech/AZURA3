@@ -1,16 +1,17 @@
-/* AZURA Hard Split v1 — strict device mode + toast/fetch cleanup */
+/* AZURA Hard Split v1 — strict device mode + local preview + toast/fetch cleanup */
 (function(){
   'use strict';
 
   var LOCAL = location.protocol === 'file:';
   var lastToastMap = new Map();
   var ownerUID = 'AZR-YJTF-QYGT';
+  var ownerPassword = '';
   var SESSION_TOKEN_KEY = 'azura_session_token';
 
   function q(sel, root){ return (root || document).querySelector(sel); }
   function qa(sel, root){ return Array.from((root || document).querySelectorAll(sel)); }
-  function read(key, fallback){ try { var v = AZURA_STORE.getItem(key); return v ? JSON.parse(v) : fallback; } catch(_) { return fallback; } }
-  function write(key, value){ try { AZURA_STORE.setItem(key, JSON.stringify(value)); } catch(_) {} }
+  function read(key, fallback){ try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch(_) { return fallback; } }
+  function write(key, value){ try { localStorage.setItem(key, JSON.stringify(value)); } catch(_) {} }
   function currentUser(){
     return window.currentUser || read('azura_current', null) || read('azura_current_user', null);
   }
@@ -73,7 +74,7 @@
       write('azura_current', publicUser(user));
       write('azura_current_user', publicUser(user));
       try { window.currentUser = publicUser(user); currentUser = publicUser(user); } catch(_) {}
-      try { AZURA_STORE.setItem(SESSION_TOKEN_KEY, 'local_' + String((user || {}).uid || '').toUpperCase()); } catch(_) {}
+      try { localStorage.setItem(SESSION_TOKEN_KEY, 'local_' + String((user || {}).uid || '').toUpperCase()); } catch(_) {}
     }
     if (/\/api\/(init|health)/.test(url)) return { ok:true, local:true, db:false, users: users.length, owner:{ uid: ownerUID }, time:Date.now() };
     if (/\/api\/users/.test(url)) {
@@ -116,7 +117,7 @@
         return me ? { ok:true, local:true, user: publicUser(me), expiresAt:Date.now() + 86400000 } : { ok:false, local:true, error:'Sessiya topilmadi' };
       }
       if (authBody.action === 'logout') {
-        try { AZURA_STORE.removeItem(SESSION_TOKEN_KEY); } catch(_) {}
+        try { localStorage.removeItem(SESSION_TOKEN_KEY); } catch(_) {}
         return { ok:true, local:true };
       }
       if (authBody.action === 'login') {
@@ -250,9 +251,16 @@
     });
   }
 
-  function installLocalPreviewChip(){ return; }
+  function installLocalPreviewChip(){
+    if (!LOCAL || q('.az-local-preview-chip')) return;
+    var chip = document.createElement('div');
+    chip.className = 'az-local-preview-chip';
+    chip.innerHTML = '<div><b>Local preview</b> — hozir sayt <code>file://</code> rejimida ochilgan. D1/R2, login sync, media va admin global API faqat deploy yoki <code>wrangler pages dev</code> bilan ishlaydi.</div><button type="button">Yopish</button>';
+    q('body').appendChild(chip);
+    q('button', chip).addEventListener('click', function(){ chip.remove(); });
+  }
 
-function patchBannerAudio(){
+  function patchBannerAudio(){
     if (window.__azuraHardSplitAudioPatched) return;
     window.__azuraHardSplitAudioPatched = true;
     document.addEventListener('click', function(e){
@@ -269,9 +277,9 @@ function patchBannerAudio(){
         video.volume = 1;
         video.currentTime = video.currentTime || 0;
         video.play().catch(function(){});
-        AZURA_STORE.setItem('azura_banner_audio_pref', 'on');
+        localStorage.setItem('azura_banner_audio_pref', 'on');
       } else {
-        AZURA_STORE.setItem('azura_banner_audio_pref', 'off');
+        localStorage.setItem('azura_banner_audio_pref', 'off');
       }
       qa('.az-bn-audio-btn').forEach(function(x){ x.classList.remove('az-on'); });
       btn.classList.toggle('az-on', !video.muted);

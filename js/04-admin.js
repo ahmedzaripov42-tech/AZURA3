@@ -21,12 +21,12 @@ var AZURA_BANNER_SLOTS = {
 };
 
 function getBanners() {
-  try { return JSON.parse(AZURA_STORE.getItem(AZURA_BANNER_KEY) || '[]'); }
+  try { return JSON.parse(localStorage.getItem(AZURA_BANNER_KEY) || '[]'); }
   catch (e) { return []; }
 }
 function saveBanners(list) {
   try {
-    AZURA_STORE.setItem(AZURA_BANNER_KEY, JSON.stringify(list || []));
+    localStorage.setItem(AZURA_BANNER_KEY, JSON.stringify(list || []));
     return true;
   } catch(e) {
     console.error('[AZURA Banner] saveBanners failed:', e);
@@ -36,7 +36,7 @@ function saveBanners(list) {
         if (c.poster && typeof c.poster === 'string' && c.poster.length > 120000) c.poster = '';
         return c;
       });
-      AZURA_STORE.setItem(AZURA_BANNER_KEY, JSON.stringify(compact));
+      localStorage.setItem(AZURA_BANNER_KEY, JSON.stringify(compact));
       return true;
     } catch(e2) {
       if (typeof showToast === 'function') {
@@ -62,8 +62,8 @@ function getActiveBannersForSlot(slot) {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// BANNER VIDEO STORE — IndexedDB (AZURA_STORE 5MB kvota muammosini hal qiladi)
-// Video fayllar IndexedDB da saqlanadi, AZURA_STORE da faqat "idb:videoId" yoziladi
+// BANNER VIDEO STORE — IndexedDB (localStorage 5MB kvota muammosini hal qiladi)
+// Video fayllar IndexedDB da saqlanadi, localStorage da faqat "idb:videoId" yoziladi
 // ════════════════════════════════════════════════════════════════════════
 window.BannerVideoStore = (function() {
   var DB_NAME    = 'azura_banner_videos';
@@ -133,7 +133,7 @@ window.BannerVideoStore = (function() {
 
 // ════════════════════════════════════════════════════════════════════════
 // BANNER MEDIA STORE — Image + Video IndexedDB
-// AZURA_STORE faqat kichik metadata saqlaydi, media esa IndexedDB da turadi.
+// localStorage faqat kichik metadata saqlaydi, media esa IndexedDB da turadi.
 // Bu 6 tadan keyin sig'maslik muammosini hal qiladi.
 // ════════════════════════════════════════════════════════════════════════
 window.BannerMediaStore = (function() {
@@ -256,7 +256,7 @@ function applyPromoCode() {
   const code = input.value.trim().toUpperCase();
   if(!code) { showPromoResult('error', '⚠️ Promokod kiriting'); return; }
 
-  const promos = JSON.parse(AZURA_STORE.getItem('azura_promos')||'[]');
+  const promos = JSON.parse(localStorage.getItem('azura_promos')||'[]');
   const promo = promos.find(p => p.code === code);
 
   if(!promo) { showPromoResult('error', '✕ Promokod topilmadi'); return; }
@@ -266,7 +266,7 @@ function applyPromoCode() {
 
   // Check if user already used this promo
   const usedKey = 'azura_promo_used_' + currentUser.uid;
-  const usedCodes = JSON.parse(AZURA_STORE.getItem(usedKey)||'[]');
+  const usedCodes = JSON.parse(localStorage.getItem(usedKey)||'[]');
   if(usedCodes.includes(code)) { showPromoResult('error', '✕ Bu kodni allaqachon ishlatgansiz'); return; }
 
   // Apply rewards
@@ -281,9 +281,9 @@ function applyPromoCode() {
 
   // Mark as used
   usedCodes.push(code);
-  AZURA_STORE.setItem(usedKey, JSON.stringify(usedCodes));
+  localStorage.setItem(usedKey, JSON.stringify(usedCodes));
   promo.uses++;
-  AZURA_STORE.setItem('azura_promos', JSON.stringify(promos));
+  localStorage.setItem('azura_promos', JSON.stringify(promos));
   saveUsers(); saveCurrent(); updateUI();
   input.value = '';
   showPromoResult('success', '✓ Promokod qo\'llandi! ' + rewardMsg);
@@ -370,13 +370,13 @@ function buyVip() {
 function claimDaily() {
   if(!currentUser) { openAuth(); return; }
   const key = 'azura_daily_' + currentUser.uid;
-  const last = AZURA_STORE.getItem(key);
+  const last = localStorage.getItem(key);
   const now = new Date().toDateString();
   if(last === now) { showToast('Bugun allaqachon oldingiz!'); return; }
   currentUser.coins += 10;
   saveUsers();
   saveCurrent();
-  AZURA_STORE.setItem(key, now);
+  localStorage.setItem(key, now);
   updateUI();
   showToast('🎁 +10 coin olindi!');
 }
@@ -426,13 +426,13 @@ function azuraInit() {
   console.log('[AZURA] init complete');
 }
 
-// Barcha _isDemo flagli boblarni AZURA_STORE dan olib tashlash
+// Barcha _isDemo flagli boblarni localStorage dan olib tashlash
 function cleanupDemoChapters() {
   try {
-    const all = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+    const all = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
     const cleaned = all.filter(ch => !ch._isDemo);
     if(cleaned.length !== all.length) {
-      AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(cleaned));
+      localStorage.setItem('azura_chapters_pending', JSON.stringify(cleaned));
       console.log('[AZURA] ' + (all.length - cleaned.length) + ' demo bob tozalandi');
     }
   } catch(e) {}
@@ -655,9 +655,9 @@ function renderAdmin(section) {
 
   // ── DASHBOARD ──
   if (section === 'dashboard') {
-    const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
-    const payments = JSON.parse(AZURA_STORE.getItem('azura_payments') || '[]');
-    const pending = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+    const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
+    const payments = JSON.parse(localStorage.getItem('azura_payments') || '[]');
+    const pending = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
     const banners = getBanners(); // v4.0
     const totalRevenue = payments.filter(p => p.status === 'tasdiqlandi').reduce((s, p) => s + (p.amount || 0), 0);
     const vips = users.filter(u => u.vip).length;
@@ -804,7 +804,7 @@ function renderAdmin(section) {
 
   // ── TO'LOVLAR ──
   else if (section === 'payments') {
-    const payments = JSON.parse(AZURA_STORE.getItem('azura_payments') || '[]');
+    const payments = JSON.parse(localStorage.getItem('azura_payments') || '[]');
     const total = payments.filter(p => p.status === 'tasdiqlandi').reduce((s, p) => s + (p.amount || 0), 0);
     const rows = payments.map(p => `
       <tr>
@@ -1009,7 +1009,7 @@ function renderAdmin(section) {
 
   // ── BOB TASDIQLASH ──
   else if (section === 'chapters') {
-    const pending = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+    const pending = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
     const realPending = pending.filter(ch => !ch._isDemo);
     const demoCount = pending.length - realPending.length;
 
@@ -1068,13 +1068,13 @@ function renderAdmin(section) {
           </div>
           <div>
             <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold-light);">Yangi Bob Qo'shish</div>
-            <div style="font-size:10px;color:var(--text-muted);">WebP/JPG image upload · ko'p bobni birdan</div>
+            <div style="font-size:10px;color:var(--text-muted);">PDF → WebP/JPG/PDF · ko'p bobni birdan</div>
           </div>
         </div>
         <div style="padding:24px;text-align:center;">
           <div style="font-size:48px;margin-bottom:12px;">📚</div>
           <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--text);margin-bottom:6px;">Premium Bob Qo'shish Tizimi</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:18px;">WebP/JPG rasmlarni tashlang · format tanlang · 1-300 ta bobni birdan yuklang</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:18px;">PDF tashlang · format tanlang · 1-300 ta bobni birdan yuklang</div>
           <button onclick="openChapterModal(null, false)" style="padding:14px 32px;border-radius:12px;background:linear-gradient(135deg,var(--crimson),var(--crimson-light));border:none;color:white;font-size:13px;font-weight:700;font-family:'Cinzel',serif;cursor:pointer;letter-spacing:1.5px;box-shadow:0 4px 20px rgba(139,0,0,0.35);transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">＋ YANGI BOB QO'SHISH</button>
         </div>
       </div>`;
@@ -1316,7 +1316,7 @@ function renderAdmin(section) {
 
   // ── PROMOKODLAR ──
   else if (section === 'promo') {
-    const promos = JSON.parse(AZURA_STORE.getItem('azura_promos') || '[]');
+    const promos = JSON.parse(localStorage.getItem('azura_promos') || '[]');
     const rows = promos.map(p => `
       <tr>
         <td><span style="font-family:'Cinzel',serif;font-size:12px;color:var(--gold-light);letter-spacing:1px;">${p.code}</span></td>
@@ -1418,7 +1418,7 @@ function renderAdmin(section) {
 
   // ── DAROMAD ──
   else if (section === 'revenue') {
-    const payments = JSON.parse(AZURA_STORE.getItem('azura_payments') || '[]');
+    const payments = JSON.parse(localStorage.getItem('azura_payments') || '[]');
     const confirmed = payments.filter(p => p.status === 'tasdiqlandi');
     const total = confirmed.reduce((s, p) => s + (p.amount||0), 0);
     const monthly = confirmed.filter(p => Date.now() - p.time < 30*86400000).reduce((s,p) => s+(p.amount||0), 0);
@@ -1604,7 +1604,7 @@ function openEditManhwaAdmin(id) {
  * Modal ichida manhwaning boblar ro'yxatini chiqaradi.
  */
 function renderManhwaChaptersList(manhwaId) {
-  const pending = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const pending = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const chapters = pending.filter(ch => ch.manhwaId === manhwaId);
 
   if (chapters.length === 0) {
@@ -1632,22 +1632,22 @@ function renderManhwaChaptersList(manhwaId) {
 
 // Bob kirish turini yangilash (modal ichida)
 function updateChapterAccess(chId, newAccess) {
-  const pending = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const pending = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const ch = pending.find(x => x.id === chId);
   if (ch) {
     ch.accessType = newAccess;
     if (newAccess === 'coin' && !ch.coinPrice) ch.coinPrice = 50;
-    AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(pending));
+    localStorage.setItem('azura_chapters_pending', JSON.stringify(pending));
     showToast('Kirish turi yangilandi');
   }
 }
 
 function deleteChapterFromManhwa(chId) {
-  const pending = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const pending = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const idx = pending.findIndex(x => x.id === chId);
   if (idx > -1) {
     pending.splice(idx, 1);
-    AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(pending));
+    localStorage.setItem('azura_chapters_pending', JSON.stringify(pending));
     showToast('Bob o\'chirildi');
     // Modal ichidagi ro'yxatni yangilash
     const modal = document.getElementById('azura-edit-modal');
@@ -1714,7 +1714,7 @@ function deleteManhwaAdmin(id) {
 // BOB SUBMIT
 // ============================================================
 // ═══════════════════════════════════════════════════════════════
-// AZURA UNIVERSAL WebP/JPG CONVERTER v5.0
+// AZURA UNIVERSAL PDF → WebP CONVERTER v5.0
 // Shared by all chapter-add places: admin panel, detail quick-add, 18+ admin
 // Renders every page at scale 2.0 → canvas → WebP base64 (NO pages lost)
 // ═══════════════════════════════════════════════════════════════
@@ -1763,9 +1763,9 @@ async function submitChapterAdmin() {
 // ── Migration: eski azura_banners → v4 ───────────────────────────────
 (function migrateBanners() {
   try {
-    if (AZURA_STORE.getItem(AZURA_BANNER_KEY)) return;
-    const legacy = JSON.parse(AZURA_STORE.getItem('azura_banners') || '[]');
-    if (!legacy.length) { AZURA_STORE.setItem(AZURA_BANNER_KEY, '[]'); return; }
+    if (localStorage.getItem(AZURA_BANNER_KEY)) return;
+    const legacy = JSON.parse(localStorage.getItem('azura_banners') || '[]');
+    if (!legacy.length) { localStorage.setItem(AZURA_BANNER_KEY, '[]'); return; }
     const slotMap = {
       'Homepage': 'home-hero', 'Reader': 'reader-between',
       'Sidebar': 'home-mid', 'Popup': 'home-mid', 'Barchasi': 'home-hero'
@@ -1785,7 +1785,7 @@ async function submitChapterAdmin() {
       createdAt: b.createdAt || Date.now(),
       createdBy: b.createdBy || '?',
     }));
-    AZURA_STORE.setItem(AZURA_BANNER_KEY, JSON.stringify(v4));
+    localStorage.setItem(AZURA_BANNER_KEY, JSON.stringify(v4));
   } catch (e) {}
 })();
 
@@ -2074,7 +2074,7 @@ function bannerHandleMediaFile(file, bufferScope) {
       })
       .catch((err) => { console.error('[AZURA Banner] image save error:', err); showToast('⚠ Rasmni saqlashda xato'); });
   } else {
-    // Video → IndexedDB (AZURA_STORE 5MB kvota muammosini hal qiladi)
+    // Video → IndexedDB (localStorage 5MB kvota muammosini hal qiladi)
     const videoId = 'bnv_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
     const previewId2 = bufferScope === 'edit' ? 'bn-edit-media-preview' : 'bn-new-media-preview';
     const preview2 = document.getElementById(previewId2);
@@ -2159,8 +2159,8 @@ function _bannerGenerateVideoPoster(videoDataUrl) {
 /* ── THE KEY FIX: refreshBannerSlots clears dismiss cache ────────── */
 function refreshBannerSlots() {
   // Clear per-banner dismiss so admin changes (delete/edit) show immediately
-  try { AZURA_STORE.removeItem('azura_bn_dismissed_v2'); } catch(e) {}
-  try { AZURA_STORE.removeItem('azura_bn_dismissed');    } catch(e) {}
+  try { localStorage.removeItem('azura_bn_dismissed_v2'); } catch(e) {}
+  try { localStorage.removeItem('azura_bn_dismissed');    } catch(e) {}
   if (typeof window.injectBannerSlots === 'function') window.injectBannerSlots();
 }
 
@@ -2200,12 +2200,12 @@ window.azuraBannerDiagnostic = function() {
 (function cleanOldBannerData() {
   try {
     const key  = 'azura_banners_v4';
-    const raw  = AZURA_STORE.getItem(key);
+    const raw  = localStorage.getItem(key);
     if (raw) {
       const banners = JSON.parse(raw);
       const cleaned = banners.filter(b => b.media || b.img);
-      if (cleaned.length !== banners.length) AZURA_STORE.setItem(key, JSON.stringify(cleaned));
+      if (cleaned.length !== banners.length) localStorage.setItem(key, JSON.stringify(cleaned));
     }
-    AZURA_STORE.removeItem('azura_banners_v5');
+    localStorage.removeItem('azura_banners_v5');
   } catch(e) {}
 })();

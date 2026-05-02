@@ -14,10 +14,10 @@ console.log('[AZURA PREMIUM v5.0] Loaded ✓');
 const ADULT_STORE_KEY = 'azura_adult_content';
 
 function getAdultContent() {
-  return JSON.parse(AZURA_STORE.getItem(ADULT_STORE_KEY) || '[]');
+  return JSON.parse(localStorage.getItem(ADULT_STORE_KEY) || '[]');
 }
 function saveAdultContent(arr) {
-  AZURA_STORE.setItem(ADULT_STORE_KEY, JSON.stringify(arr));
+  localStorage.setItem(ADULT_STORE_KEY, JSON.stringify(arr));
 }
 function generateAdultId() {
   return 'adlt-' + Date.now() + '-' + Math.floor(Math.random()*9999);
@@ -28,7 +28,7 @@ function generateAdultId() {
 // ═══════════════════════════════════════════════════════════════
 // ADULT_DATA — COMPLETELY SEPARATE 18+ DATABASE
 // NEVER uses MANHWA_DATA. This is the ONLY source for 18+ content.
-// Admin-added entries via AZURA_STORE are merged in at runtime.
+// Admin-added entries via localStorage are merged in at runtime.
 // ═══════════════════════════════════════════════════════════════
 const ADULT_DATA_SEED = [
   {
@@ -346,7 +346,7 @@ function aapGateProceed() {
   const allContent = getAdultContent();
   const el1 = document.getElementById('aap-content-count');
   if (el1) el1.textContent = allContent.length;
-  const allUsers = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+  const allUsers = JSON.parse(localStorage.getItem('azura_users') || '[]');
   const vips = allUsers.filter(u => u.vip).length;
   const el2 = document.getElementById('aap-vip-count');
   if (el2) el2.textContent = vips;
@@ -388,14 +388,14 @@ function renderAapSection(section) {
 // ── DASHBOARD ─────────────────────────────────────────────────
 function renderAapDashboard(container) {
   const allContent = getAdultContent();
-  const users      = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+  const users      = JSON.parse(localStorage.getItem('azura_users') || '[]');
   const vips       = users.filter(u => u.vip).length;
   const hidden     = allContent.filter(c => c.status === 'hidden').length;
   const active     = allContent.filter(c => c.status !== 'hidden').length;
   const total18    = allContent.length;
 
   // Chapter count
-  const allChapters = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const allChapters = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const aapChapters = allChapters.filter(c => c._isAdult18);
 
   // Content type breakdown
@@ -441,7 +441,7 @@ function renderAapDashboard(container) {
       <div class="aap-quick-card" onclick="aapNav(document.querySelector('[data-aap=chapters]'),'chapters')">
         <div class="aap-quick-icon">📄</div>
         <div class="aap-quick-label">Bob Qo'shish</div>
-        <div class="aap-quick-sub">WebP/JPG konvertatsiya</div>
+        <div class="aap-quick-sub">PDF → WebP konvertatsiya</div>
       </div>
       <div class="aap-quick-card" onclick="aapNav(document.querySelector('[data-aap=content]'),'content')">
         <div class="aap-quick-icon">📋</div>
@@ -544,7 +544,7 @@ function renderAapContentRows(list) {
   return list.map(c => {
     const ctype = AAP_CTYPES[c.contentType || 'manhwa'] || AAP_CTYPES['manhwa'];
     // Chapter count for this content
-    const allCh = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+    const allCh = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
     const chCount = allCh.filter(ch => ch.manhwaId === c.id && !ch._isDemo).length;
     return `
     <div class="aap-content-row">
@@ -756,7 +756,7 @@ function addAapContent() {
   aapNav(document.querySelector('[data-aap=content]'), 'content');
 }
 
-// ── BOB QO'SHISH — WebP/JPG (ALL PAGES, NO LOSS) ───────────
+// ── BOB QO'SHISH — PDF → WebP (ALL PAGES, NO LOSS) ───────────
 // ── BOB QO'SHISH — Mini panel only (real form is in Module 11) ───
 function renderAapChapters(container) {
   container.innerHTML = `
@@ -764,7 +764,7 @@ function renderAapChapters(container) {
     <div class="aap-chapter-add-card" style="padding:24px;text-align:center;">
       <div style="font-size:48px;margin-bottom:12px;">📚</div>
       <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--adult-text);margin-bottom:6px;">Premium 18+ Bob Qo'shish</div>
-      <div style="font-size:11px;color:var(--adult-text-muted);margin-bottom:18px;">WebP/JPG · format tanlash · 1-300 ta birdan</div>
+      <div style="font-size:11px;color:var(--adult-text-muted);margin-bottom:18px;">PDF → WebP/JPG · format tanlash · 1-300 ta birdan</div>
       <button onclick="openChapterModal(null, true)" class="aap-btn-save" style="padding:14px 32px;font-size:13px;letter-spacing:1.5px;">
         ＋ YANGI BOB QO'SHISH
       </button>
@@ -789,7 +789,7 @@ function aapUpdateChapterNum() {
   if (!sel || !numInp) return;
   const cid = sel.value;
   if (!cid) return;
-  const allCh = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const allCh = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const existing = allCh.filter(c => c.manhwaId === cid && !c._isDemo);
   const nextNum = existing.length > 0 ? Math.max(...existing.map(c => c.number)) + 1 : 1;
   numInp.value = nextNum;
@@ -802,7 +802,7 @@ function aapShowExistingChapters(cid) {
   if (!wrap || !list) return;
   if (!cid) { wrap.style.display = 'none'; return; }
 
-  const allCh = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const allCh = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const chapters = allCh.filter(c => c.manhwaId === cid && !c._isDemo).sort((a,b) => a.number - b.number);
 
   const content = getAdultContent().find(c => c.id === cid);
@@ -869,13 +869,13 @@ function aapQuickAddChapter(contentId) {
 
 function aapDeleteChapter(chId) {
   if (!confirm('Bu bobni o\'chirishni tasdiqlaysizmi?')) return;
-  const allCh = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+  const allCh = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
   const idx = allCh.findIndex(c => c.id === chId);
   if (idx === -1) return;
   const deletedNum = allCh[idx].number;
   const deletedMid = allCh[idx].manhwaId;
   allCh.splice(idx, 1);
-  AZURA_STORE.setItem('azura_chapters_pending', JSON.stringify(allCh));
+  localStorage.setItem('azura_chapters_pending', JSON.stringify(allCh));
   showToast(`🗑 Bob ${deletedNum} o'chirildi`);
 
   if (currentManhwa && currentManhwa.id === deletedMid) {
@@ -1063,7 +1063,7 @@ function confirmAapDelete() {
 
 // ── VIP ACCESS MANAGER ─────────────────────────────────────────
 function renderAapAccess(container) {
-  const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+  const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
   container.innerHTML = `
     <div class="aap-section-title">VIP 18+ Kirish Boshqaruvi</div>
     <div class="aap-search">
@@ -1096,21 +1096,21 @@ function renderAapAccessRows(users) {
 }
 
 function filterAapAccess(q) {
-  const users    = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+  const users    = JSON.parse(localStorage.getItem('azura_users') || '[]');
   const filtered = q ? users.filter(u => (u.username||'').toLowerCase().includes(q.toLowerCase()) || (u.uid||'').toLowerCase().includes(q.toLowerCase())) : users;
   const el = document.getElementById('aap-access-list');
   if (el) el.innerHTML = renderAapAccessRows(filtered);
 }
 
 function toggleAapVip(uid) {
-  const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+  const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
   const idx   = users.findIndex(u => u.uid === uid);
   if (idx === -1) return;
   users[idx].vip = !users[idx].vip;
-  AZURA_STORE.setItem('azura_users', JSON.stringify(users));
+  localStorage.setItem('azura_users', JSON.stringify(users));
   if (currentUser && currentUser.uid === uid) {
     currentUser.vip = users[idx].vip;
-    AZURA_STORE.setItem('azura_current', JSON.stringify(currentUser));
+    localStorage.setItem('azura_current', JSON.stringify(currentUser));
   }
   USERS = users;
   showToast(users[idx].vip ? `✓ ${users[idx].username} — 18+ VIP berildi` : `✓ ${users[idx].username} — 18+ VIP olib tashlandi`);
@@ -1148,8 +1148,8 @@ function renderAapAdmins(container) {
 }
 
 function renderAapAdminRows(canDelete) {
-  const ids   = JSON.parse(AZURA_STORE.getItem('azura_admins') || '[]');
-  const users = JSON.parse(AZURA_STORE.getItem('azura_users')  || '[]');
+  const ids   = JSON.parse(localStorage.getItem('azura_admins') || '[]');
+  const users = JSON.parse(localStorage.getItem('azura_users')  || '[]');
   if (!ids.length) return `<div class="aap-empty" style="border:none;"><div class="aap-empty-icon">🛡</div><div class="aap-empty-text">Admin yo'q</div></div>`;
   return ids.map(uid => {
     const u    = users.find(x => x.uid === uid);
@@ -1174,23 +1174,23 @@ function addAapAdmin() {
   const uid = (document.getElementById('aap-new-admin-id')?.value || '').trim().toUpperCase();
   if (!uid.startsWith('AZR-')) { showToast('⚠ To\'g\'ri ID kiriting (AZR-XXXX-XXXX)'); return; }
   if (uid === OWNER_ID)        { showToast('⚠ Owner ID admin sifatida qo\'shib bo\'lmaydi'); return; }
-  const ids = JSON.parse(AZURA_STORE.getItem('azura_admins') || '[]');
+  const ids = JSON.parse(localStorage.getItem('azura_admins') || '[]');
   if (ids.includes(uid)) { showToast('⚠ Bu ID allaqachon admin'); return; }
   ids.push(uid);
   ADMIN_IDS = ids;
-  AZURA_STORE.setItem('azura_admins', JSON.stringify(ids));
+  localStorage.setItem('azura_admins', JSON.stringify(ids));
   showToast('✓ Admin qo\'shildi: ' + uid);
   renderAapAdmins(document.getElementById('aap-main-content'));
   updateUI();
 }
 
 function removeAapAdmin(uid) {
-  const ids = JSON.parse(AZURA_STORE.getItem('azura_admins') || '[]');
+  const ids = JSON.parse(localStorage.getItem('azura_admins') || '[]');
   const idx = ids.indexOf(uid);
   if (idx === -1) return;
   ids.splice(idx, 1);
   ADMIN_IDS = ids;
-  AZURA_STORE.setItem('azura_admins', JSON.stringify(ids));
+  localStorage.setItem('azura_admins', JSON.stringify(ids));
   showToast('✓ Admin o\'chirildi: ' + uid);
   renderAapAdmins(document.getElementById('aap-main-content'));
   updateUI();
@@ -1384,7 +1384,7 @@ const AAP_LOG_MAX = 500;
 
 function aapLogActivity(type, message) {
   try {
-    const log = JSON.parse(AZURA_STORE.getItem(AAP_LOG_KEY) || '[]');
+    const log = JSON.parse(localStorage.getItem(AAP_LOG_KEY) || '[]');
     log.unshift({
       type,           // 'create' | 'edit' | 'delete' | 'chapter' | 'access' | 'admin' | 'security'
       message,
@@ -1394,18 +1394,18 @@ function aapLogActivity(type, message) {
     });
     // Trim to max
     if (log.length > AAP_LOG_MAX) log.length = AAP_LOG_MAX;
-    AZURA_STORE.setItem(AAP_LOG_KEY, JSON.stringify(log));
+    localStorage.setItem(AAP_LOG_KEY, JSON.stringify(log));
   } catch(e) { /* silent */ }
 }
 
 function aapGetActivityLog() {
-  try { return JSON.parse(AZURA_STORE.getItem(AAP_LOG_KEY) || '[]'); }
+  try { return JSON.parse(localStorage.getItem(AAP_LOG_KEY) || '[]'); }
   catch(e) { return []; }
 }
 
 function aapClearActivityLog() {
   if (!confirm('Barcha faoliyat jurnalini o\'chirishni tasdiqlaysizmi?')) return;
-  AZURA_STORE.removeItem(AAP_LOG_KEY);
+  localStorage.removeItem(AAP_LOG_KEY);
   showToast('✓ Faoliyat jurnali tozalandi');
   renderAapSection('settings');
 }
@@ -1580,7 +1580,7 @@ function aapClearSelection() {
       </div>
       ${list.map(c => {
         const ctype = AAP_CTYPES[c.contentType || 'manhwa'] || AAP_CTYPES['manhwa'];
-        const allCh = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+        const allCh = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
         const chCount = allCh.filter(ch => ch.manhwaId === c.id && !ch._isDemo).length;
         const isSel = _aapSelectedIds.has(c.id);
         const hasVideo = !!c.trailerVideo;
@@ -1655,7 +1655,7 @@ function aapClearSelection() {
     const uidEl = document.getElementById('aap-new-admin-id');
     const uid   = uidEl ? uidEl.value.trim().toUpperCase() : '';
     _origAddAdmin();
-    if (uid && (JSON.parse(AZURA_STORE.getItem('azura_admins')||'[]')).includes(uid)) {
+    if (uid && (JSON.parse(localStorage.getItem('azura_admins')||'[]')).includes(uid)) {
       aapLogActivity('admin', `Yangi admin: ${uid}`);
     }
   };
@@ -1668,7 +1668,7 @@ function aapClearSelection() {
   // VIP toggle
   const _origToggleVip = toggleAapVip;
   toggleAapVip = function(uid) {
-    const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
     const u = users.find(x => x.uid === uid);
     const wasVip = u ? !!u.vip : false;
     _origToggleVip(uid);

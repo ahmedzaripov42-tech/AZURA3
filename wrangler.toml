@@ -1,21 +1,12 @@
-name = "azura"
-pages_build_output_dir = "."
+name = "azura3"
 compatibility_date = "2026-05-02"
+pages_build_output_dir = "."
 
-# GitHub -> Cloudflare Pages deploy uchun bu faylda D1 database_id yozilmadi.
-# Sabab: database_id har bir Cloudflare akkauntda boshqa UUID bo‘ladi.
-# D1 bindingni Cloudflare Dashboard orqali qo‘shing:
-# Pages -> azura3 -> Settings -> Functions -> D1 database bindings
+# D1 is intentionally NOT declared here to avoid invalid placeholder UUID deploy errors.
+# Add it in Cloudflare Pages dashboard:
+# Settings → Bindings → Add → D1 database
 # Variable name: DB
 # Database: azura-db
-#
-# R2 binding:
-# Variable name: MEDIA
-# Bucket: azura-media
-#
-# Production secretlar:
-# OWNER_PASSWORD
-# ALLOWED_ORIGINS = https://<sizning-domainingiz>
 
 [[r2_buckets]]
 binding = "MEDIA"

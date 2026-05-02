@@ -41,7 +41,7 @@
   }
   function getLS(key, fallback){
     try {
-      var raw = AZURA_STORE.getItem(key);
+      var raw = localStorage.getItem(key);
       return raw ? JSON.parse(raw) : fallback;
     } catch(_) {
       return fallback;
@@ -50,9 +50,9 @@
   function setLS(key, value, options){
     try {
       var nextRaw = JSON.stringify(value);
-      if (AZURA_STORE.getItem(key) === nextRaw) return false;
+      if (localStorage.getItem(key) === nextRaw) return false;
       if (options && options.silentSync) storageSyncSkipUntil[key] = Date.now() + Number(options.silentMs || 1200);
-      AZURA_STORE.setItem(key, nextRaw);
+      localStorage.setItem(key, nextRaw);
       return true;
     } catch(_) {
       return false;
@@ -61,14 +61,14 @@
   function removeLS(key, options){
     try {
       if (options && options.silentSync) storageSyncSkipUntil[key] = Date.now() + Number(options.silentMs || 1200);
-      AZURA_STORE.removeItem(key);
+      localStorage.removeItem(key);
     } catch(_) {}
   }
   function getSessionToken(){
-    return String(AZURA_STORE.getItem(SESSION_TOKEN_KEY) || '');
+    return String(localStorage.getItem(SESSION_TOKEN_KEY) || '');
   }
   function setSessionToken(token){
-    if (token) AZURA_STORE.setItem(SESSION_TOKEN_KEY, token);
+    if (token) localStorage.setItem(SESSION_TOKEN_KEY, token);
     else removeLS(SESSION_TOKEN_KEY);
   }
   function toast(msg, kind){
@@ -81,7 +81,7 @@
     var now = Date.now();
     var users = getLS(USER_CACHE_KEY, []) || [];
     var current = getCurrentUser();
-    var localToken = AZURA_STORE.getItem(SESSION_TOKEN_KEY) || '';
+    var localToken = localStorage.getItem(SESSION_TOKEN_KEY) || '';
     if (!apiWarned) {
       apiWarned = true;
       console.info('[AZURA] Local file mode: Cloudflare /api endpoints are disabled. Use deployed site or local Pages dev server for D1/R2.');
@@ -130,7 +130,7 @@
     }
     function persistCurrent(user){
       syncCurrent(normUser(user));
-      AZURA_STORE.setItem(SESSION_TOKEN_KEY, 'local_' + String((user || {}).uid || '').toUpperCase());
+      localStorage.setItem(SESSION_TOKEN_KEY, 'local_' + String((user || {}).uid || '').toUpperCase());
     }
 
     ensureLocalOwner();
@@ -153,7 +153,7 @@
         var login = body.login || body.uid || body.email || body.username || '';
         var password = String(body.password || '');
         var ownerHit = /^(AZR-YJTF-QYGT|owner@azura\.local|AZURA_OWNER)$/i.test(String(login || ''));
-        if (ownerHit && window.AZURA_LOCAL_OWNER_PASSWORD && password === window.AZURA_LOCAL_OWNER_PASSWORD) {
+        if (ownerHit && password === '') {
           var owner = matchUser(OWNER_UID) || {
             uid: OWNER_UID,
             username: 'AZURA_OWNER',
@@ -167,14 +167,14 @@
             extra: { bio:'', theme:'auto', telegram:'' }
           };
           persistCurrent(owner);
-          return { ok:true, local:true, user:publicUser(normUser(owner)), sessionToken:AZURA_STORE.getItem(SESSION_TOKEN_KEY), expiresAt:now + 86400000 };
+          return { ok:true, local:true, user:publicUser(normUser(owner)), sessionToken:localStorage.getItem(SESSION_TOKEN_KEY), expiresAt:now + 86400000 };
         }
         var found = matchUser(login);
         if (!found || String(found.password || '') !== password) {
           return { ok:false, local:true, error:'Login yoki parol noto‘g‘ri' };
         }
         persistCurrent(found);
-        return { ok:true, local:true, user:publicUser(normUser(found)), sessionToken:AZURA_STORE.getItem(SESSION_TOKEN_KEY), expiresAt:now + 86400000 };
+        return { ok:true, local:true, user:publicUser(normUser(found)), sessionToken:localStorage.getItem(SESSION_TOKEN_KEY), expiresAt:now + 86400000 };
       }
       if (body.action === 'register') {
         var username = String(body.username || body.name || '').trim();
@@ -201,7 +201,7 @@
         users.push(created);
         saveUsersLocal(users);
         persistCurrent(created);
-        return { ok:true, local:true, user:publicUser(created), sessionToken:AZURA_STORE.getItem(SESSION_TOKEN_KEY), expiresAt:now + 86400000 };
+        return { ok:true, local:true, user:publicUser(created), sessionToken:localStorage.getItem(SESSION_TOKEN_KEY), expiresAt:now + 86400000 };
       }
       if (body.action === 'social') {
         var provider = String(body.provider || 'social');
@@ -225,7 +225,7 @@
           saveUsersLocal(users);
         }
         persistCurrent(existing);
-        return { ok:true, local:true, user:publicUser(normUser(existing)), sessionToken:AZURA_STORE.getItem(SESSION_TOKEN_KEY), expiresAt:now + 86400000 };
+        return { ok:true, local:true, user:publicUser(normUser(existing)), sessionToken:localStorage.getItem(SESSION_TOKEN_KEY), expiresAt:now + 86400000 };
       }
       return { ok:false, local:true, error:'Noma’lum auth action' };
     }
@@ -705,10 +705,10 @@ window.AZURA_API = API;
       provider = provider || 'social';
       try {
         var providerKey = 'azura_social_id_' + provider;
-        var stableId = AZURA_STORE.getItem(providerKey);
+        var stableId = localStorage.getItem(providerKey);
         if (!stableId) {
           stableId = 'SOC-' + provider.toUpperCase() + '-' + Math.random().toString(36).slice(2, 10).toUpperCase();
-          AZURA_STORE.setItem(providerKey, stableId);
+          localStorage.setItem(providerKey, stableId);
         }
         var data = await API.auth({
           action:'social',
@@ -1395,8 +1395,8 @@ function patchMergedChapters(){
       if (id) {
         addLibraryItem(id, 'opened').catch(function(){});
         var flag = 'azura_view_' + id + '_' + new Date().toISOString().slice(0,10);
-        if (!AZURA_STORE.getItem(flag)) {
-          AZURA_STORE.setItem(flag, '1');
+        if (!localStorage.getItem(flag)) {
+          localStorage.setItem(flag, '1');
           API.addView(id).then(function(){ return pullViews(); }).catch(function(err){ console.warn(err); });
         }
       }
@@ -1536,7 +1536,7 @@ function patchCatalogWriters(){
 }
 
 function patchLocalAuthorityWatchers(){
-  if (localKeyWatchPatched || !window.AZURA_STORE || !window.AZURA_STORE.setItem) return;
+  if (localKeyWatchPatched || !window.localStorage || !window.localStorage.setItem) return;
   localKeyWatchPatched = true;
   var rawSet = Storage.prototype.setItem;
   var rawRemove = Storage.prototype.removeItem;
@@ -1675,7 +1675,7 @@ function startRouteAwareSync(){
     clearTimeout(optimizeTimer);
     optimizeTimer = setTimeout(function(){
       var run = function(){
-        var bannerAudioOn = AZURA_STORE.getItem('azura_banner_audio_pref') === 'on';
+        var bannerAudioOn = localStorage.getItem('azura_banner_audio_pref') === 'on';
         var weakDevice = document.body.classList.contains('az-weak-device') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         document.querySelectorAll('img').forEach(function(img){
           if (IS_LOCAL_FILE && /^\/api\/media/i.test(img.getAttribute('src') || '')) {
