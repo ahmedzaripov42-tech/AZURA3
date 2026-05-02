@@ -1,45 +1,58 @@
-# AZURA Cloudflare Pages + D1 + R2 deploy
+# AZURA3 Cloudflare Pages deploy
 
-## 1) D1 database yaratish
+Bu versiyada `wrangler.toml` ichida D1 `database_id` yozilmagan. Shuning uchun GitHub deploy `Invalid database UUID` xatosiga tushmaydi.
+
+## 1) Cloudflare Pages build settings
+
+- Framework preset: `None`
+- Build command: bo‘sh
+- Output directory: `.`
+
+## 2) D1 binding qo‘shish
+
+Cloudflare Dashboard:
+
+`Workers & Pages -> azura3 -> Settings -> Functions -> D1 database bindings`
+
+Qo‘shing:
+
+- Variable name: `DB`
+- D1 database: `azura-db`
+
+Agar `azura-db` hali bo‘lmasa, D1 SQL Database bo‘limidan yarating.
+
+## 3) R2 binding qo‘shish
+
+`Workers & Pages -> azura3 -> Settings -> Functions -> R2 bucket bindings`
+
+Qo‘shing:
+
+- Variable name: `MEDIA`
+- Bucket: `azura-media`
+
+## 4) Secretlar
+
+`Workers & Pages -> azura3 -> Settings -> Environment variables`
+
+Qo‘shing:
+
+- `OWNER_PASSWORD` = owner parolingiz
+- `ALLOWED_ORIGINS` = `https://sizning-domainingiz` yoki pages.dev domeningiz
+
+## 5) D1 migration
+
+Cloudflare D1 console orqali `migrations/0001_initial.sql` ichidagi SQL ni ishga tushiring.
+
+Yoki lokal wrangler bilan ishlatsangiz:
+
 ```bash
-npm install
-npx wrangler d1 create azura-db
+npx wrangler d1 execute azura-db --file=./migrations/0001_initial.sql --remote
 ```
-Chiqqan `database_id` qiymatini `wrangler.toml` ichidagi `YOUR_D1_DATABASE_ID` o‘rniga yozing.
 
-## 2) R2 bucket yaratish
+## 6) GitHub push
+
 ```bash
-npx wrangler r2 bucket create azura-media
+git add .
+git commit -m "fix Cloudflare dashboard bindings deploy"
+git push
 ```
-
-## 3) Owner parolni secret qilish
-```bash
-npx wrangler pages secret put OWNER_PASSWORD
-```
-Eski hardcoded parol koddan olib tashlangan. Owner login UID: `AZR-YJTF-QYGT`.
-
-Ixtiyoriy, production domenlarni cheklash uchun:
-```bash
-npx wrangler pages secret put ALLOWED_ORIGINS
-```
-Qiymat namunasi: `https://azura.pages.dev,https://azura.uz`
-
-## 4) D1 migration
-```bash
-npm run d1:migrate:remote
-```
-
-## 5) Deploy
-```bash
-npm run deploy
-```
-
-## Nimalar tuzatildi
-- Cloudflare Pages Functions uchun D1 `DB` va R2 `MEDIA` bindinglari qo‘shildi.
-- D1 schema migration faylga chiqarildi: `migrations/0001_initial.sql`.
-- Owner parol frontend/backend kodidan olib tashlandi va `OWNER_PASSWORD` secretga o‘tkazildi.
-- PDF.js olib tashlangan; platforma WebP/JPG image-first reader sifatida optimizatsiya qilingan.
-- Rasmlar lazy loading/async decoding bilan optimizatsiya qilindi.
-- WebP bor joydagi JPG dublikat coverlar deploydan olib tashlandi.
-- `.git` tarixi final zipdan olib tashlandi.
-- Static assetlar uchun cache headers qo‘shildi.

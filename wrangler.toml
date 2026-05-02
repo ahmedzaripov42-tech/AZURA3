@@ -2,14 +2,20 @@ name = "azura"
 pages_build_output_dir = "."
 compatibility_date = "2026-05-02"
 
-# Production secret kerak:
-# wrangler pages secret put OWNER_PASSWORD
-# wrangler pages secret put ALLOWED_ORIGINS  # masalan: https://azura.pages.dev,https://azura.uz
-
-[[d1_databases]]
-binding = "DB"
-database_name = "azura-db"
-database_id = "YOUR_D1_DATABASE_ID"
+# GitHub -> Cloudflare Pages deploy uchun bu faylda D1 database_id yozilmadi.
+# Sabab: database_id har bir Cloudflare akkauntda boshqa UUID bo‘ladi.
+# D1 bindingni Cloudflare Dashboard orqali qo‘shing:
+# Pages -> azura3 -> Settings -> Functions -> D1 database bindings
+# Variable name: DB
+# Database: azura-db
+#
+# R2 binding:
+# Variable name: MEDIA
+# Bucket: azura-media
+#
+# Production secretlar:
+# OWNER_PASSWORD
+# ALLOWED_ORIGINS = https://<sizning-domainingiz>
 
 [[r2_buckets]]
 binding = "MEDIA"
