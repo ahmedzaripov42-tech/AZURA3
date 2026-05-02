@@ -26,7 +26,7 @@
   }
   function getCurrent(){
     try {
-      var local = JSON.parse(localStorage.getItem('azura_current') || 'null');
+      var local = JSON.parse(AZURA_STORE.getItem('azura_current') || 'null');
       if (local && local.uid) return local;
     } catch(_){}
     try {
@@ -35,18 +35,18 @@
     return null;
   }
   function setCurrent(user){
-    try { localStorage.setItem('azura_current', JSON.stringify(user)); } catch(_){}
+    try { AZURA_STORE.setItem('azura_current', JSON.stringify(user)); } catch(_){}
     try { currentUser = user; } catch(_){}
     try { window.currentUser = user; } catch(_){}
   }
   function syncUsersLocal(user){
     try {
-      var list = JSON.parse(localStorage.getItem('azura_users') || '[]');
+      var list = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
       if (!Array.isArray(list)) list = [];
       var idx = list.findIndex(function(row){ return row && row.uid === user.uid; });
       if (idx >= 0) list[idx] = Object.assign({}, list[idx], user);
       else list.unshift(user);
-      localStorage.setItem('azura_users', JSON.stringify(list));
+      AZURA_STORE.setItem('azura_users', JSON.stringify(list));
       try { USERS = list; } catch(_){}
     } catch(_){}
   }
@@ -98,7 +98,7 @@
     var loginForm = $('#form-login');
     var regForm = $('#form-register');
     if (loginForm && !$('.az-login-helper', loginForm)) {
-      var lastLogin = localStorage.getItem('azura_last_login') || '';
+      var lastLogin = AZURA_STORE.getItem('azura_last_login') || '';
       var wrap = document.createElement('div');
       wrap.className = 'az-login-helper';
       wrap.innerHTML = 'UID, username yoki email bilan kirishingiz mumkin.';
@@ -168,13 +168,13 @@
       var passInput = $('#login-password');
       if (loginInput && passInput) {
         var login = (loginInput.value || '').trim();
-        if (login) localStorage.setItem('azura_last_login', login);
+        if (login) AZURA_STORE.setItem('azura_last_login', login);
       }
       var res = oldLogin ? oldLogin.apply(this, arguments) : undefined;
       return Promise.resolve(res).then(function(v){
         var me = getCurrent();
         if (me && me.uid) {
-          localStorage.setItem('azura_last_login', me.email || me.username || me.uid);
+          AZURA_STORE.setItem('azura_last_login', me.email || me.username || me.uid);
         }
         return v;
       });
@@ -185,7 +185,7 @@
       return Promise.resolve(res).then(function(v){
         var me = getCurrent();
         if (me && me.uid) {
-          localStorage.setItem('azura_last_login', me.email || me.username || me.uid);
+          AZURA_STORE.setItem('azura_last_login', me.email || me.username || me.uid);
         }
         return v;
       });
@@ -240,8 +240,8 @@
       video.loop = true;
       video.playsInline = true;
       video.setAttribute('playsinline', '');
-      localStorage.setItem(audioKey, 'on');
-      localStorage.setItem(activeKey, videoId(video));
+      AZURA_STORE.setItem(audioKey, 'on');
+      AZURA_STORE.setItem(activeKey, videoId(video));
       var p = video.play();
       if (p && typeof p.catch === 'function') {
         p.catch(function(){
@@ -252,8 +252,8 @@
       setButtonState(video, true);
     }
     function syncAudio(){
-      var audioOn = localStorage.getItem(audioKey) === 'on';
-      var activeId = localStorage.getItem(activeKey) || '';
+      var audioOn = AZURA_STORE.getItem(audioKey) === 'on';
+      var activeId = AZURA_STORE.getItem(activeKey) || '';
       var visibleVideos = allBannerVideos().filter(isVisible);
       if (!audioOn) {
         allBannerVideos().forEach(muteVideo);
@@ -271,12 +271,12 @@
     window._azBnToggleAudio = function(btn){
       var video = btn && btn.closest ? btn.closest('.az-bn-video-wrap').querySelector('video') : null;
       if (!video) return;
-      var turnOn = video.muted || localStorage.getItem(audioKey) !== 'on';
+      var turnOn = video.muted || AZURA_STORE.getItem(audioKey) !== 'on';
       if (turnOn) {
         playWithSound(video);
       } else {
-        localStorage.setItem(audioKey, 'off');
-        localStorage.removeItem(activeKey);
+        AZURA_STORE.setItem(audioKey, 'off');
+        AZURA_STORE.removeItem(activeKey);
         muteVideo(video);
       }
       syncAudio();

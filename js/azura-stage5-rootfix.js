@@ -4,7 +4,7 @@
   var coinSvg='<svg class="az5-coin-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.35 16.08V20h-2.62v-1.9c-1.82-.34-3.22-1.4-3.39-3.25h2.03c.13.91.82 1.63 2.58 1.63 1.74 0 2.22-.68 2.22-1.35 0-.78-.43-1.34-2.65-1.89-2.58-.62-3.86-1.55-3.86-3.3 0-1.62 1.3-2.72 3.07-3.07V4h2.62v1.9c1.6.38 2.76 1.34 3.03 3.02h-2.03c-.17-.86-.75-1.46-2.17-1.46-1.47 0-2.18.55-2.18 1.31 0 .71.45 1.16 2.62 1.71 2.79.71 3.91 1.76 3.91 3.49 0 1.79-1.35 2.82-3.2 3.11z"/></svg>';
   function $(s,r){return (r||document).querySelector(s)} function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-  function getUser(){return window.currentUser||JSON.parse(localStorage.getItem('azura_current_user')||localStorage.getItem('azura_current')||'null')}
+  function getUser(){return window.currentUser||JSON.parse(AZURA_STORE.getItem('azura_current_user')||AZURA_STORE.getItem('azura_current')||'null')}
   function role(){var u=getUser(); if(!u)return 'guest'; if(String(u.uid||'').toUpperCase()===OWNER_UID)return 'owner'; return String(u.role||'user').toLowerCase()}
   function toast(m,k){ if(window.showToast) window.showToast(m,k||'info'); else console.log('[AZURA]',m); }
   function api(){return window.AZURA_API||null}
@@ -15,7 +15,7 @@
     A.json=async function(url,options){
       options=options||{}; if(location.protocol==='file:') return old.call(this,url,options);
       var headers=Object.assign({},options.headers||{}); if(!(options.body instanceof FormData)&&!headers['content-type']) headers['content-type']='application/json';
-      var tok=localStorage.getItem('azura_session_token')||''; if(tok) headers.authorization='Bearer '+tok; options.headers=headers;
+      var tok=AZURA_STORE.getItem('azura_session_token')||''; if(tok) headers.authorization='Bearer '+tok; options.headers=headers;
       var res, text=''; try{res=await fetch(url,options); text=await res.text();}catch(e){throw new Error('Tarmoq/API ulanish xatosi: '+(e.message||e));}
       var data=null; try{data=text?JSON.parse(text):{ok:true};}catch(e){throw new Error('API JSON emas qaytdi: HTTP '+(res&&res.status)+' '+String(text||'').slice(0,160));}
       if(!res.ok || data.ok===false){throw new Error((data.error||data.message||('HTTP '+res.status))+(data.requestId?' ['+data.requestId+']':''));}
@@ -41,11 +41,11 @@
     var u=getUser(); if(!u)return [];
     var out=[];
     try{ var A=api(); if(A&&location.protocol!=='file:'){ var d=await A.json('/api/features?scope=bootstrap'); out=d.library||[]; } }catch(e){ console.warn('[AZURA library sync]',e.message||e); }
-    var legacy=[]; try{legacy=(u.library||[]).concat(JSON.parse(localStorage.getItem('azura_library_'+u.uid)||'[]'));}catch(_){legacy=u.library||[]}
+    var legacy=[]; try{legacy=(u.library||[]).concat(JSON.parse(AZURA_STORE.getItem('azura_library_'+u.uid)||'[]'));}catch(_){legacy=u.library||[]}
     legacy.forEach(function(x){ var id=typeof x==='string'?x:(x&&x.id)||x&&x.manhwaId; if(id&&!out.some(function(r){return r.manhwaId===id})) out.push({manhwaId:id,state:'saved',progress:0,updatedAt:0}); });
     return out;
   }
-  function progressMap(uid){try{return JSON.parse(localStorage.getItem('azura_reading_progress_'+uid)||'{}')}catch(_){return {}}}
+  function progressMap(uid){try{return JSON.parse(AZURA_STORE.getItem('azura_reading_progress_'+uid)||'{}')}catch(_){return {}}}
   async function renderLibraryFixed(){
     var page=$('#page-library .main-content')||$('#page-library'); var list=$('#library-list'); if(!page||!list)return;
     var u=getUser(); if(!u){ var g=$('#library-guest'); if(g)g.style.display=''; list.innerHTML=''; return; }
@@ -63,8 +63,8 @@
     shell.innerHTML=html; var f=$('#az5-lib-f'),s=$('#az5-lib-s'),inp=$('#az5-lib-q'); if(f)f.value=filter;if(s)s.value=sort;
     [inp,f,s].forEach(function(el){if(!el)return; el.oninput=el.onchange=function(){window.az5LibQ=($('#az5-lib-q')||{}).value||'';window.az5LibF=($('#az5-lib-f')||{}).value||'all';window.az5LibS=($('#az5-lib-s')||{}).value||'recent';renderLibraryFixed();};});
   }
-  window.az5SaveLibrary=async function(id,mode){var A=api(); try{ if(A&&location.protocol!=='file:') await A.json('/api/features',{method:'POST',body:JSON.stringify({action:'library.upsert',manhwaId:id,state:mode==='favorites'?'saved':'saved',favorite:mode==='favorites'})}); var u=getUser(); if(u){u.library=Array.from(new Set((u.library||[]).concat([id]))); localStorage.setItem('azura_current_user',JSON.stringify(u));} await renderLibraryFixed(); toast('Kutubxona yangilandi','success');}catch(e){toast(e.message,'error')}};
-  window.az5RemoveLibrary=async function(id){var A=api(); try{ if(A&&location.protocol!=='file:') await A.json('/api/features',{method:'POST',body:JSON.stringify({action:'library.remove',manhwaId:id})}); var u=getUser(); if(u){u.library=(u.library||[]).filter(function(x){return x!==id});localStorage.setItem('azura_current_user',JSON.stringify(u));} await renderLibraryFixed();}catch(e){toast(e.message,'error')}};
+  window.az5SaveLibrary=async function(id,mode){var A=api(); try{ if(A&&location.protocol!=='file:') await A.json('/api/features',{method:'POST',body:JSON.stringify({action:'library.upsert',manhwaId:id,state:mode==='favorites'?'saved':'saved',favorite:mode==='favorites'})}); var u=getUser(); if(u){u.library=Array.from(new Set((u.library||[]).concat([id]))); AZURA_STORE.setItem('azura_current_user',JSON.stringify(u));} await renderLibraryFixed(); toast('Kutubxona yangilandi','success');}catch(e){toast(e.message,'error')}};
+  window.az5RemoveLibrary=async function(id){var A=api(); try{ if(A&&location.protocol!=='file:') await A.json('/api/features',{method:'POST',body:JSON.stringify({action:'library.remove',manhwaId:id})}); var u=getUser(); if(u){u.library=(u.library||[]).filter(function(x){return x!==id});AZURA_STORE.setItem('azura_current_user',JSON.stringify(u));} await renderLibraryFixed();}catch(e){toast(e.message,'error')}};
 
   function fixAdultAdmin(){
     var mb=$('#adult-admin-mobile-btn'), db=$('#adult-admin-desktop-btn'); [mb,db].forEach(function(b){ if(!b)return; b.onclick=function(e){e.preventDefault(); if(window.openAdultAdmin) window.openAdultAdmin(); else toast('18+ admin panel topilmadi','error');}; });

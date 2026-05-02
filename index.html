@@ -105,7 +105,6 @@
 <!-- ═════════ PERFORMANCE HINTS ═════════ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="dns-prefetch" href="//via.placeholder.com">
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -118,13 +117,6 @@
 <link rel="stylesheet" href="azura-stage4-hardening.css?v=1">
 <link rel="stylesheet" href="azura-stage5-rootfix.css?v=1">
 
-<!-- PDF.js for real WebP conversion -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>
-  if(typeof pdfjsLib !== 'undefined')
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-</script>
 </head>
 <body>
 
@@ -1580,7 +1572,8 @@
 
 <!-- AZURA v14 — Modular JS architecture (10 modules, deferred for proper order) -->
 <script>window.__AZURA_DISABLE_LEGACY_POLLERS=true;window.__AZURA_EVENT_REFRESH=true;window.__AZURA_PROD_SYNC_STABLE=true;</script>
-<script src="js/00-diagnostic.js?v=14"></script>
+<script defer src="js/00-diagnostic.js?v=14"></script>
+<script defer src="js/azura-d1-first.js?v=13"></script>
 <script defer src="js/01-core.js?v=14"></script>
 <script defer src="js/02-auth.js?v=14"></script>
 <script defer src="js/03-navigation.js?v=14"></script>
@@ -1655,6 +1648,7 @@
 </footer>
 
 <script defer src="js/13-reader-safe-upgrade.js?v=3"></script>
+<script defer src="js/azura-v13-image-reader.js?v=13"></script>
 <script defer src="js/azura-reborn-ui.js?v=1"></script>
 <script defer src="js/azura-production-sync.js?v=7"></script>
 <script>

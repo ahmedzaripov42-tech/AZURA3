@@ -2,7 +2,7 @@
 // AZURA v15 — MODULE 12: PROMO KARUSEL + CONTINUE READING
 // Promo = bosh sahifadagi katta rasm karusel (⚙ tugma bilan boshqariladi)
 // Admin Panel → Bannerlar bilan aloqasi YO'Q — bu alohida tizim.
-// Storage: localStorage "azura_promo_banners"
+// Storage: AZURA_STORE "azura_promo_banners"
 // ════════════════════════════════════════════════════════════════════════
 (function() {
   'use strict';
@@ -10,8 +10,8 @@
   var INT = 5000;
   var _cur = 0, _items = [], _tmr = null;
 
-  function getItems() { try { return JSON.parse(localStorage.getItem(KEY)||'[]'); } catch(e) { return []; } }
-  function saveItems(l) { localStorage.setItem(KEY, JSON.stringify(l)); }
+  function getItems() { try { return JSON.parse(AZURA_STORE.getItem(KEY)||'[]'); } catch(e) { return []; } }
+  function saveItems(l) { AZURA_STORE.setItem(KEY, JSON.stringify(l)); }
 
   // Birinchi marta — MANHWA_DATA cover'laridan seed
   function seedIfEmpty() {
@@ -135,7 +135,7 @@
   };
   window._azPR = function(i){var items=getItems();items.splice(i,1);saveItems(items);openAdmin();render();};
   window._azPMove = function(i,dir){var items=getItems();var ni=i+dir;if(ni<0||ni>=items.length)return;var t=items[i];items[i]=items[ni];items[ni]=t;saveItems(items);openAdmin();render();};
-  window._azPReset = function(){localStorage.removeItem(KEY);if(typeof showToast==='function')showToast('\u2713 Reset','info');openAdmin();render();};
+  window._azPReset = function(){AZURA_STORE.removeItem(KEY);if(typeof showToast==='function')showToast('\u2713 Reset','info');openAdmin();render();};
 
   // ── Continue Reading ───────────────────────────────────────────
   function renderContinueReading() {
@@ -144,14 +144,14 @@
     if(!section||!card) return;
     if(typeof currentUser==='undefined'||!currentUser){section.style.display='none';return;}
     var rk='azura_recent_'+currentUser.uid;
-    var recent=[];try{recent=JSON.parse(localStorage.getItem(rk)||'[]');}catch(e){}
+    var recent=[];try{recent=JSON.parse(AZURA_STORE.getItem(rk)||'[]');}catch(e){}
     if(typeof MANHWA_DATA!=='undefined'){recent=recent.filter(function(id){return MANHWA_DATA.find(function(m){return m.id===id;});});}
     if(!recent.length){section.style.display='none';return;}
     section.style.display='';
     var esc=typeof _escapeHTML==='function'?_escapeHTML:function(s){return(s||'').replace(/[<>"'&]/g,'');};
     var mws=recent.slice(0,3).map(function(id){return MANHWA_DATA.find(function(m){return m.id===id;});}).filter(Boolean);
     card.innerHTML='<div class="az-cont-grid">'+mws.map(function(mw){
-      var lc=1;try{var s=JSON.parse(localStorage.getItem('azura_streak_'+currentUser.uid)||'{}');lc=s.lastChapter||1;}catch(e){}
+      var lc=1;try{var s=JSON.parse(AZURA_STORE.getItem('azura_streak_'+currentUser.uid)||'{}');lc=s.lastChapter||1;}catch(e){}
       var tc=Math.max(lc,20+Math.floor(Math.random()*60));var pct=Math.min(100,Math.round((lc/tc)*100));
       return'<div class="az-cont-wrap" onclick="openManhwa(\''+mw.id+'\')">'+
         '<div class="az-cont-cover-wrap"><img class="az-cont-cover" src="'+esc(mw.cover)+'" alt="" loading="lazy"/><div class="az-cont-cover-glow"></div></div>'+

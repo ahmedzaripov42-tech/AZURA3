@@ -10,7 +10,7 @@ let currentTab = 'login';
 function openAuth(defaultTab) {
   const modal = document.getElementById('auth-modal');
   if (!modal) return;
-  // Re-load USERS from localStorage to avoid stale state
+  // Re-load USERS from AZURA_STORE to avoid stale state
   reloadUsersFromStorage();
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -66,10 +66,10 @@ function switchTab(tab) {
   }, 60);
 }
 
-// Reload USERS from localStorage (fixes stale state between tabs)
+// Reload USERS from AZURA_STORE (fixes stale state between tabs)
 function reloadUsersFromStorage() {
   try {
-    const fresh = JSON.parse(localStorage.getItem('azura_users') || '[]');
+    const fresh = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
     if (Array.isArray(fresh)) {
       // Replace global USERS array contents in-place to keep reference
       USERS.length = 0;
@@ -329,7 +329,7 @@ function doSocialAuth(provider) {
 
 function doLogout() {
   currentUser = null;
-  localStorage.removeItem('azura_current');
+  AZURA_STORE.removeItem('azura_current');
   updateUI();
   navigate('home');
   showToast('Chiqish muvaffaqiyatli');
@@ -683,7 +683,7 @@ function filterGenreHome(genre) {
 // ════════════════════════════════════════════════════════════════════════
 // AZURA REAL LATEST CHAPTER UPDATES — replaces old fake/random list
 // Reads actual chapters from:
-//  1) legacy localStorage: azura_chapters_pending
+//  1) legacy AZURA_STORE: azura_chapters_pending
 //  2) IndexedDB: AzuraChapterDB
 //  3) IndexedDB: AzuraV15ChapterDB
 // ════════════════════════════════════════════════════════════════════════
@@ -751,9 +751,9 @@ async function azNrGetRealLatestChapters(limit) {
   var out = [];
   var now = Date.now();
 
-  // Legacy localStorage chapters
+  // Legacy AZURA_STORE chapters
   try {
-    var legacy = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
+    var legacy = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
     if (Array.isArray(legacy)) {
       legacy.forEach(function(ch) {
         if (!ch || !ch.manhwaId || ch._isDemo) return;
@@ -992,9 +992,9 @@ if (typeof window.renderContinueReading !== 'function') {
     var out = [];
     var now = Date.now();
 
-    // Legacy localStorage chapters
+    // Legacy AZURA_STORE chapters
     try {
-      var legacy = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
+      var legacy = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
       if (Array.isArray(legacy)) {
         legacy.forEach(function(ch) {
           if (!ch || !ch.manhwaId || ch._isDemo) return;

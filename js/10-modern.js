@@ -18,11 +18,11 @@ console.log('[AZURA v8.0] ✓ 25+ features: i18n, search, PWA, comments, ratings
 const AZURA_ORDER_KEY = 'azura_orders';
 
 function getOrders() {
-  try { return JSON.parse(localStorage.getItem(AZURA_ORDER_KEY) || '[]'); }
+  try { return JSON.parse(AZURA_STORE.getItem(AZURA_ORDER_KEY) || '[]'); }
   catch(e) { return []; }
 }
 function saveOrders(orders) {
-  localStorage.setItem(AZURA_ORDER_KEY, JSON.stringify(orders));
+  AZURA_STORE.setItem(AZURA_ORDER_KEY, JSON.stringify(orders));
 }
 
 function createOrder(opts) {
@@ -170,7 +170,7 @@ function adminApproveOrder(orderId) {
   if (!o) return;
   if (o.status !== 'pending') return;
   // Apply the purchase to the user
-  const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
+  const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
   const u = users.find(x => x.uid === o.uid);
   if (!u) { showToast('⚠ Foydalanuvchi topilmadi', 'error'); return; }
 
@@ -192,13 +192,13 @@ function adminApproveOrder(orderId) {
     }
     if (o.payload.unlocks) {
       const k = 'azura_unlock_credits_' + o.uid;
-      const c = parseInt(localStorage.getItem(k) || '0');
-      localStorage.setItem(k, (c + o.payload.unlocks).toString());
+      const c = parseInt(AZURA_STORE.getItem(k) || '0');
+      AZURA_STORE.setItem(k, (c + o.payload.unlocks).toString());
     }
-    if (o.payload.unlocksUnlimited) localStorage.setItem('azura_unlock_unlimited_' + o.uid, '1');
+    if (o.payload.unlocksUnlimited) AZURA_STORE.setItem('azura_unlock_unlimited_' + o.uid, '1');
     if (o.payload.badge) u.badge = o.payload.badge;
   }
-  localStorage.setItem('azura_users', JSON.stringify(users));
+  AZURA_STORE.setItem('azura_users', JSON.stringify(users));
   // If currentUser is this user, update
   if (currentUser && currentUser.uid === o.uid) {
     Object.assign(currentUser, u);
@@ -462,12 +462,12 @@ const CHAT_EMOJIS = ['😀','😍','🥰','😎','🤔','😢','😡','🔥','�
 
 function getChatMessages(roomId) {
   const k = AZURA_CHAT_KEY + '_' + roomId;
-  try { return JSON.parse(localStorage.getItem(k) || '[]'); }
+  try { return JSON.parse(AZURA_STORE.getItem(k) || '[]'); }
   catch(e) { return []; }
 }
 function saveChatMessages(roomId, msgs) {
   if (msgs.length > 200) msgs = msgs.slice(-200);
-  localStorage.setItem(AZURA_CHAT_KEY + '_' + roomId, JSON.stringify(msgs));
+  AZURA_STORE.setItem(AZURA_CHAT_KEY + '_' + roomId, JSON.stringify(msgs));
 }
 
 function postChatMessage(roomId, text, replyTo = null) {
@@ -508,7 +508,7 @@ function reactChatMessage(roomId, msgId, emoji) {
 function pingChatOnline() {
   if (!currentUser) return;
   let online = {};
-  try { online = JSON.parse(localStorage.getItem(AZURA_CHAT_ONLINE_KEY) || '{}'); } catch(e) {}
+  try { online = JSON.parse(AZURA_STORE.getItem(AZURA_CHAT_ONLINE_KEY) || '{}'); } catch(e) {}
   online[currentUser.uid] = {
     username: currentUser.username || '?',
     avatar: (currentUser.username || '?').slice(0, 2).toUpperCase(),
@@ -519,12 +519,12 @@ function pingChatOnline() {
   // Clean stale (>2 min)
   const cutoff = Date.now() - 120000;
   Object.keys(online).forEach(uid => { if (online[uid].lastSeen < cutoff) delete online[uid]; });
-  localStorage.setItem(AZURA_CHAT_ONLINE_KEY, JSON.stringify(online));
+  AZURA_STORE.setItem(AZURA_CHAT_ONLINE_KEY, JSON.stringify(online));
 }
 
 function getOnlineUsers() {
   try {
-    const online = JSON.parse(localStorage.getItem(AZURA_CHAT_ONLINE_KEY) || '{}');
+    const online = JSON.parse(AZURA_STORE.getItem(AZURA_CHAT_ONLINE_KEY) || '{}');
     const cutoff = Date.now() - 120000;
     return Object.entries(online)
       .filter(([uid, data]) => data.lastSeen >= cutoff)
@@ -913,11 +913,11 @@ const TG_KEY = 'azura_telegram_channels';
 const TG_SUBS_KEY = 'azura_tg_subscriptions'; // user telegram subscriptions
 
 function getTelegramChannels() {
-  try { return JSON.parse(localStorage.getItem(TG_KEY) || '[]'); }
+  try { return JSON.parse(AZURA_STORE.getItem(TG_KEY) || '[]'); }
   catch(e) { return []; }
 }
 function saveTelegramChannels(list) {
-  localStorage.setItem(TG_KEY, JSON.stringify(list));
+  AZURA_STORE.setItem(TG_KEY, JSON.stringify(list));
 }
 function addTelegramChannel(data) {
   if (!data || !data.username) { showToast('⚠ Channel username kiriting', 'warning'); return null; }
@@ -962,7 +962,7 @@ function toggleTelegramChannel(id) {
 // User subscription tracking
 function getUserTgSubs() {
   if (!currentUser) return [];
-  try { return JSON.parse(localStorage.getItem(TG_SUBS_KEY + '_' + currentUser.uid) || '[]'); }
+  try { return JSON.parse(AZURA_STORE.getItem(TG_SUBS_KEY + '_' + currentUser.uid) || '[]'); }
   catch(e) { return []; }
 }
 function markTgSubscribed(channelId) {
@@ -970,13 +970,13 @@ function markTgSubscribed(channelId) {
   const subs = getUserTgSubs();
   if (subs.includes(channelId)) return;
   subs.push(channelId);
-  localStorage.setItem(TG_SUBS_KEY + '_' + currentUser.uid, JSON.stringify(subs));
+  AZURA_STORE.setItem(TG_SUBS_KEY + '_' + currentUser.uid, JSON.stringify(subs));
   // Reward bonus: 25 coins per channel
-  const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
+  const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
   const u = users.find(x => x.uid === currentUser.uid);
   if (u) {
     u.coins = (u.coins || 0) + 25;
-    localStorage.setItem('azura_users', JSON.stringify(users));
+    AZURA_STORE.setItem('azura_users', JSON.stringify(users));
     if (currentUser) { currentUser.coins = u.coins; saveCurrent(); }
     addCoinHistory('earn', 25, 'Telegram kanaliga obuna bonus');
     if (typeof updateUI === 'function') updateUI();
@@ -1211,7 +1211,7 @@ function adminAddTelegramChannel() {
 // ─────────────────────────────────────────────────────────────────────────────
 function getCoinHistory() {
   if (!currentUser) return [];
-  try { return JSON.parse(localStorage.getItem('azura_coin_tx_' + currentUser.uid) || '[]'); }
+  try { return JSON.parse(AZURA_STORE.getItem('azura_coin_tx_' + currentUser.uid) || '[]'); }
   catch(e) { return []; }
 }
 function addCoinHistory(type, amount, description) {
@@ -1226,7 +1226,7 @@ function addCoinHistory(type, amount, description) {
     time: Date.now(),
   });
   if (list.length > 200) list.length = 200;
-  localStorage.setItem('azura_coin_tx_' + currentUser.uid, JSON.stringify(list));
+  AZURA_STORE.setItem('azura_coin_tx_' + currentUser.uid, JSON.stringify(list));
 }
 
 // Hook into existing coin operations
@@ -1296,11 +1296,11 @@ function showCoinHistoryModal() {
 // FEATURE 4: ENHANCED PROMO CODES (admin creates, user redeems)
 // ─────────────────────────────────────────────────────────────────────────────
 function getPromoCodes() {
-  try { return JSON.parse(localStorage.getItem('azura_promo_codes') || '[]'); }
+  try { return JSON.parse(AZURA_STORE.getItem('azura_promo_codes') || '[]'); }
   catch(e) { return []; }
 }
 function savePromoCodes(list) {
-  localStorage.setItem('azura_promo_codes', JSON.stringify(list));
+  AZURA_STORE.setItem('azura_promo_codes', JSON.stringify(list));
 }
 function adminAddPromoCode() {
   const code = (document.getElementById('promo-new-code')?.value || '').trim().toUpperCase();
@@ -1356,7 +1356,7 @@ window.applyPromoCode = function() {
   promo.usedBy.push(currentUser.uid);
   savePromoCodes(list);
   // Update user
-  const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
+  const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
   const u = users.find(x => x.uid === currentUser.uid);
   if (u) {
     if (promo.coins) {
@@ -1368,7 +1368,7 @@ window.applyPromoCode = function() {
       const cur = u.vipExpires || Date.now();
       u.vipExpires = Math.max(cur, Date.now()) + promo.vipDays * 86400000;
     }
-    localStorage.setItem('azura_users', JSON.stringify(users));
+    AZURA_STORE.setItem('azura_users', JSON.stringify(users));
     if (currentUser) {
       Object.assign(currentUser, u);
       saveCurrent();
@@ -1468,7 +1468,7 @@ function renderAdminPromos() {
 // ─────────────────────────────────────────────────────────────────────────────
 function getUserNotifications() {
   if (!currentUser) return [];
-  try { return JSON.parse(localStorage.getItem('azura_notifs_' + currentUser.uid) || '[]'); }
+  try { return JSON.parse(AZURA_STORE.getItem('azura_notifs_' + currentUser.uid) || '[]'); }
   catch(e) { return []; }
 }
 function addUserNotification(opts) {
@@ -1485,13 +1485,13 @@ function addUserNotification(opts) {
     link: opts.link || null,
   });
   if (list.length > 100) list.length = 100;
-  localStorage.setItem('azura_notifs_' + currentUser.uid, JSON.stringify(list));
+  AZURA_STORE.setItem('azura_notifs_' + currentUser.uid, JSON.stringify(list));
 }
 function markNotifRead(id) {
   if (!currentUser) return;
   const list = getUserNotifications();
   const n = list.find(x => x.id === id);
-  if (n) { n.read = true; localStorage.setItem('azura_notifs_' + currentUser.uid, JSON.stringify(list)); }
+  if (n) { n.read = true; AZURA_STORE.setItem('azura_notifs_' + currentUser.uid, JSON.stringify(list)); }
 }
 function getUnreadNotifCount() {
   return getUserNotifications().filter(n => !n.read).length;
@@ -1502,7 +1502,7 @@ function getUnreadNotifCount() {
 // ─────────────────────────────────────────────────────────────────────────────
 function getMySubs() {
   if (!currentUser) return [];
-  try { return JSON.parse(localStorage.getItem('azura_subs_' + currentUser.uid) || '[]'); }
+  try { return JSON.parse(AZURA_STORE.getItem('azura_subs_' + currentUser.uid) || '[]'); }
   catch(e) { return []; }
 }
 function toggleManhwaSub(manhwaId) {
@@ -1521,7 +1521,7 @@ function toggleManhwaSub(manhwaId) {
       icon: '🔔',
     });
   }
-  localStorage.setItem('azura_subs_' + currentUser.uid, JSON.stringify(subs));
+  AZURA_STORE.setItem('azura_subs_' + currentUser.uid, JSON.stringify(subs));
   if (typeof updateUI === 'function') updateUI();
 }
 function isSubbed(manhwaId) {
@@ -1535,14 +1535,14 @@ function logActivity(action, data) {
   if (!currentUser) return;
   const k = 'azura_activity_' + currentUser.uid;
   let list = [];
-  try { list = JSON.parse(localStorage.getItem(k) || '[]'); } catch(e) {}
+  try { list = JSON.parse(AZURA_STORE.getItem(k) || '[]'); } catch(e) {}
   list.unshift({ action, data, time: Date.now() });
   if (list.length > 50) list.length = 50;
-  localStorage.setItem(k, JSON.stringify(list));
+  AZURA_STORE.setItem(k, JSON.stringify(list));
 }
 function getMyActivity() {
   if (!currentUser) return [];
-  try { return JSON.parse(localStorage.getItem('azura_activity_' + currentUser.uid) || '[]'); }
+  try { return JSON.parse(AZURA_STORE.getItem('azura_activity_' + currentUser.uid) || '[]'); }
   catch(e) { return []; }
 }
 
@@ -1550,7 +1550,7 @@ function getMyActivity() {
 // FEATURE 8: STATS DASHBOARD (admin overview)
 // ─────────────────────────────────────────────────────────────────────────────
 function getAzuraStats() {
-  const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
+  const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
   const orders = getOrders();
   const channels = getTelegramChannels();
   const promos = getPromoCodes();
@@ -1679,7 +1679,7 @@ window.addEventListener('storage', function(e) {
 // FEATURE 13: WELCOME FIRST-TIME USER NOTIFICATIONS
 // ─────────────────────────────────────────────────────────────────────────────
 setTimeout(() => {
-  if (currentUser && !localStorage.getItem('azura_welcome_sent_' + currentUser.uid)) {
+  if (currentUser && !AZURA_STORE.getItem('azura_welcome_sent_' + currentUser.uid)) {
     addUserNotification({
       title: 'Xush kelibsiz, ' + (currentUser.username || 'Foydalanuvchi') + '!',
       body: 'AZURA ga qo\'shilganingiz uchun rahmat. Yangi boblar har kuni!',
@@ -1692,7 +1692,7 @@ setTimeout(() => {
       icon: '🎁',
       type: 'info',
     });
-    localStorage.setItem('azura_welcome_sent_' + currentUser.uid, '1');
+    AZURA_STORE.setItem('azura_welcome_sent_' + currentUser.uid, '1');
   }
 }, 3000);
 
@@ -1733,7 +1733,7 @@ function giftCoinsTo(uid, amount) {
   if (!currentUser) return;
   if (!uid || amount <= 0) return;
   if ((currentUser.coins || 0) < amount) { showToast('⚠ Yetarli coin yo\'q', 'warning'); return; }
-  const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
+  const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
   const target = users.find(u => u.uid.toUpperCase() === uid.toUpperCase());
   if (!target) { showToast('⚠ Foydalanuvchi topilmadi', 'error'); return; }
   if (target.uid === currentUser.uid) { showToast('⚠ O\'zingizga sovg\'a qila olmaysiz', 'warning'); return; }
@@ -1745,7 +1745,7 @@ function giftCoinsTo(uid, amount) {
   // Save
   const senderInUsers = users.find(u => u.uid === currentUser.uid);
   if (senderInUsers) senderInUsers.coins = currentUser.coins;
-  localStorage.setItem('azura_users', JSON.stringify(users));
+  AZURA_STORE.setItem('azura_users', JSON.stringify(users));
   saveCurrent();
 
   addCoinHistory('spend', -amount, 'Sovg\'a: ' + target.username);
@@ -1952,81 +1952,10 @@ const azuraChapter = (function() {
   }
 
   // ─── PDF → WebP converter (PERFECT — every page guaranteed) ────
-  // Uses PDF.js, renders each page to canvas, exports as WebP.
+  // Uses image engine, renders each page to canvas, exports as WebP.
   // Quality: 0.88 (high), max page width: 2048px (auto-scale down for huge PDFs)
   async function convertPdfToWebP(file, onProgress) {
-    if (typeof pdfjsLib === 'undefined') {
-      throw new Error('PDF.js kutubxonasi yuklanmagan');
-    }
-    if (!file) throw new Error('Fayl kiritilmagan');
-    if (!/pdf/i.test(file.type) && !/\.pdf$/i.test(file.name)) {
-      throw new Error('Fayl PDF formatida emas');
-    }
-
-    // Read file as ArrayBuffer
-    const buf = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: buf, useWorkerFetch: false }).promise;
-    const totalPages = pdf.numPages;
-    const pages = [];
-    const MAX_WIDTH = 2048;
-
-    for (let i = 1; i <= totalPages; i++) {
-      try {
-        const page = await pdf.getPage(i);
-
-        // Compute optimal scale — start with 2.0, reduce if too large
-        let scale = 2.0;
-        let viewport = page.getViewport({ scale });
-        if (viewport.width > MAX_WIDTH) {
-          scale = (MAX_WIDTH / viewport.width) * scale;
-          viewport = page.getViewport({ scale });
-        }
-        // Floor for very small PDFs — minimum 1.5x readable
-        if (scale < 1.5) scale = 1.5;
-        viewport = page.getViewport({ scale });
-
-        // Render to canvas
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.ceil(viewport.width);
-        canvas.height = Math.ceil(viewport.height);
-        const ctx = canvas.getContext('2d', { alpha: false });
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        await page.render({ canvasContext: ctx, viewport }).promise;
-
-        // Export as WebP
-        const dataUrl = canvas.toDataURL('image/webp', 0.88);
-
-        pages.push({
-          dataUrl,
-          width: canvas.width,
-          height: canvas.height,
-          index: i - 1,
-        });
-
-        // Progress callback — page i of totalPages, percent
-        if (onProgress) {
-          onProgress(i, totalPages, Math.round((i / totalPages) * 100));
-        }
-
-        // Free canvas memory
-        canvas.width = 0;
-        canvas.height = 0;
-      } catch (err) {
-        console.error('[azuraChapter] page', i, 'failed:', err);
-        // CRITICAL: don't lose the PDF — try one more time with a placeholder so user knows
-        pages.push({
-          dataUrl: '',
-          width: 800,
-          height: 1200,
-          index: i - 1,
-          failed: true,
-          errorMsg: err.message || 'Render xatosi',
-        });
-      }
-    }
-
-    return { pages, pageCount: pages.length, totalPages };
+    throw new Error('PDF konvertatsiya o‘chirilgan. Boblarni WebP/JPG rasm sifatida yuklang.');
   }
 
   // ─── Save chapter (with all pages) to IndexedDB ────────────────
@@ -2668,10 +2597,10 @@ async function azuraGetMergedChapters(manhwaId) {
     dbChapters = await azuraChapter.getChaptersByManhwa(manhwaId);
   } catch(e) { console.error('IndexedDB error:', e); }
 
-  // 2. From legacy localStorage (azura_chapters_pending)
+  // 2. From legacy AZURA_STORE (azura_chapters_pending)
   let legacy = [];
   try {
-    legacy = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]')
+    legacy = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]')
       .filter(ch => ch && ch.manhwaId === manhwaId);
   } catch(e) {}
 
@@ -2782,7 +2711,7 @@ async function openIdbChapter(chapterId) {
     } else if (ch.access === 'coin' || ch.coinPrice > 0) {
       // Check unlocks
       if (!currentUser) { openAuth(); return; }
-      const unlocked = JSON.parse(localStorage.getItem('azura_unlocked_' + currentUser.uid) || '[]');
+      const unlocked = JSON.parse(AZURA_STORE.getItem('azura_unlocked_' + currentUser.uid) || '[]');
       if (!unlocked.includes(chapterId)) {
         if (!confirm(`Bu bob ${ch.coinPrice} coin turadi. Sotib olasizmi?`)) return;
         if ((currentUser.coins || 0) < ch.coinPrice) {
@@ -2791,12 +2720,12 @@ async function openIdbChapter(chapterId) {
         }
         currentUser.coins -= ch.coinPrice;
         unlocked.push(chapterId);
-        localStorage.setItem('azura_unlocked_' + currentUser.uid, JSON.stringify(unlocked));
+        AZURA_STORE.setItem('azura_unlocked_' + currentUser.uid, JSON.stringify(unlocked));
         if (typeof saveUsers === 'function') {
           // Update users array
-          const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
+          const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
           const u = users.find(x => x.uid === currentUser.uid);
-          if (u) { u.coins = currentUser.coins; localStorage.setItem('azura_users', JSON.stringify(users)); }
+          if (u) { u.coins = currentUser.coins; AZURA_STORE.setItem('azura_users', JSON.stringify(users)); }
         }
         if (typeof saveCurrent === 'function') saveCurrent();
         if (typeof addCoinHistory === 'function') addCoinHistory('spend', -ch.coinPrice, 'Bob: ' + (ch.title || 'Bob ' + ch.number));
