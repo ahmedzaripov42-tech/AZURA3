@@ -65,9 +65,9 @@ const AZURA_I18N = {
     comments: 'Comments', rating: 'Rating', share: 'Share',
   },
 };
-function getLang() { return AZURA_STORE.getItem('azura_lang') || 'uz'; }
+function getLang() { return localStorage.getItem('azura_lang') || 'uz'; }
 function setLang(lang) {
-  AZURA_STORE.setItem('azura_lang', lang);
+  localStorage.setItem('azura_lang', lang);
   document.documentElement.lang = lang;
   // Translate all elements with [data-i18n]
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -90,7 +90,7 @@ window.addEventListener('beforeinstallprompt', e => {
   _pwaPromptEvent = e;
   // Show install button after 30s
   setTimeout(() => {
-    if (_pwaPromptEvent && !AZURA_STORE.getItem('azura_pwa_dismissed')) {
+    if (_pwaPromptEvent && !localStorage.getItem('azura_pwa_dismissed')) {
       showPwaPrompt();
     }
   }, 30000);
@@ -119,7 +119,7 @@ async function installPwa() {
   const { outcome } = await _pwaPromptEvent.userChoice;
   if (outcome === 'accepted') {
     showToast('✓ AZURA o\'rnatildi!', 'success');
-    AZURA_STORE.setItem('azura_pwa_installed', '1');
+    localStorage.setItem('azura_pwa_installed', '1');
   }
   _pwaPromptEvent = null;
   dismissPwa();
@@ -127,7 +127,7 @@ async function installPwa() {
 function dismissPwa() {
   const b = document.getElementById('pwa-install-banner');
   if (b) { b.classList.remove('show'); setTimeout(() => b.remove(), 300); }
-  AZURA_STORE.setItem('azura_pwa_dismissed', '1');
+  localStorage.setItem('azura_pwa_dismissed', '1');
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -170,7 +170,7 @@ function gsRender() {
 
   // Recent searches
   let recent = [];
-  try { recent = JSON.parse(AZURA_STORE.getItem('azura_recent_searches') || '[]'); } catch(e) {}
+  try { recent = JSON.parse(localStorage.getItem('azura_recent_searches') || '[]'); } catch(e) {}
 
   if (!q) {
     results.innerHTML = `
@@ -240,20 +240,20 @@ function gsSaveAndOpen(id, q) {
   // Save recent
   if (q) {
     let recent = [];
-    try { recent = JSON.parse(AZURA_STORE.getItem('azura_recent_searches') || '[]'); } catch(e) {}
+    try { recent = JSON.parse(localStorage.getItem('azura_recent_searches') || '[]'); } catch(e) {}
     recent = recent.filter(r => r !== q);
     recent.unshift(q);
     if (recent.length > 10) recent = recent.slice(0, 10);
-    AZURA_STORE.setItem('azura_recent_searches', JSON.stringify(recent));
+    localStorage.setItem('azura_recent_searches', JSON.stringify(recent));
   }
   closeGlobalSearch();
   openManhwa(id);
 }
 function gsRemoveRecent(idx) {
   let recent = [];
-  try { recent = JSON.parse(AZURA_STORE.getItem('azura_recent_searches') || '[]'); } catch(e) {}
+  try { recent = JSON.parse(localStorage.getItem('azura_recent_searches') || '[]'); } catch(e) {}
   recent.splice(idx, 1);
-  AZURA_STORE.setItem('azura_recent_searches', JSON.stringify(recent));
+  localStorage.setItem('azura_recent_searches', JSON.stringify(recent));
   gsRender();
 }
 
@@ -322,7 +322,7 @@ function shareCurrentManhwa() {
 // ─────────────────────────────────────────────────────────────────────────
 function getChapterComments(chapterId) {
   const k = 'azura_comments_' + chapterId;
-  try { return JSON.parse(AZURA_STORE.getItem(k) || '[]'); }
+  try { return JSON.parse(localStorage.getItem(k) || '[]'); }
   catch(e) { return []; }
 }
 function postChapterComment(chapterId, text) {
@@ -340,7 +340,7 @@ function postChapterComment(chapterId, text) {
     likedBy: [],
     reactions: {},
   });
-  AZURA_STORE.setItem('azura_comments_' + chapterId, JSON.stringify(comments));
+  localStorage.setItem('azura_comments_' + chapterId, JSON.stringify(comments));
   return true;
 }
 function likeComment(chapterId, commentId) {
@@ -352,7 +352,7 @@ function likeComment(chapterId, commentId) {
   const idx = c.likedBy.indexOf(currentUser.uid);
   if (idx >= 0) { c.likedBy.splice(idx, 1); c.likes = Math.max(0, c.likes - 1); }
   else { c.likedBy.push(currentUser.uid); c.likes = (c.likes || 0) + 1; }
-  AZURA_STORE.setItem('azura_comments_' + chapterId, JSON.stringify(comments));
+  localStorage.setItem('azura_comments_' + chapterId, JSON.stringify(comments));
 }
 function reactComment(chapterId, commentId, emoji) {
   if (!currentUser) return;
@@ -365,7 +365,7 @@ function reactComment(chapterId, commentId, emoji) {
   if (idx >= 0) c.reactions[emoji].splice(idx, 1);
   else c.reactions[emoji].push(currentUser.uid);
   if (c.reactions[emoji].length === 0) delete c.reactions[emoji];
-  AZURA_STORE.setItem('azura_comments_' + chapterId, JSON.stringify(comments));
+  localStorage.setItem('azura_comments_' + chapterId, JSON.stringify(comments));
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -373,7 +373,7 @@ function reactComment(chapterId, commentId, emoji) {
 // ─────────────────────────────────────────────────────────────────────────
 function getManhwaRating(manhwaId) {
   const k = 'azura_rating_' + manhwaId;
-  try { return JSON.parse(AZURA_STORE.getItem(k) || '{"users":{},"avg":0,"count":0}'); }
+  try { return JSON.parse(localStorage.getItem(k) || '{"users":{},"avg":0,"count":0}'); }
   catch(e) { return { users: {}, avg: 0, count: 0 }; }
 }
 function setManhwaRating(manhwaId, stars) {
@@ -385,7 +385,7 @@ function setManhwaRating(manhwaId, stars) {
   const all = Object.values(data.users);
   data.count = all.length;
   data.avg = all.reduce((s, n) => s + n, 0) / data.count;
-  AZURA_STORE.setItem(k, JSON.stringify(data));
+  localStorage.setItem(k, JSON.stringify(data));
   showToast('✓ Bahoyingiz qabul qilindi: ' + '★'.repeat(stars), 'gold');
 }
 function getUserRating(manhwaId) {
@@ -416,7 +416,7 @@ function renderStarRating(manhwaId, container) {
 function getReadingGoals() {
   if (!currentUser) return { daily: 1, weekly: 7, todayCount: 0, weekCount: 0 };
   const k = 'azura_goals_' + currentUser.uid;
-  try { return JSON.parse(AZURA_STORE.getItem(k) || '{"daily":1,"weekly":7,"todayCount":0,"weekCount":0,"date":""}'); }
+  try { return JSON.parse(localStorage.getItem(k) || '{"daily":1,"weekly":7,"todayCount":0,"weekCount":0,"date":""}'); }
   catch(e) { return { daily: 1, weekly: 7 }; }
 }
 function setReadingGoals(daily, weekly) {
@@ -424,7 +424,7 @@ function setReadingGoals(daily, weekly) {
   const data = getReadingGoals();
   data.daily = daily || 1;
   data.weekly = weekly || 7;
-  AZURA_STORE.setItem('azura_goals_' + currentUser.uid, JSON.stringify(data));
+  localStorage.setItem('azura_goals_' + currentUser.uid, JSON.stringify(data));
   showToast('✓ Maqsad belgilandi', 'success');
 }
 function pingGoalProgress() {
@@ -434,7 +434,7 @@ function pingGoalProgress() {
   if (data.date !== today) { data.date = today; data.todayCount = 0; }
   data.todayCount = (data.todayCount || 0) + 1;
   data.weekCount = (data.weekCount || 0) + 1;
-  AZURA_STORE.setItem('azura_goals_' + currentUser.uid, JSON.stringify(data));
+  localStorage.setItem('azura_goals_' + currentUser.uid, JSON.stringify(data));
   if (data.todayCount === data.daily) {
     showToast('🎯 Bugungi maqsad bajarildi!', 'gold');
   }
@@ -507,11 +507,11 @@ const READER_THEMES = ['dark', 'sepia', 'oled', 'light'];
 function setReaderTheme(theme) {
   document.body.classList.remove('reader-theme-dark','reader-theme-sepia','reader-theme-oled','reader-theme-light');
   document.body.classList.add('reader-theme-' + theme);
-  AZURA_STORE.setItem('azura_reader_theme', theme);
+  localStorage.setItem('azura_reader_theme', theme);
   showToast('🎨 ' + theme.toUpperCase(), 'info');
 }
 // Apply saved theme
-const _savedReaderTheme = AZURA_STORE.getItem('azura_reader_theme') || 'dark';
+const _savedReaderTheme = localStorage.getItem('azura_reader_theme') || 'dark';
 document.body.classList.add('reader-theme-' + _savedReaderTheme);
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -519,9 +519,9 @@ document.body.classList.add('reader-theme-' + _savedReaderTheme);
 // ─────────────────────────────────────────────────────────────────────────
 function setReaderFontSize(size) {
   document.documentElement.style.setProperty('--reader-font', size + 'px');
-  AZURA_STORE.setItem('azura_reader_font', size);
+  localStorage.setItem('azura_reader_font', size);
 }
-const _savedFont = parseInt(AZURA_STORE.getItem('azura_reader_font') || '16');
+const _savedFont = parseInt(localStorage.getItem('azura_reader_font') || '16');
 document.documentElement.style.setProperty('--reader-font', _savedFont + 'px');
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -529,7 +529,7 @@ document.documentElement.style.setProperty('--reader-font', _savedFont + 'px');
 // ─────────────────────────────────────────────────────────────────────────
 function getScheduledChapters() {
   let pending = [];
-  try { pending = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]'); }
+  try { pending = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]'); }
   catch(e) {}
   const now = Date.now();
   return pending
@@ -542,15 +542,15 @@ function getScheduledChapters() {
 // ─────────────────────────────────────────────────────────────────────────
 function getLeaderboard() {
   try {
-    const users = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('azura_users') || '[]');
     return users.map(u => ({
       uid: u.uid,
       username: u.username,
       coins: u.coins || 0,
-      readsCount: parseInt(AZURA_STORE.getItem('azura_reads_count_' + u.uid) || '0'),
+      readsCount: parseInt(localStorage.getItem('azura_reads_count_' + u.uid) || '0'),
       streak: (() => {
         try {
-          const d = JSON.parse(AZURA_STORE.getItem('azura_streak_' + u.uid) || '{"count":0}');
+          const d = JSON.parse(localStorage.getItem('azura_streak_' + u.uid) || '{"count":0}');
           return d.count || 0;
         } catch(e) { return 0; }
       })(),
@@ -607,7 +607,7 @@ function addPageBookmark(chapterId, pageNum, note = '') {
   if (!currentUser) return;
   const k = 'azura_page_bookmarks_' + currentUser.uid;
   let bms = [];
-  try { bms = JSON.parse(AZURA_STORE.getItem(k) || '[]'); } catch(e) {}
+  try { bms = JSON.parse(localStorage.getItem(k) || '[]'); } catch(e) {}
   bms.push({
     id: 'pbm_' + Date.now(),
     chapterId, pageNum, note,
@@ -615,12 +615,12 @@ function addPageBookmark(chapterId, pageNum, note = '') {
     manhwaId: currentManhwa ? currentManhwa.id : null,
     manhwaTitle: currentManhwa ? currentManhwa.title : '',
   });
-  AZURA_STORE.setItem(k, JSON.stringify(bms));
+  localStorage.setItem(k, JSON.stringify(bms));
   showToast('🔖 Sahifa belgilandi', 'gold');
 }
 function getPageBookmarks() {
   if (!currentUser) return [];
-  try { return JSON.parse(AZURA_STORE.getItem('azura_page_bookmarks_' + currentUser.uid) || '[]'); }
+  try { return JSON.parse(localStorage.getItem('azura_page_bookmarks_' + currentUser.uid) || '[]'); }
   catch(e) { return []; }
 }
 
@@ -629,15 +629,15 @@ function getPageBookmarks() {
 // ─────────────────────────────────────────────────────────────────────────
 function getUserXP() {
   if (!currentUser) return { xp: 0, level: 1, nextLevel: 100 };
-  const reads = parseInt(AZURA_STORE.getItem('azura_reads_count_' + currentUser.uid) || '0');
+  const reads = parseInt(localStorage.getItem('azura_reads_count_' + currentUser.uid) || '0');
   const streak = (() => {
     try {
-      const d = JSON.parse(AZURA_STORE.getItem('azura_streak_' + currentUser.uid) || '{}');
+      const d = JSON.parse(localStorage.getItem('azura_streak_' + currentUser.uid) || '{}');
       return d.count || 0;
     } catch(e) { return 0; }
   })();
   const achs = (() => {
-    try { return JSON.parse(AZURA_STORE.getItem('azura_achievements_' + currentUser.uid) || '[]').length; }
+    try { return JSON.parse(localStorage.getItem('azura_achievements_' + currentUser.uid) || '[]').length; }
     catch(e) { return 0; }
   })();
   const xp = reads * 10 + streak * 5 + achs * 50;
@@ -652,7 +652,7 @@ function getUserXP() {
 function renderReadingHeatmap(container) {
   if (!container || !currentUser) return;
   const data = (() => {
-    try { return JSON.parse(AZURA_STORE.getItem('azura_streak_' + currentUser.uid) || '{"days":[]}'); }
+    try { return JSON.parse(localStorage.getItem('azura_streak_' + currentUser.uid) || '{"days":[]}'); }
     catch(e) { return { days: [] }; }
   })();
   const days = new Set(data.days || []);

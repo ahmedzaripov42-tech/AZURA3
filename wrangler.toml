@@ -1,0 +1,29 @@
+# AZURA Cloudflare Pages + Worker config
+# Deploy command: wrangler pages deploy . --project-name=azura
+#
+# After first deploy, in the Cloudflare dashboard or via wrangler:
+#   wrangler d1 create azura
+#   wrangler r2 bucket create azura-media
+# then paste the resulting database_id below and run migrations.
+
+name = "azura"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "."
+
+# ── Bindings used by _worker.js ───────────────────────────────────────────────
+[[d1_databases]]
+binding = "DB"
+database_name = "azura"
+database_id = "REPLACE_WITH_D1_ID_AFTER_CREATE"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "azura-media"
+
+# Optional: custom domain → set AZURA_CONFIG.mediaBase to the public R2 URL
+# in env.html (loaded before the adapter) or via ?mediaBase= query param.
+
+[vars]
+AZURA_RUNTIME = "production"
+AZURA_OWNER_UID = "AZR-YJTF-QYGT"

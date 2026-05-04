@@ -4,7 +4,7 @@
 // Toasts, skeletons, hover preview, streaks, achievements
 // ════════════════════════════════════════════════════════════════════════
 
-console.log('[AZURA 18+ Admin v3.1] Loaded ✓ — Security Gate + Content Types + WebP/JPG + Cover & Video Upload + Activity Log + Bulk Actions');
+console.log('[AZURA 18+ Admin v3.1] Loaded ✓ — Security Gate + Content Types + PDF→WebP + Cover & Video Upload + Activity Log + Bulk Actions');
 
 // ═══════════════════════════════════════════════════════════════
 // ADMIN PANEL MOBILE HAMBURGER + GLOBAL BANNER HELPERS
@@ -43,7 +43,9 @@ function updateAdminHamburgerVisibility() {
 window.addEventListener('resize', updateAdminHamburgerVisibility);
 
 // Patch openAdultAdmin to show hamburger
-(function patchAapHamburger() {
+function patchAapHamburger() {
+  if (window.__azuraAapHamburgerPatched) return;
+  if (typeof aapGateProceed !== 'function' || typeof closeAdultAdmin !== 'function') return;
   const _orig = aapGateProceed;
   aapGateProceed = function() { _orig(); setTimeout(updateAdminHamburgerVisibility, 60); };
   const _close = closeAdultAdmin;
@@ -54,7 +56,10 @@ window.addEventListener('resize', updateAdminHamburgerVisibility);
     document.querySelector('.admin-mobile-backdrop')?.remove();
     updateAdminHamburgerVisibility();
   };
-})();
+  window.__azuraAapHamburgerPatched = true;
+}
+window.azuraPatchAdultAdminHamburger = patchAapHamburger;
+patchAapHamburger();
 
 // Patch navigate to update hamburger
 (function patchNavHamburger() {
@@ -174,7 +179,7 @@ function renderCmdResults(q) {
     { label: "Davom etish", icon: '▶', action: () => {
         if (!currentUser) return showToast('Kirish talab qilinadi');
         const k = 'azura_reading_progress_' + currentUser.uid;
-        let p = {}; try { p = JSON.parse(AZURA_STORE.getItem(k) || '{}'); } catch(e) {}
+        let p = {}; try { p = JSON.parse(localStorage.getItem(k) || '{}'); } catch(e) {}
         const recent = Object.values(p).sort((a,b) => (b.lastRead||0) - (a.lastRead||0))[0];
         if (recent) continueReading(recent.manhwaId, recent.chapterId);
         else showToast("Hali o'qigan bob yo'q");
@@ -666,7 +671,7 @@ if (typeof setupManhwaHoverPreview === 'function') {
 function getReadingStreak() {
   if (!currentUser) return { count: 0, lastDate: null, days: [] };
   const k = 'azura_streak_' + currentUser.uid;
-  try { return JSON.parse(AZURA_STORE.getItem(k) || '{"count":0,"lastDate":null,"days":[]}'); }
+  try { return JSON.parse(localStorage.getItem(k) || '{"count":0,"lastDate":null,"days":[]}'); }
   catch(e) { return { count: 0, lastDate: null, days: [] }; }
 }
 
@@ -687,7 +692,7 @@ function pingReadingStreak() {
   data.days = (data.days || []).slice(-29);
   data.days.push(today);
 
-  AZURA_STORE.setItem(k, JSON.stringify(data));
+  localStorage.setItem(k, JSON.stringify(data));
 
   // Celebrate milestones
   if ([3, 7, 14, 30, 60, 100].includes(data.count)) {
@@ -720,17 +725,17 @@ function unlockAchievement(id) {
   if (!currentUser) return;
   const k = 'azura_achievements_' + currentUser.uid;
   let unlocked = [];
-  try { unlocked = JSON.parse(AZURA_STORE.getItem(k) || '[]'); } catch(e) {}
+  try { unlocked = JSON.parse(localStorage.getItem(k) || '[]'); } catch(e) {}
   if (unlocked.includes(id)) return;
   unlocked.push(id);
-  AZURA_STORE.setItem(k, JSON.stringify(unlocked));
+  localStorage.setItem(k, JSON.stringify(unlocked));
   const ach = AZURA_ACHIEVEMENTS[id];
   if (ach) showAchievementPopup(ach);
 }
 
 function getUnlockedAchievements() {
   if (!currentUser) return [];
-  try { return JSON.parse(AZURA_STORE.getItem('azura_achievements_' + currentUser.uid) || '[]'); }
+  try { return JSON.parse(localStorage.getItem('azura_achievements_' + currentUser.uid) || '[]'); }
   catch(e) { return []; }
 }
 
@@ -860,11 +865,19 @@ function setupScrollToTop() {
   }
   document.querySelectorAll('.main-content').forEach(el => el.addEventListener('scroll', check, { passive: true }));
   window.addEventListener('scroll', check, { passive: true });
-  setInterval(() => {
+  var bindLateScrollTargets = function() {
+    if (document.visibilityState === 'hidden') return;
     document.querySelectorAll('.main-content').forEach(el => {
       if (!el._sttBound) { el._sttBound = true; el.addEventListener('scroll', check, { passive: true }); }
     });
-  }, 2000);
+  };
+  bindLateScrollTargets();
+  if ('MutationObserver' in window) {
+    var mo = new MutationObserver(function(){ bindLateScrollTargets(); });
+    mo.observe(document.body, { childList: true, subtree: true });
+  } else {
+    setInterval(bindLateScrollTargets, (window.azuraIsWeakPhone && window.azuraIsWeakPhone()) ? 8000 : 4000);
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -891,7 +904,7 @@ if (typeof _origAddToLibrary === 'function') {
     if (currentUser) {
       const k = 'azura_library_' + currentUser.uid;
       try {
-        const lib = JSON.parse(AZURA_STORE.getItem(k) || '[]');
+        const lib = JSON.parse(localStorage.getItem(k) || '[]');
         if (lib.length === 10) unlockAchievement('lib-10');
         if (lib.length === 50) unlockAchievement('lib-50');
       } catch(e) {}
@@ -907,16 +920,16 @@ function pingRecentlyViewed(manhwaId) {
   if (!currentUser || !manhwaId) return;
   const k = 'azura_recent_' + currentUser.uid;
   let list = [];
-  try { list = JSON.parse(AZURA_STORE.getItem(k) || '[]'); } catch(e) {}
+  try { list = JSON.parse(localStorage.getItem(k) || '[]'); } catch(e) {}
   list = list.filter(x => x.id !== manhwaId);
   list.unshift({ id: manhwaId, time: Date.now() });
   if (list.length > 20) list = list.slice(0, 20);
-  AZURA_STORE.setItem(k, JSON.stringify(list));
+  localStorage.setItem(k, JSON.stringify(list));
 }
 
 function getRecentlyViewed() {
   if (!currentUser) return [];
-  try { return JSON.parse(AZURA_STORE.getItem('azura_recent_' + currentUser.uid) || '[]'); }
+  try { return JSON.parse(localStorage.getItem('azura_recent_' + currentUser.uid) || '[]'); }
   catch(e) { return []; }
 }
 
@@ -934,9 +947,9 @@ function pingReaderActivity() {
   pingReadingStreak();
   if (!currentUser) return;
   const k = 'azura_reads_count_' + currentUser.uid;
-  let n = parseInt(AZURA_STORE.getItem(k) || '0');
+  let n = parseInt(localStorage.getItem(k) || '0');
   n++;
-  AZURA_STORE.setItem(k, n.toString());
+  localStorage.setItem(k, n.toString());
   if (n === 1) unlockAchievement('first-read');
   if (n === 100) unlockAchievement('reads-100');
   // Time-based achievements
@@ -1015,10 +1028,11 @@ window.azuraUnfreeze = function() {
 };
 // Auto safety-net: remove stuck page-transitioning every 5s
 setInterval(function() {
+  if (document.visibilityState === 'hidden') return;
   if (document.body.classList.contains('page-transitioning')) {
     document.body.classList.remove('page-transitioning');
     console.warn('[AZURA] page-transitioning force-removed');
   }
-}, 5000);
+}, (window.azuraIsWeakPhone && window.azuraIsWeakPhone()) ? 12000 : 7000);
 
 if (typeof window !== 'undefined' && window._azuraMarkLoaded) window._azuraMarkLoaded('08-premium-ui');

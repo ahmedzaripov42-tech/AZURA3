@@ -1,8 +1,0 @@
-.git/
-node_modules/
-*.zip
-*.log
-.env
-.DS_Store
-FIX*-REPORT.md
-*-REPORT.md

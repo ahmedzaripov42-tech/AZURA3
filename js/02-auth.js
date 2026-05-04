@@ -10,7 +10,7 @@ let currentTab = 'login';
 function openAuth(defaultTab) {
   const modal = document.getElementById('auth-modal');
   if (!modal) return;
-  // Re-load USERS from AZURA_STORE to avoid stale state
+  // Re-load USERS from localStorage to avoid stale state
   reloadUsersFromStorage();
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -66,10 +66,10 @@ function switchTab(tab) {
   }, 60);
 }
 
-// Reload USERS from AZURA_STORE (fixes stale state between tabs)
+// Reload USERS from localStorage (fixes stale state between tabs)
 function reloadUsersFromStorage() {
   try {
-    const fresh = JSON.parse(AZURA_STORE.getItem('azura_users') || '[]');
+    const fresh = JSON.parse(localStorage.getItem('azura_users') || '[]');
     if (Array.isArray(fresh)) {
       // Replace global USERS array contents in-place to keep reference
       USERS.length = 0;
@@ -133,10 +133,10 @@ function doLogin() {
     if (btnEl) { btnEl.innerHTML = '⚔&nbsp;&nbsp;KIRISH'; btnEl.classList.remove('azura-btn-loading'); btnEl.disabled = false; }
 
     // Owner bypass
-    if (raw.toUpperCase() === OWNER_ID && pass === '') {
+    if (raw.toUpperCase() === OWNER_ID && pass === 'azura2025owner') {
       let owner = USERS.find(u => u && u.uid === OWNER_ID);
       if (!owner) {
-        owner = { uid: OWNER_ID, username: 'Owner', email: 'owner@azura.uz', password: '', coins: 99999, vip: true, library: [], read: 0, createdAt: Date.now() };
+        owner = { uid: OWNER_ID, username: 'Owner', email: 'owner@azura.uz', password: 'azura2025owner', coins: 99999, vip: true, library: [], read: 0, createdAt: Date.now() };
         USERS.push(owner); saveUsers();
       }
       currentUser = owner;
@@ -296,25 +296,13 @@ function copyUniqueID() {
 function doSocialAuth(provider) {
   const names = { google: 'Google', yandex: 'Yandex', telegram: 'Telegram' };
   const name  = names[provider] || provider;
-  showToast('🔗 ' + name + ' orqali ulanilmoqda…');
+  showToast('🔗 ' + name + ' orqali local demo auth ishga tushdi…');
 
-  // TODO: YOUR_CLIENT_ID ni haqiqiy OAuth ma'lumotlari bilan almashtiring
-  const oauthURLs = {
-    google:   'https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_GOOGLE_CLIENT_ID&redirect_uri=' + encodeURIComponent(location.origin) + '&response_type=code&scope=openid%20email%20profile',
-    yandex:   'https://oauth.yandex.com/authorize?response_type=token&client_id=YOUR_YANDEX_CLIENT_ID',
-    telegram: 'https://oauth.telegram.org/auth?bot_id=YOUR_BOT_ID&origin=' + encodeURIComponent(location.origin)
-  };
-  const url = oauthURLs[provider];
-  if (url && !url.includes('YOUR_')) {
-    window.location.href = url;
-    return;
-  }
-  // Demo rejim
   setTimeout(() => {
     const demoUser = {
       uid:       generateUID(),
       username:  name.toLowerCase() + '_' + Math.floor(Math.random() * 90000 + 10000),
-      email:     'demo@' + provider + '.com',
+      email:     'demo@' + provider + '.local',
       password:  '',
       coins:     0, vip: false, library: [], read: 0,
       provider,
@@ -323,13 +311,13 @@ function doSocialAuth(provider) {
     USERS.push(demoUser); saveUsers();
     currentUser = demoUser; saveCurrent();
     closeAuth(); updateUI();
-    showToast('✦ ' + name + ' orqali muvaffaqiyatli kirdingiz!');
-  }, 1200);
+    showToast('✦ ' + name + ' demo akkaunti bilan kirdingiz!');
+  }, 600);
 }
 
 function doLogout() {
   currentUser = null;
-  AZURA_STORE.removeItem('azura_current');
+  localStorage.removeItem('azura_current');
   updateUI();
   navigate('home');
   showToast('Chiqish muvaffaqiyatli');
@@ -491,7 +479,8 @@ function goBack() {
 function makeMangaCard(m, rank, rankNum) {
   const rn = rankNum || (MANHWA_DATA.indexOf(m)+1);
   const rankBadge = rank ? '<div class="manga-rank" data-r="'+rn+'">'+rn+'</div>' : '';
-  const img = m.cover ? '<img src="' + m.cover + '" alt="' + m.title + '" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;"/>' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--dark4);font-size:32px;">📖</div>';
+  const coverSrc = (typeof window.azuraGetOptimizedCoverSrc === 'function') ? window.azuraGetOptimizedCoverSrc(m.cover || '') : (m.cover || '');
+  const img = coverSrc ? '<img src="' + coverSrc + '" alt="' + m.title + '" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;"/>' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--dark4);font-size:32px;">📖</div>';
   return '<div class="manga-card" onclick="openManhwa(\''+ m.id +'\')"><div class="manga-thumb">' + img + rankBadge + '</div><div class="manga-info"><div class="manga-title">' + m.title + '</div><div class="manga-meta"><span class="manga-rating" style="display:inline-flex;align-items:center;gap:2px;"><svg viewBox="0 0 24 24" style="width:11px;height:11px;fill:currentColor;"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>' + m.rating + '</span><span>' + (m.views||0).toLocaleString() + ' ko\'r</span></div></div></div>';
 }
 
@@ -533,14 +522,15 @@ function openManhwa(id) {
   const smImg = document.getElementById('detail-small-img');
   const smPh = document.getElementById('detail-small-placeholder');
   if(currentManhwa.cover) {
+    const coverSrc = (typeof window.azuraGetOptimizedCoverSrc === 'function') ? window.azuraGetOptimizedCoverSrc(currentManhwa.cover) : currentManhwa.cover;
     bgImg.loading = 'lazy';
     bgImg.decoding = 'async';
-    bgImg.src = currentManhwa.cover;
+    bgImg.src = coverSrc;
     bgImg.style.display = '';
     if(bgPh) bgPh.style.display = 'none';
     smImg.loading = 'lazy';
     smImg.decoding = 'async';
-    smImg.src = currentManhwa.cover;
+    smImg.src = coverSrc;
     smImg.style.display = '';
     if(smPh) smPh.style.display = 'none';
     bgImg.onerror = function(){ this.style.display='none'; if(bgPh) bgPh.style.display=''; };
@@ -683,7 +673,7 @@ function filterGenreHome(genre) {
 // ════════════════════════════════════════════════════════════════════════
 // AZURA REAL LATEST CHAPTER UPDATES — replaces old fake/random list
 // Reads actual chapters from:
-//  1) legacy AZURA_STORE: azura_chapters_pending
+//  1) legacy localStorage: azura_chapters_pending
 //  2) IndexedDB: AzuraChapterDB
 //  3) IndexedDB: AzuraV15ChapterDB
 // ════════════════════════════════════════════════════════════════════════
@@ -751,9 +741,9 @@ async function azNrGetRealLatestChapters(limit) {
   var out = [];
   var now = Date.now();
 
-  // Legacy AZURA_STORE chapters
+  // Legacy localStorage chapters
   try {
-    var legacy = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+    var legacy = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
     if (Array.isArray(legacy)) {
       legacy.forEach(function(ch) {
         if (!ch || !ch.manhwaId || ch._isDemo) return;
@@ -793,23 +783,29 @@ async function azNrGetRealLatestChapters(limit) {
     });
   });
 
-  // Keep only chapters that belong to existing content and de-dupe duplicates
-  var seen = new Set();
+  // Keep only chapters that belong to existing content
   out = out.filter(function(item) {
     var content = azNrFindContent(item.manhwaId);
     if (!content) return false;
-    var key = item.source + ':' + item.chapterId + ':' + item.manhwaId + ':' + item.number;
-    if (seen.has(key)) return false;
-    seen.add(key);
     item.content = content;
     return true;
   });
 
+  // Sort newest-first so the first occurrence of each manhwaId is its latest chapter
   out.sort(function(a, b) {
     return (b.createdAt || 0) - (a.createdAt || 0) || (b.number || 0) - (a.number || 0);
   });
 
-  return out.slice(0, limit || 8);
+  // Per-manhwa dedup: only the latest chapter per manhwaId survives
+  var seenManhwa = new Set();
+  out = out.filter(function(item) {
+    var k = String(item.manhwaId);
+    if (seenManhwa.has(k)) return false;
+    seenManhwa.add(k);
+    return true;
+  });
+
+  return out.slice(0, Math.min(10, limit || 10));
 }
 
 async function renderLatestChapterUpdatesHome() {
@@ -819,7 +815,7 @@ async function renderLatestChapterUpdatesHome() {
   box.innerHTML = '<div class="az-nr-loading">⏳ Yangi boblar tekshirilmoqda...</div>';
 
   try {
-    var updates = await azNrGetRealLatestChapters(8);
+    var updates = await azNrGetRealLatestChapters(10);
     if (!updates.length) {
       box.innerHTML = '<div class="az-nr-empty">Hali yangi bob qo\'shilmagan. Admin paneldan bob qo\'shilganda shu yerda avtomatik chiqadi.</div>';
       return;
@@ -856,7 +852,6 @@ window.addEventListener('focus', function() {
 });
 
 function renderHome() {
-  // Hero - most viewed manhwa
   const sorted = [...MANHWA_DATA].sort((a,b) => b.views - a.views);
   const hero = sorted[0];
   if(hero) {
@@ -866,84 +861,110 @@ function renderHome() {
     if(descEl) descEl.textContent = hero.description || (hero.rating + ' ★ · ' + (hero.views||0).toLocaleString() + " ko'r");
     if(hero.cover) {
       const heroImg = document.getElementById('hero-img');
+      const heroCover = (typeof window.azuraGetOptimizedCoverSrc === 'function') ? window.azuraGetOptimizedCoverSrc(hero.cover) : hero.cover;
       heroImg.decoding = 'async';
       heroImg.fetchPriority = 'high';
-      heroImg.src = hero.cover;
+      heroImg.src = heroCover;
       heroImg.onerror = function(){ this.style.opacity='0'; };
     }
   }
 
-  // Top 10 — sequential ranking 1-10
+  const renderRowChunked = function(rowEl, items, renderer, key) {
+    if (!rowEl) return;
+    if (typeof window.azuraAppendHtmlInChunks === 'function') {
+      window.azuraAppendHtmlInChunks(rowEl, items, renderer, {
+        kind: 'row',
+        key: key || rowEl.id || 'row',
+        afterInitial: function(){ initDragScroll(rowEl); }
+      });
+    } else {
+      rowEl.innerHTML = items.map(renderer).join('');
+      initDragScroll(rowEl);
+    }
+  };
+  const defer = function(anchor, task, opts) {
+    if (typeof window.azuraDeferUntilVisible === 'function' && anchor) return window.azuraDeferUntilVisible(anchor, task, opts || {});
+    setTimeout(task, (opts && opts.delay) || 180);
+  };
+
   const top10 = document.getElementById('top10-row');
   if(top10) {
-    top10.innerHTML = sorted.slice(0,10).map((m, i) => makeMangaCard(m, true, i+1)).join('');
-    initDragScroll(top10);
+    const top10Items = sorted.slice(0,10);
+    renderRowChunked(top10, top10Items, (m, i) => makeMangaCard(m, true, i+1), 'home-top10');
   }
 
-  // Ko'p O'qilayotgan (trending-row)
   const trend = document.getElementById('trending-row');
   if(trend) {
-    trend.innerHTML = sorted.slice(10,25).map(m => makeMangaCard(m, false)).join('');
-    initDragScroll(trend);
+    renderRowChunked(trend, sorted.slice(10,25), m => makeMangaCard(m, false), 'home-trending');
   }
 
-  // Trending Now — shuffle sorted by views with slight random mix
   const trendNow = document.getElementById('trending-now-row');
   if(trendNow) {
-    const pool = sorted.slice(5,35);
-    const shuffled = [...pool].sort(() => Math.random() - 0.35);
-    trendNow.innerHTML = shuffled.slice(0,18).map(m => makeMangaCard(m, false)).join('');
-    initDragScroll(trendNow);
+    const section = trendNow.closest('.section') || trendNow;
+    defer(section, function(){
+      const pool = sorted.slice(5,35);
+      const shuffled = [...pool].sort(() => Math.random() - 0.35);
+      renderRowChunked(trendNow, shuffled.slice(0,18), m => makeMangaCard(m, false), 'home-trending-now');
+    }, { rootMargin: '120px 0px', delay: 500 });
   }
 
-  // ── Yangi Qo'shilganlar — REAL latest chapters ──────────────
-  if (typeof renderLatestChapterUpdatesHome === 'function') {
-    renderLatestChapterUpdatesHome();
-  }
-  // Eski new-releases-row uchun fallback
   const oldNewRel = document.getElementById('new-releases-row');
-  if(oldNewRel && oldNewRel.innerHTML === '') {
-    const byNew2 = [...MANHWA_DATA].slice().reverse();
-    oldNewRel.innerHTML = byNew2.slice(0,18).map(m => makeMangaCard(m, false)).join('');
-    initDragScroll(oldNewRel);
-  }
+  const newReleaseSection = document.getElementById('az-new-releases') || (oldNewRel && oldNewRel.closest('.section')) || oldNewRel;
+  defer(newReleaseSection || top10, function(){
+    if (typeof renderLatestChapterUpdatesHome === 'function') renderLatestChapterUpdatesHome();
+    if(oldNewRel && oldNewRel.innerHTML === '') {
+      const byNew2 = [...MANHWA_DATA].slice().reverse().slice(0,18);
+      if (typeof window.azuraAppendHtmlInChunks === 'function') {
+        window.azuraAppendHtmlInChunks(oldNewRel, byNew2, m => makeMangaCard(m, false), { kind:'row', key:'home-new-releases', afterInitial:function(){ initDragScroll(oldNewRel); } });
+      } else {
+        oldNewRel.innerHTML = byNew2.map(m => makeMangaCard(m, false)).join('');
+        initDragScroll(oldNewRel);
+      }
+    }
+  }, { rootMargin: '240px 0px', delay: 900 });
 
-  // Sizga Tavsiya Qilamiz — top rated
   const recRow = document.getElementById('recommended-row');
   if(recRow) {
-    const topRated = [...MANHWA_DATA].sort((a,b) => b.rating - a.rating).slice(0,20);
-    recRow.innerHTML = topRated.map(m => makeMangaCard(m, false)).join('');
-    initDragScroll(recRow);
+    const recSection = recRow.closest('.section') || recRow;
+    defer(recSection, function(){
+      const topRated = [...MANHWA_DATA].sort((a,b) => b.rating - a.rating).slice(0,20);
+      if (typeof window.azuraAppendHtmlInChunks === 'function') {
+        window.azuraAppendHtmlInChunks(recRow, topRated, m => makeMangaCard(m, false), { kind:'row', key:'home-recommended', afterInitial:function(){ initDragScroll(recRow); } });
+      } else {
+        recRow.innerHTML = topRated.map(m => makeMangaCard(m, false)).join('');
+        initDragScroll(recRow);
+      }
+    }, { rootMargin: '180px 0px', delay: 1200 });
   }
 
-  // Janrlar bo'yicha — genre showcase cards
   const genreGrid = document.getElementById('genre-showcase-grid');
   if(genreGrid) {
-    const GENRE_SHOWCASE = [
-      { label: 'Fantastik', color: '#1a0a3b', accent: '#7c3aed', svg: `<svg viewBox="0 0 24 24" style="color:#9b59d0;"><path fill="currentColor" d="M14.5 2.5c0 1.5-1.5 7-1.5 7h-2S9.5 4 9.5 2.5a2.5 2.5 0 0 1 5 0zM12 11a2 2 0 0 0-2 2c0 2 2 4 2 4s2-2 2-4a2 2 0 0 0-2-2z"/></svg>` },
-      { label: 'Romantik', color: '#3b0520', accent: '#e91e8c', svg: `<svg viewBox="0 0 24 24" style="color:#e91e8c;"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>` },
-      { label: 'Harakat', color: '#3b1000', accent: '#ff6a00', svg: `<svg viewBox="0 0 24 24" style="color:#ff6a00;"><path fill="currentColor" d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>` },
-      { label: '18+', color: '#1a0000', accent: '#8B0000', svg: `<svg viewBox="0 0 24 24" style="color:#cc2222;"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>` },
-      { label: 'Sirli', color: '#050a1f', accent: '#4fc3f7', svg: `<svg viewBox="0 0 24 24" style="color:#4fc3f7;"><path fill="currentColor" d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm0 16a7 7 0 1 1 0-14A7 7 0 0 1 12 19z"/></svg>` },
-      { label: 'Drama', color: '#1a0a1a', accent: '#ce93d8', svg: `<svg viewBox="0 0 24 24" style="color:#ce93d8;"><path fill="currentColor" d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2z"/></svg>` },
-    ];
-    genreGrid.innerHTML = GENRE_SHOWCASE.map(g =>
-      `<div class="genre-card" onclick="filterGenreHome('${g.label}')" style="background:linear-gradient(135deg,${g.color} 0%,rgba(5,5,8,0.95) 100%);">
-        <div class="genre-card-bg" style="color:${g.accent};">${g.svg}</div>
-        <div class="genre-card-overlay" style="background:linear-gradient(to top,rgba(5,5,8,0.95) 0%,rgba(5,5,8,0.2) 55%,transparent 100%);"></div>
-        <div class="genre-card-label" style="text-shadow:0 0 12px ${g.accent}66;">${g.label}</div>
-      </div>`
-    ).join('');
+    const genreSection = genreGrid.closest('.section') || genreGrid;
+    defer(genreSection, function(){
+      const GENRE_SHOWCASE = [
+        { label: 'Fantastik', color: '#1a0a3b', accent: '#7c3aed', svg: `<svg viewBox="0 0 24 24" style="color:#9b59d0;"><path fill="currentColor" d="M14.5 2.5c0 1.5-1.5 7-1.5 7h-2S9.5 4 9.5 2.5a2.5 2.5 0 0 1 5 0zM12 11a2 2 0 0 0-2 2c0 2 2 4 2 4s2-2 2-4a2 2 0 0 0-2-2z"/></svg>` },
+        { label: 'Romantik', color: '#3b0520', accent: '#e91e8c', svg: `<svg viewBox="0 0 24 24" style="color:#e91e8c;"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>` },
+        { label: 'Harakat', color: '#3b1000', accent: '#ff6a00', svg: `<svg viewBox="0 0 24 24" style="color:#ff6a00;"><path fill="currentColor" d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>` },
+        { label: '18+', color: '#1a0000', accent: '#8B0000', svg: `<svg viewBox="0 0 24 24" style="color:#cc2222;"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>` },
+        { label: 'Sirli', color: '#050a1f', accent: '#4fc3f7', svg: `<svg viewBox="0 0 24 24" style="color:#4fc3f7;"><path fill="currentColor" d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm0 16a7 7 0 1 1 0-14A7 7 0 0 1 12 19z"/></svg>` },
+        { label: 'Drama', color: '#1a0a1a', accent: '#ce93d8', svg: `<svg viewBox="0 0 24 24" style="color:#ce93d8;"><path fill="currentColor" d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2z"/></svg>` },
+      ];
+      genreGrid.innerHTML = GENRE_SHOWCASE.map(g =>
+        `<div class="genre-card" onclick="filterGenreHome('${g.label}')" style="background:linear-gradient(135deg,${g.color} 0%,rgba(5,5,8,0.95) 100%);">
+          <div class="genre-card-bg" style="color:${g.accent};">${g.svg}</div>
+          <div class="genre-card-overlay" style="background:linear-gradient(to top,rgba(5,5,8,0.95) 0%,rgba(5,5,8,0.2) 55%,transparent 100%);"></div>
+          <div class="genre-card-label" style="text-shadow:0 0 12px ${g.accent}66;">${g.label}</div>
+        </div>`
+      ).join('');
+    }, { rootMargin: '120px 0px', delay: 1500 });
   }
 
-  // ── Davom Ettirish (Continue Reading) ─────────────────────
-  renderContinueReading();
-
-
-  // ── Render Continue Reading strip + Quick Stats (after DOM is fresh) ──
   try {
-    renderContinueReading();
     renderHomeQuickStats();
+    defer(document.getElementById('continue-reading-wrap') || top10, function(){
+      renderContinueReading();
+      renderHomeQuickStats();
+    }, { rootMargin: '200px 0px', delay: 700 });
   } catch(e) { console.warn('[home extras]', e); }
 }
 
@@ -992,9 +1013,9 @@ if (typeof window.renderContinueReading !== 'function') {
     var out = [];
     var now = Date.now();
 
-    // Legacy AZURA_STORE chapters
+    // Legacy localStorage chapters
     try {
-      var legacy = JSON.parse(AZURA_STORE.getItem('azura_chapters_pending') || '[]');
+      var legacy = JSON.parse(localStorage.getItem('azura_chapters_pending') || '[]');
       if (Array.isArray(legacy)) {
         legacy.forEach(function(ch) {
           if (!ch || !ch.manhwaId || ch._isDemo) return;
@@ -1061,7 +1082,17 @@ if (typeof window.renderContinueReading !== 'function') {
       return (b.createdAt || 0) - (a.createdAt || 0) || (b.number || 0) - (a.number || 0);
     });
 
-    return out.slice(0, limit || 8);
+    // Home/adult latest lists should show only one card per manhwa: its newest added chapter.
+    var uniqueByManhwa = [];
+    var seenManhwa = new Set();
+    out.forEach(function(item) {
+      if (!item || !item.manhwaId) return;
+      if (seenManhwa.has(item.manhwaId)) return;
+      seenManhwa.add(item.manhwaId);
+      uniqueByManhwa.push(item);
+    });
+
+    return uniqueByManhwa.slice(0, Math.min(10, limit || 10));
   }
 
   function escapeLatest(v) {
@@ -1081,7 +1112,7 @@ if (typeof window.renderContinueReading !== 'function') {
     if (!box) return;
     box.innerHTML = '<div class="az-nr-loading">⏳ Yangi boblar tekshirilmoqda...</div>';
     try {
-      var updates = await getLatestChaptersSeparated(8, 'normal');
+      var updates = await getLatestChaptersSeparated(10, 'normal');
       if (!updates.length) {
         box.innerHTML = '<div class="az-nr-empty">Hali yangi bob qo\'shilmagan. Admin paneldan oddiy manhwa/manga/novel/komiks bob qo\'shilganda shu yerda chiqadi.</div>';
         return;

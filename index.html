@@ -103,38 +103,88 @@
 <link rel="alternate" hreflang="x-default" href="https://azura.app/">
 
 <!-- ═════════ PERFORMANCE HINTS ═════════ -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="dns-prefetch" href="//via.placeholder.com">
+<!-- DNS prefetch + preconnect for media (R2/CDN). Hostname is rewritten by adapter when remote mode is on. -->
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link rel="dns-prefetch" href="//fonts.gstatic.com">
+<link rel="preload" as="image" href="assets/covers/lord-chaqaloq-romantik-hayotni-boshqaradi.webp" fetchpriority="high" media="(min-width: 768px)">
 
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="azura.css">
-<link rel="stylesheet" href="azura-reborn.css?v=1">
-<link rel="stylesheet" href="azura-adaptive-polish.css?v=2">
-<link rel="stylesheet" href="azura-hard-split.css?v=1">
-<link rel="stylesheet" href="azura-stage2-premium.css?v=1">
-<link rel="stylesheet" href="azura-stage3-real.css?v=1">
-<link rel="stylesheet" href="azura-stage4-hardening.css?v=1">
-<link rel="stylesheet" href="azura-stage5-rootfix.css?v=1">
+<!-- Critical CSS bundle (load order: base -> reborn -> primary -> perf overrides) -->
+<link rel="stylesheet" href="azura.css?v=11">
+<link rel="stylesheet" href="azura-reborn.css?v=11">
+<link rel="stylesheet" href="azura-reborn-primary.css?v=11">
+<link rel="stylesheet" href="azura-mobile-performance-v10.css?v=11">
 
-
+<!-- Inline boot guards (run before any deferred script). Adapter mode is decided here so
+     legacy code sees the right __AZURA_* flags from the start. Remote mode reads window.__AZURA_RUNTIME_MODE. -->
 <script>
 (function(){
-  if (location.protocol !== 'file:') return;
-  document.documentElement.classList.add('az-file-blocked');
-  document.addEventListener('DOMContentLoaded', function(){
-    document.body.innerHTML = '<main style="min-height:100vh;display:grid;place-items:center;background:#060814;color:#eef1ff;font-family:Arial,sans-serif;padding:24px;text-align:center"><section style="max-width:560px;border:1px solid rgba(120,245,255,.25);border-radius:24px;padding:28px;background:rgba(12,16,32,.94)"><h1 style="margin:0 0 12px;font-size:30px">AZURA faqat serverda ishlaydi</h1><p style="line-height:1.7;color:#b9c4df">Bu faylni ikki marta bosib ochmang. D1/R2, login, media va admin API faqat Cloudflare Pages yoki dev server orqali ishlaydi.</p><code style="display:inline-block;margin-top:12px;padding:10px 12px;border-radius:12px;background:#111a2b;color:#79f5ff">https://azura4.pages.dev</code></section></main>';
-  });
+  // Default: local. To switch to D1/R2, set ?mode=remote in URL or AZURA_RUNTIME_MODE=remote in env.html
+  var url = new URL(location.href);
+  var mode = url.searchParams.get('mode') || (window.__AZURA_FORCE_REMOTE ? 'remote' : 'local');
+  window.__AZURA_RUNTIME_MODE = mode === 'remote' ? 'remote' : 'local-stable';
+  window.__AZURA_LOCAL_ONLY = mode !== 'remote';
+  window.__AZURA_DISABLE_LEGACY_POLLERS = true;
+  window.__AZURA_EVENT_REFRESH = true;
+
+  // Early weak-phone detection so CSS can react via class before JS bundle is parsed.
+  var weak = false, saveData = false, mobile = false, slow = false;
+  try {
+    mobile = matchMedia('(max-width: 767px)').matches;
+    var mem = navigator.deviceMemory || 0;
+    var cpu = navigator.hardwareConcurrency || 0;
+    var c = navigator.connection;
+    saveData = !!(c && c.saveData);
+    slow = !!(c && (c.effectiveType === 'slow-2g' || c.effectiveType === '2g' || (c.downlink && c.downlink < 1.2)));
+    weak = mobile && ((mem && mem <= 4) || (cpu && cpu <= 6));
+    var cls = document.documentElement.classList;
+    if (weak) cls.add('az-weak-early');
+    if (saveData) cls.add('az-save-data-early');
+    if (mobile) cls.add('az-mobile-early');
+    if (slow) cls.add('az-slow-early');
+  } catch(_){}
+
+  // ─── Inline timer guard: wraps setInterval BEFORE any other JS runs ───
+  // Pauses intervals when tab hidden + stretches their period on weak devices.
+  if (!window.__azuraTimerGuardInstalled) {
+    window.__azuraTimerGuardInstalled = true;
+    var mult = 1;
+    if (weak) mult *= 1.6;
+    if (saveData) mult *= 1.4;
+    if (slow) mult *= 1.5;
+    var origSI = window.setInterval.bind(window);
+    var origST = window.setTimeout.bind(window);
+    window.setInterval = function(fn, period){
+      if (typeof fn !== 'function') return origSI.apply(null, arguments);
+      var args = Array.prototype.slice.call(arguments, 2);
+      var p = Math.max(50, Math.round(Number(period||0) * mult));
+      return origSI.call(null, function(){
+        if (document.hidden) return;
+        try { fn.apply(null, args); } catch(_){}
+      }, p);
+    };
+    window.setTimeout = function(fn, delay){
+      if (typeof fn !== 'function' || !delay || delay < 200) return origST.apply(null, arguments);
+      var d = Math.round(Number(delay) * mult);
+      var args = Array.prototype.slice.call(arguments, 2);
+      return origST.apply(null, [fn, d].concat(args));
+    };
+  }
+
+  // Service worker registration (idle, after first paint).
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    addEventListener('load', function(){
+      setTimeout(function(){
+        navigator.serviceWorker.register('sw.js').catch(function(){});
+      }, 1500);
+    });
+  }
 })();
 </script>
-<link rel="stylesheet" href="azura-v15-production-fixes.css?v=15">
-<link rel="stylesheet" href="azura-v16-production-stability.css?v=16">
-<link rel="stylesheet" href="azura-v17-critical-fixes.css?v=17">
 </head>
 <body>
 
 <!-- BG -->
-<div style="position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(139,0,0,0.12) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 80% 80%,rgba(139,0,0,0.08) 0%,transparent 70%);"></div>
+<div class="az-bg-decor" style="position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(139,0,0,0.12) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 80% 80%,rgba(139,0,0,0.08) 0%,transparent 70%);"></div>
 
 <!-- AUTH MODAL — PREMIUM DARK FANTASY -->
 <div class="modal-overlay" id="auth-modal">
@@ -616,7 +666,10 @@
 
   <!-- Desktop Topbar -->
   <div class="desktop-topbar" style="display:none;">
-    <div style="width:110px;"></div>
+    <button class="detail-desktop-back" onclick="if(navigationHistory.length)navigate(navigationHistory.pop());else navigate('home');" title="Orqaga">
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      <span>Orqaga</span>
+    </button>
     <div class="topbar-title" id="detail-dtop-title"
          style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</div>
     <div class="topbar-actions">
@@ -1264,7 +1317,7 @@
      18+ ADMIN PANEL — OWNER & AUTHORIZED ADMINS ONLY
      v3.0 — Kontent turi filter, PDF→WebP, Gallery upload, Instant chapters
      ═══════════════════════════════════════════════════════════════ -->
-<div class="adult-admin-overlay" id="adult-admin-panel">
+<div class="adult-admin-overlay" id="adult-admin-panel" hidden>
 
   <!-- Security Gate (shown before panel opens) -->
   <div class="aap-security-gate" id="aap-security-gate">
@@ -1354,7 +1407,7 @@
 
 
 <!-- ══ 18+ PDF→WebP Progress Overlay ══ -->
-<div class="aap-pdf-progress-overlay" id="aap-pdf-progress-overlay">
+<div class="aap-pdf-progress-overlay" id="aap-pdf-progress-overlay" hidden>
   <div class="aap-pdf-progress-box">
     <div class="aap-pdf-progress-icon">⚡</div>
     <div class="aap-pdf-progress-title">PDF → WebP Konvertatsiya</div>
@@ -1368,7 +1421,7 @@
 </div>
 
 <!-- 18+ Add/Edit Modal — with cover file upload + content type -->
-<div class="aap-modal-overlay" id="aap-edit-modal">
+<div class="aap-modal-overlay" id="aap-edit-modal" hidden>
   <div class="aap-modal">
     <div class="aap-modal-header">
       <div class="aap-modal-header-icon">✦</div>
@@ -1489,7 +1542,7 @@
 </div>
 
 <!-- 18+ Delete Confirm -->
-<div class="aap-confirm-overlay" id="aap-confirm-overlay">
+<div class="aap-confirm-overlay" id="aap-confirm-overlay" hidden>
   <div class="aap-confirm-box">
     <div class="aap-confirm-icon">⚠️</div>
     <div class="aap-confirm-title">O'chirishni tasdiqlang</div>
@@ -1584,21 +1637,12 @@
 <div class="toast" id="toast"></div>
 
 <!-- AZURA v14 — Modular JS architecture (10 modules, deferred for proper order) -->
-<script>window.__AZURA_DISABLE_LEGACY_POLLERS=true;window.__AZURA_EVENT_REFRESH=true;window.__AZURA_PROD_SYNC_STABLE=true;</script>
-<script defer src="js/00-diagnostic.js?v=14"></script>
-<script defer src="js/azura-d1-first.js?v=13"></script>
+
+<script defer src="js/00-diagnostic.js?v=17"></script>
 <script defer src="js/01-core.js?v=14"></script>
 <script defer src="js/02-auth.js?v=14"></script>
 <script defer src="js/03-navigation.js?v=14"></script>
-<script defer src="js/04-admin.js?v=16"></script>
-<script defer src="js/05-banner.js?v=17"></script>
-<script defer src="js/azura-v15-production-fixes.js?v=15"></script>
-<script defer src="js/06-reader.js?v=14"></script>
-<script defer src="js/07-adult.js?v=14"></script>
-<script defer src="js/08-premium-ui.js?v=14"></script>
-<script defer src="js/09-features.js?v=14"></script>
-<script defer src="js/10-modern.js?v=14"></script>
-<script defer src="js/11-chapter-system.js?v=15"></script>
+<script defer src="js/08-premium-ui.js?v=15"></script>
 <script defer src="js/12-slider-footer.js?v=15"></script>
 
 <!-- ═══════════════════════════════════════════════════════════════════
@@ -1661,35 +1705,10 @@
   </div>
 </footer>
 
-<script defer src="js/13-reader-safe-upgrade.js?v=3"></script>
-<script defer src="js/azura-v13-image-reader.js?v=13"></script>
-<script defer src="js/azura-v16-production-stability.js?v=16"></script>
-<script defer src="js/azura-reborn-ui.js?v=1"></script>
-<script defer src="js/azura-production-sync.js?v=7"></script>
-<script defer src="js/azura-v17-critical-fixes.js?v=17"></script>
-<script>
-(function(){
-  var lateScripts = [
-    'js/azura-final-polish.js?v=2',
-    'js/azura-hard-split.js?v=2',
-    'js/azura-stage2-premium.js?v=1',
-    'js/azura-stage3-expansion.js?v=2',
-    'js/azura-stage4-hardening.js?v=1',
-    'js/azura-stage5-rootfix.js?v=2'
-  ];
-  function loadLateScripts(){
-    lateScripts.forEach(function(src){
-      if (document.querySelector('script[data-az-late="' + src + '"]')) return;
-      var s = document.createElement('script');
-      s.src = src;
-      s.defer = true;
-      s.dataset.azLate = src;
-      document.body.appendChild(s);
-    });
-  }
-  if (window.requestIdleCallback) window.requestIdleCallback(loadLateScripts, { timeout: 1800 });
-  else window.addEventListener('load', function(){ setTimeout(loadLateScripts, 400); }, { once:true });
-})();
-</script>
+<script defer src="js/azura-reborn-ui.js?v=2"></script>
+<script defer src="js/azura-adapter-v9.js?v=2"></script>
+<script defer src="js/azura-local-unified-v9.js?v=1"></script>
+<script defer src="js/azura-clean-bridge-v9.js?v=1"></script>
+<script defer src="js/azura-mobile-performance-v10.js?v=2"></script>
 </body>
 </html>

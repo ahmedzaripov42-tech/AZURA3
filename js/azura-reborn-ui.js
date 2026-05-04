@@ -6,7 +6,7 @@
   function $(sel, root){ return (root||document).querySelector(sel); }
   function $all(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
   function isSmallPhone(){ return Math.min(window.innerWidth || 0, window.innerHeight || 0) <= 420; }
-  function isMobile(){ return window.matchMedia('(max-width: 820px)').matches; }
+  function isMobile(){ return window.matchMedia('(max-width: 767px)').matches; }
   function isWeakMobile(){
     return isMobile() || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 6);
   }
@@ -39,7 +39,7 @@
   }
 
   function tuneMedia(){
-    var bannerAudioOn = AZURA_STORE.getItem('azura_banner_audio_pref') === 'on';
+    var bannerAudioOn = localStorage.getItem('azura_banner_audio_pref') === 'on';
     $all('img').forEach(function(img){
       if (!img.getAttribute('loading')) img.setAttribute('loading','lazy');
       img.decoding = 'async';

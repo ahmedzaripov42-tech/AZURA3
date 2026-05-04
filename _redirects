@@ -1,0 +1,5 @@
+# SPA fallback: any unmatched non-asset route returns index.html so client-side
+# navigation still works on direct URL hits.
+/api/*    /api/:splat    200
+/media/*  /media/:splat  200
+/*        /index.html    200

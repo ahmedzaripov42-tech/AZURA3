@@ -1,13 +1,38 @@
-/*
+# Cloudflare Pages cache rules
+# HTML must always be checked (versioned assets via ?v= are cached aggressively).
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Service-Worker-Allowed: /
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Long-cache static assets — they are version-stamped via ?v= in HTML
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-/js/*
-  Cache-Control: public, max-age=604800
+# API responses must never be cached at edge by mistake
+/api/*
+  Cache-Control: no-store
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS
+  Access-Control-Allow-Headers: content-type
+  Access-Control-Allow-Credentials: true
 
-/*.css
-  Cache-Control: public, max-age=604800
+# R2 media: long cache (content-addressable)
+/media/*
+  Cache-Control: public, max-age=31536000, immutable

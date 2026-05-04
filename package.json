@@ -1,14 +1,16 @@
 {
-  "name": "azura3",
-  "version": "12.0.0",
+  "name": "azura-cloudflare-ready",
   "private": true,
-  "type": "module",
+  "version": "11.1.0",
+  "description": "AZURA — mobil-optimized, Cloudflare D1/R2 ga to'liq tayyor",
   "scripts": {
-    "dev": "wrangler pages dev . --compatibility-date=2026-05-02",
-    "deploy": "wrangler pages deploy . --project-name=azura3",
-    "check": "node --check js/00-diagnostic.js && node --check functions/api/_common.js"
-  },
-  "devDependencies": {
-    "wrangler": "^3.101.0"
+    "start": "node server.js",
+    "validate": "node scripts/validate-build.js",
+    "package": "bash scripts/package.sh",
+    "seed:gen": "node scripts/generate-d1-seed.js",
+    "deploy:pages": "wrangler pages deploy . --project-name=azura",
+    "deploy:db": "bash scripts/migrate-d1.sh",
+    "deploy:r2": "bash scripts/upload-r2.sh",
+    "deploy": "npm run validate && npm run deploy:db && npm run deploy:r2 && npm run deploy:pages"
   }
 }
