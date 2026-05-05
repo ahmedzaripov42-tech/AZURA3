@@ -109,18 +109,20 @@
 <link rel="preload" as="image" href="assets/covers/lord-chaqaloq-romantik-hayotni-boshqaradi.webp" fetchpriority="high" media="(min-width: 768px)">
 
 <!-- Critical CSS bundle (load order: base -> reborn -> primary -> perf overrides) -->
-<link rel="stylesheet" href="azura.css?v=11">
-<link rel="stylesheet" href="azura-reborn.css?v=11">
-<link rel="stylesheet" href="azura-reborn-primary.css?v=11">
-<link rel="stylesheet" href="azura-mobile-performance-v10.css?v=11">
+<link rel="stylesheet" href="azura.css?v=15">
+<link rel="stylesheet" href="azura-reborn.css?v=15">
+<link rel="stylesheet" href="azura-reborn-primary.css?v=15">
+<link rel="stylesheet" href="azura-mobile-performance-v10.css?v=15">
 
 <!-- Inline boot guards (run before any deferred script). Adapter mode is decided here so
      legacy code sees the right __AZURA_* flags from the start. Remote mode reads window.__AZURA_RUNTIME_MODE. -->
 <script>
 (function(){
-  // Default: local. To switch to D1/R2, set ?mode=remote in URL or AZURA_RUNTIME_MODE=remote in env.html
+  // Production: remote mode (D1+R2) by default.
+  // To force local/demo mode add ?mode=local to URL.
   var url = new URL(location.href);
-  var mode = url.searchParams.get('mode') || (window.__AZURA_FORCE_REMOTE ? 'remote' : 'local');
+  var urlMode = url.searchParams.get('mode');
+  var mode = urlMode === 'local' ? 'local' : (urlMode === 'remote' ? 'remote' : (window.__AZURA_FORCE_LOCAL ? 'local' : 'remote'));
   window.__AZURA_RUNTIME_MODE = mode === 'remote' ? 'remote' : 'local-stable';
   window.__AZURA_LOCAL_ONLY = mode !== 'remote';
   window.__AZURA_DISABLE_LEGACY_POLLERS = true;
@@ -1638,10 +1640,10 @@
 
 <!-- AZURA v14 — Modular JS architecture (10 modules, deferred for proper order) -->
 
-<script defer src="js/00-diagnostic.js?v=17"></script>
-<script defer src="js/01-core.js?v=14"></script>
-<script defer src="js/02-auth.js?v=14"></script>
-<script defer src="js/03-navigation.js?v=14"></script>
+<script defer src="js/00-diagnostic.js?v=15"></script>
+<script defer src="js/01-core.js?v=15"></script>
+<script defer src="js/02-auth.js?v=15"></script>
+<script defer src="js/03-navigation.js?v=15"></script>
 <script defer src="js/08-premium-ui.js?v=15"></script>
 <script defer src="js/12-slider-footer.js?v=15"></script>
 
@@ -1705,10 +1707,10 @@
   </div>
 </footer>
 
-<script defer src="js/azura-reborn-ui.js?v=2"></script>
-<script defer src="js/azura-adapter-v9.js?v=2"></script>
-<script defer src="js/azura-local-unified-v9.js?v=1"></script>
-<script defer src="js/azura-clean-bridge-v9.js?v=1"></script>
-<script defer src="js/azura-mobile-performance-v10.js?v=2"></script>
+<script defer src="js/azura-reborn-ui.js?v=15"></script>
+<script defer src="js/azura-adapter-v9.js?v=15"></script>
+<script defer src="js/azura-clean-bridge-v9.js?v=15"></script>
+<script defer src="js/azura-mobile-performance-v10.js?v=15"></script>
+<script defer src="js/azura-fixes-v15.js?v=15"></script>
 </body>
 </html>

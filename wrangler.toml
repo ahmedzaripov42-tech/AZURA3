@@ -1,29 +1,39 @@
-# AZURA Cloudflare Pages + Worker config
-# Deploy command: wrangler pages deploy . --project-name=azura
-#
-# After first deploy, in the Cloudflare dashboard or via wrangler:
-#   wrangler d1 create azura
-#   wrangler r2 bucket create azura-media
-# then paste the resulting database_id below and run migrations.
+# AZURA — Cloudflare Pages + Workers + D1 + R2
+# ─────────────────────────────────────────────
+# Deploy:
+#   1. wrangler d1 create azura
+#   2. Paste database_id below
+#   3. wrangler d1 execute azura --file=docs/d1/migrations/001_base.sql
+#   4. wrangler d1 execute azura --file=docs/d1/migrations/002_indexes.sql
+#   5. wrangler d1 execute azura --file=docs/d1/migrations/003_full_schema.sql
+#   6. wrangler d1 execute azura --file=docs/d1/migrations/004_full_indexes.sql
+#   7. wrangler r2 bucket create azura-media
+#   8. wrangler pages deploy . --project-name=azura
 
 name = "azura"
-compatibility_date = "2025-04-01"
+compatibility_date = "2025-05-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "."
 
-# ── Bindings used by _worker.js ───────────────────────────────────────────────
+# ── D1 Database ───────────────────────────────
 [[d1_databases]]
 binding = "DB"
-database_name = "azura"
-database_id = "REPLACE_WITH_D1_ID_AFTER_CREATE"
+database_name = "azura_db"
+# ✅ Dashboard da ko'ringan nom: azura_db
+# IMPORTANT: Quyidagi database_id ni Cloudflare Dashboard > D1 > azura_db dan oling
+# Workers & Pages → D1 → azura_db → Settings da ID ko'rinadi
+database_id = "58560d47-471d-4501-a7de-2a17c73673f6"
 
+# ── R2 Storage ────────────────────────────────
 [[r2_buckets]]
 binding = "MEDIA"
 bucket_name = "azura-media"
 
-# Optional: custom domain → set AZURA_CONFIG.mediaBase to the public R2 URL
-# in env.html (loaded before the adapter) or via ?mediaBase= query param.
-
+# ── Environment Variables ─────────────────────
 [vars]
 AZURA_RUNTIME = "production"
 AZURA_OWNER_UID = "AZR-YJTF-QYGT"
+
+# ── Secrets (set via CLI, NOT stored here) ────
+# wrangler secret put AZURA_ADMIN_SECRET
+# These are available as env.AZURA_ADMIN_SECRET in the worker

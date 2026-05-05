@@ -1,12 +1,17 @@
-# Cloudflare Pages cache rules
-# HTML must always be checked (versioned assets via ?v= are cached aggressively).
+# AZURA — Cloudflare Pages HTTP Headers
+# Production-grade security + caching
 
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
-  X-Frame-Options: SAMEORIGIN
+  X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  X-DNS-Prefetch-Control: off
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https:; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
@@ -15,24 +20,28 @@
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
 
-# Long-cache static assets — they are version-stamped via ?v= in HTML
 /*.css
   Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
 
 /js/*
   Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-# API responses must never be cached at edge by mistake
 /api/*
   Cache-Control: no-store
-  Access-Control-Allow-Origin: *
-  Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS
-  Access-Control-Allow-Headers: content-type
-  Access-Control-Allow-Credentials: true
+  X-Content-Type-Options: nosniff
 
-# R2 media: long cache (content-addressable)
 /media/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Block access to sensitive files
+/wrangler.toml
+  X-Robots-Tag: noindex
+/package.json
+  X-Robots-Tag: noindex
+/server.js
+  X-Robots-Tag: noindex
