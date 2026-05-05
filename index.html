@@ -118,11 +118,10 @@
      legacy code sees the right __AZURA_* flags from the start. Remote mode reads window.__AZURA_RUNTIME_MODE. -->
 <script>
 (function(){
-  // Production: remote mode (D1+R2) by default.
-  // To force local/demo mode add ?mode=local to URL.
+  // Default: local mode (localStorage). Remote D1/R2: add ?mode=remote
   var url = new URL(location.href);
   var urlMode = url.searchParams.get('mode');
-  var mode = urlMode === 'local' ? 'local' : (urlMode === 'remote' ? 'remote' : (window.__AZURA_FORCE_LOCAL ? 'local' : 'remote'));
+  var mode = urlMode === 'remote' ? 'remote' : (urlMode === 'local' ? 'local' : 'local');
   window.__AZURA_RUNTIME_MODE = mode === 'remote' ? 'remote' : 'local-stable';
   window.__AZURA_LOCAL_ONLY = mode !== 'remote';
   window.__AZURA_DISABLE_LEGACY_POLLERS = true;
@@ -1640,6 +1639,12 @@
 
 <!-- AZURA v14 — Modular JS architecture (10 modules, deferred for proper order) -->
 
+<script>
+// Global stubs — prevent ReferenceError before lazy JS bundles load
+window.injectBannerSlots=window.injectBannerSlots||function(){if(typeof window.__realInjectBannerSlots==='function')window.__realInjectBannerSlots();};
+window.refreshBannerSlots=window.refreshBannerSlots||function(){};
+window.showToast=window.showToast||function(msg,type){console.log('[toast]',msg);};
+</script>
 <script defer src="js/00-diagnostic.js?v=15"></script>
 <script defer src="js/01-core.js?v=15"></script>
 <script defer src="js/02-auth.js?v=15"></script>
