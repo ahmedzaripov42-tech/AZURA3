@@ -401,7 +401,7 @@ async function api(env, req, url) {
       await env.MEDIA.put(r2Key, file.stream(), {
         httpMetadata: {
           contentType: file.type || 'application/octet-stream',
-          contentDisposition: \`attachment; filename="\${safeName}"\`
+          contentDisposition: `attachment; filename="${safeName}"`
         },
         customMetadata: { originalName: filename, folder: safeFolder, kind, uploadedBy: a.uid, uploadedAt: String(now()) }
       });
@@ -409,11 +409,11 @@ async function api(env, req, url) {
     // Store metadata in D1
     const fileSize = file.size || 0;
     await env.DB.prepare(
-      \`INSERT INTO media_assets (id,kind,folder,filename,mime_type,size_bytes,r2_key,poster_key,created_at,updated_at)
+      `INSERT INTO media_assets (id,kind,folder,filename,mime_type,size_bytes,r2_key,poster_key,created_at,updated_at)
        VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10)
-       ON CONFLICT(id) DO UPDATE SET r2_key=excluded.r2_key,size_bytes=excluded.size_bytes,updated_at=excluded.updated_at\`
+       ON CONFLICT(id) DO UPDATE SET r2_key=excluded.r2_key,size_bytes=excluded.size_bytes,updated_at=excluded.updated_at`
     ).bind(id, kind, safeFolder, safeName, file.type || '', fileSize, r2Key, '', now(), now()).run();
-    return json({ id, r2Key, url: \`/media/\${r2Key}\`, size: fileSize, mime: file.type });
+    return json({ id, r2Key, url: `/media/${r2Key}`, size: fileSize, mime: file.type });
   }
 
   // ── Presigned / chunked upload helpers ────────────────────────────────────
@@ -421,7 +421,7 @@ async function api(env, req, url) {
   if (p === '/api/media/multipart/create' && m === 'POST') {
     const a = await requireAdmin(env, req); if (isErr(a)) return a;
     const body = (await safeJson(req)) || {};
-    const r2Key = String(body.r2Key || \`uploads/\${now()}_\${rid()}\`);
+    const r2Key = String(body.r2Key || `uploads/${now()}_${rid()}`);
     const multipart = await env.MEDIA.createMultipartUpload(r2Key, {
       httpMetadata: { contentType: body.mime || 'application/octet-stream' }
     });
@@ -444,13 +444,13 @@ async function api(env, req, url) {
     if (!r2Key || !uploadId || !parts) return err('r2Key, uploadId, parts required');
     const upload = env.MEDIA.resumeMultipartUpload(r2Key, uploadId);
     const obj = await upload.complete(parts);
-    const id = \`\${now()}_\${rid()}\`;
+    const id = `${now()}_${rid()}`;
     await env.DB.prepare(
-      \`INSERT INTO media_assets (id,kind,folder,filename,mime_type,size_bytes,r2_key,poster_key,created_at,updated_at)
+      `INSERT INTO media_assets (id,kind,folder,filename,mime_type,size_bytes,r2_key,poster_key,created_at,updated_at)
        VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10)
-       ON CONFLICT(id) DO UPDATE SET r2_key=excluded.r2_key,updated_at=excluded.updated_at\`
+       ON CONFLICT(id) DO UPDATE SET r2_key=excluded.r2_key,updated_at=excluded.updated_at`
     ).bind(id, kind||'video', folder||'uploads', filename||'file', mime||'', 0, r2Key, '', now(), now()).run();
-    return json({ id, r2Key, url: \`/media/\${r2Key}\` });
+    return json({ id, r2Key, url: `/media/${r2Key}` });
   }
   if (p === '/api/media/multipart/abort' && m === 'POST') {
     const a = await requireAdmin(env, req); if (isErr(a)) return a;
