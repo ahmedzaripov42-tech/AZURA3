@@ -1,41 +1,17 @@
 name = "azura"
 compatibility_date = "2025-05-01"
 compatibility_flags = ["nodejs_compat"]
-
-# Pages output (agar Pages ishlatsangiz)
 pages_build_output_dir = "."
 
-# ─────────────────────────────
-# D1 DATABASE
-# ─────────────────────────────
 [[d1_databases]]
 binding = "DB"
 database_name = "azura_db"
 database_id = "58560d47-471d-4501-a7de-2a17c73673f6"
 
-# ─────────────────────────────
-# R2 STORAGE
-# ─────────────────────────────
 [[r2_buckets]]
 binding = "MEDIA"
 bucket_name = "azura-media"
 
-# ─────────────────────────────
-# ENV VARIABLES (public)
-# ─────────────────────────────
 [vars]
 AZURA_RUNTIME = "production"
 AZURA_OWNER_UID = "AZR-YJTF-QYGT"
-
-# ⚠️ PASSWORD BU YERGA YOZILMAYDI!
-# AZURA_ADMIN_SECRET = ❌ YOZILMASIN
-
-# ─────────────────────────────
-# NOTES
-# ─────────────────────────────
-# Secret qo‘shish:
-# wrangler secret put AZURA_ADMIN_SECRET
-#
-# Owner parol:
-# ham secret bo‘lishi kerak (tavsiya)
-# wrangler secret put AZURA_OWNER_PASSWORD
