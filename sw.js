@@ -28,7 +28,6 @@ const SHELL = [
   './js/azura-adapter-v9.js?v=15',
   './js/azura-clean-bridge-v9.js?v=15',
   './js/azura-reborn-ui.js?v=15',
-  './js/azura-storage-sync-v15.js?v=15',
   './js/azura-fixes-v15.js?v=15',
   './assets/logo.svg'
 ];

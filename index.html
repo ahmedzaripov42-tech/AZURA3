@@ -118,40 +118,12 @@
      legacy code sees the right __AZURA_* flags from the start. Remote mode reads window.__AZURA_RUNTIME_MODE. -->
 <script>
 (function(){
-  // Mode: local (default) or remote (D1+R2)
-  // URL param overrides, then localStorage persists, then default local
+  // Default: local mode (localStorage). Remote D1/R2: add ?mode=remote
   var url = new URL(location.href);
   var urlMode = url.searchParams.get('mode');
-  var STORAGE_MODE_KEY = 'azura_runtime_mode';
-  var savedMode = '';
-  try { savedMode = localStorage.getItem(STORAGE_MODE_KEY) || ''; } catch(_){}
-  var mode;
-  if (urlMode === 'remote') {
-    mode = 'remote';
-    try { localStorage.setItem(STORAGE_MODE_KEY, 'remote'); } catch(_){}
-  } else if (urlMode === 'local') {
-    mode = 'local';
-    try { localStorage.removeItem(STORAGE_MODE_KEY); } catch(_){}
-  } else if (savedMode === 'remote') {
-    mode = 'remote';
-  } else {
-    mode = 'local';
-  }
+  var mode = urlMode === 'remote' ? 'remote' : (urlMode === 'local' ? 'local' : 'local');
   window.__AZURA_RUNTIME_MODE = mode === 'remote' ? 'remote' : 'local-stable';
-  window.__AZURA_CURRENT_MODE = mode;
   window.__AZURA_LOCAL_ONLY = mode !== 'remote';
-
-  // Safe admin navigation - loads bundle before rendering
-  window.navigateAdmin = function() {
-    if (typeof window.navigate !== 'function') return;
-    window.navigate('admin');
-    // Extra safety: if renderAdmin still not defined after 800ms, retry
-    setTimeout(function() {
-      if (typeof window.renderAdmin === 'function' && window.currentPage === 'admin') {
-        window.renderAdmin('dashboard');
-      }
-    }, 800);
-  };
   window.__AZURA_DISABLE_LEGACY_POLLERS = true;
   window.__AZURA_EVENT_REFRESH = true;
 
@@ -434,7 +406,7 @@
     <div class="nav-section-title">Profil</div>
     <div class="nav-item" onclick="navigate('notifications')"><span class="nav-icon"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>Xabarnomalar<span class="nav-badge" id="notif-badge">3</span></div>
     <div class="nav-item" onclick="navigate('profile')"><span class="nav-icon"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>Profil</div>
-    <div class="nav-item" id="admin-nav-item" style="display:none;" onclick="navigateAdmin()"><span class="nav-icon"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span>Admin Panel</div>
+    <div class="nav-item" id="admin-nav-item" style="display:none;" onclick="navigate('admin')"><span class="nav-icon"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></span>Admin Panel</div>
   </div>
   <div class="sidebar-bottom" id="sidebar-bottom-area">
     <div id="sidebar-guest">
@@ -1171,7 +1143,7 @@
 
         <div class="profile-menu-section-title" id="profile-admin-section-title" style="display:none;">Admin</div>
 
-        <div class="profile-menu-card admin-item" id="profile-admin-btn" style="display:none;" onclick="navigateAdmin()">
+        <div class="profile-menu-card admin-item" id="profile-admin-btn" style="display:none;" onclick="navigate('admin')">
           <div class="profile-menu-card-icon admin">
             <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
           </div>
@@ -1223,13 +1195,6 @@
     <div class="topbar-actions">
       <div style="font-size:11px;color:var(--gold-dim);font-family:'Cinzel',serif;" id="admin-logged-as">—</div>
       <div class="topbar-vip-badge" id="admin-role-badge-top">OWNER</div>
-      <div id="azura-mode-toggle-btn" onclick="azuraToggleMode()"
-           style="cursor:pointer;font-size:9px;font-family:'Cinzel',serif;font-weight:700;
-                  padding:3px 8px;border-radius:4px;letter-spacing:0.5px;
-                  background:var(--dark3);border:1px solid var(--border);
-                  color:var(--text-muted);transition:all 0.2s;user-select:none;">
-        LOKAL
-      </div>
     </div>
   </div>
   <div class="main-content">
@@ -1257,7 +1222,7 @@
     <div class="bot-nav-item" onclick="navigate('home')"><div class="bot-nav-icon"><svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:currentColor;"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div><div class="bot-nav-label">Bosh</div></div>
     <div class="bot-nav-item" onclick="navigate('discover')"><div class="bot-nav-icon"><svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:currentColor;"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div><div class="bot-nav-label">Kashf</div></div>
     <div class="bot-nav-item" onclick="navigate('profile')"><div class="bot-nav-icon"><svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:currentColor;"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div><div class="bot-nav-label">Profil</div></div>
-    <div class="bot-nav-item active" onclick="navigateAdmin()"><div class="bot-nav-icon"><svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:currentColor;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div><div class="bot-nav-label">Admin</div></div>
+    <div class="bot-nav-item active" onclick="navigate('admin')"><div class="bot-nav-icon"><svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:currentColor;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div><div class="bot-nav-label">Admin</div></div>
   </nav>
 </div>
 
@@ -1751,7 +1716,6 @@ window.showToast=window.showToast||function(msg,type){console.log('[toast]',msg)
 <script defer src="js/azura-adapter-v9.js?v=15"></script>
 <script defer src="js/azura-clean-bridge-v9.js?v=15"></script>
 <script defer src="js/azura-mobile-performance-v10.js?v=15"></script>
-<script defer src="js/azura-storage-sync-v15.js?v=15"></script>
 <script defer src="js/azura-fixes-v15.js?v=15"></script>
 </body>
 </html>
