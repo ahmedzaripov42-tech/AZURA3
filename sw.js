@@ -1,12 +1,15 @@
-/* AZURA Service Worker v15
-   - Network-first for HTML/API (always fresh when online)
-   - Stale-while-revalidate for assets (instant load + background update)
+/* AZURA Service Worker v16 — FIX: API responses are never cached
+   - Network-first for HTML (always fresh when online)
+   - Stale-while-revalidate for static assets only
+   - API (/api/*) responses: NEVER cached — always network-only
+     (Worker sends Cache-Control: no-store; SW must honour it)
+   - Media (/media/*): cache with revalidation (1h TTL)
    - Precache shell on install; drop old caches on activate
    - skipWaiting + clients.claim for instant activation
    - Navigation preload for faster first paint
    - Range bypass for streaming
 */
-const VERSION = 'azura-v15';
+const VERSION = 'azura-v16';
 const SHELL_CACHE = `${VERSION}-shell`;
 const ASSET_CACHE = `${VERSION}-assets`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
@@ -14,21 +17,21 @@ const RUNTIME_CACHE = `${VERSION}-runtime`;
 const SHELL = [
   './',
   './index.html',
-  './azura.css?v=15',
-  './azura-reborn.css?v=15',
-  './azura-reborn-primary.css?v=15',
-  './azura-mobile-performance-v10.css?v=15',
-  './js/00-diagnostic.js?v=15',
-  './js/01-core.js?v=15',
-  './js/02-auth.js?v=15',
-  './js/03-navigation.js?v=15',
-  './js/08-premium-ui.js?v=15',
-  './js/12-slider-footer.js?v=15',
-  './js/azura-mobile-performance-v10.js?v=15',
-  './js/azura-adapter-v9.js?v=15',
-  './js/azura-clean-bridge-v9.js?v=15',
-  './js/azura-reborn-ui.js?v=15',
-  './js/azura-fixes-v15.js?v=15',
+  './azura.css?v=16',
+  './azura-reborn.css?v=16',
+  './azura-reborn-primary.css?v=16',
+  './azura-mobile-performance-v10.css?v=16',
+  './js/00-diagnostic.js?v=16',
+  './js/01-core.js?v=16',
+  './js/02-auth.js?v=16',
+  './js/03-navigation.js?v=16',
+  './js/08-premium-ui.js?v=16',
+  './js/12-slider-footer.js?v=16',
+  './js/azura-mobile-performance-v10.js?v=16',
+  './js/azura-adapter-v9.js?v=16',
+  './js/azura-clean-bridge-v9.js?v=16',
+  './js/azura-reborn-ui.js?v=16',
+  './js/azura-fixes-v15.js?v=16',
   './assets/logo.svg'
 ];
 
@@ -87,19 +90,32 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== location.origin && !url.hostname.endsWith('r2.cloudflarestorage.com') && !url.hostname.endsWith('r2.dev')) return;
   if (req.headers.get('range')) return;
 
+  // FIX 6: API calls are NETWORK-ONLY — no caching whatsoever.
+  // The worker already sends Cache-Control: no-store on every /api/* response.
+  // Previously this SW was putting catalog + chapter responses into
+  // RUNTIME_CACHE, meaning stale data survived even after the worker returned
+  // fresh rows. The cache.put() calls are now removed entirely.
   if (isAPI(url)) {
     event.respondWith((async () => {
       try {
-        const fresh = await fetch(req);
-        if (fresh && fresh.ok && (url.pathname === '/api/catalog' || url.pathname.startsWith('/api/catalog/')
-          || url.pathname === '/api/chapters' || url.pathname === '/api/chapters/latest')) {
-          const c = await caches.open(RUNTIME_CACHE); c.put(req, fresh.clone());
-        }
-        return fresh;
+        // Always go to network. Add cache-busting headers to defeat any
+        // intermediate proxy that ignores Cache-Control: no-store.
+        const networkReq = new Request(req, {
+          cache: 'no-store',
+          headers: (() => {
+            const h = new Headers(req.headers);
+            h.set('cache-control', 'no-cache');
+            h.set('pragma', 'no-cache');
+            return h;
+          })(),
+        });
+        return await fetch(networkReq);
       } catch (_) {
-        const c = await caches.match(req);
-        if (c) return c;
-        return new Response(JSON.stringify({ error: 'offline' }), { status: 503, headers: { 'content-type': 'application/json' } });
+        // Offline fallback — never serve stale API data, always signal error
+        return new Response(
+          JSON.stringify({ error: 'offline', offline: true }),
+          { status: 503, headers: { 'content-type': 'application/json' } }
+        );
       }
     })());
     return;

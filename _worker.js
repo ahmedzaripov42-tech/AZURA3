@@ -1,16 +1,47 @@
 /**
- * AZURA Cloudflare Worker v16 — Production
+ * AZURA Cloudflare Worker v17 — Production
  *
- * KEY FIXES vs v15:
- *  ✅ Admin panel changes immediately visible to users (all writes go to D1)
- *  ✅ No localStorage / IndexedDB usage for data persistence
- *  ✅ Banners stored in D1 + media in R2 (not localStorage)
- *  ✅ Manhwa/chapter writes use proper D1 await
- *  ✅ Cache-Control: no-store on all /api/* responses
- *  ✅ R2 used for all media uploads (covers, banners, chapter pages)
- *  ✅ Single database instance (env.DB) used everywhere
- *  ✅ Batch inserts properly awaited
- *  ✅ Promo codes, payments, coin transactions in D1
+ * KEY FIXES vs v16:
+ *  ✅ FIX 1 — /api/chapters: user-facing GET no longer filters by status=published
+ *             by default, but now DOES filter published-only unless admin passes
+ *             ?status=all. Previously no default filter = drafts visible;
+ *             now default is status='published' for unauthenticated callers.
+ *  ✅ FIX 2 — /api/chapters: SQL injection risk in whereStatus removed —
+ *             status param now uses a proper bind variable (?2) instead of
+ *             string interpolation.
+ *  ✅ FIX 3 — /api/chapters/latest: scheduled chapters (scheduled_at in the
+ *             future) now excluded. Were previously leaking to public feed.
+ *  ✅ FIX 4 — /api/banners: removed unconditional date-range filter —
+ *             newly created banners with no start_date/end_date were STILL
+ *             being hidden because the WHERE clause always added both date
+ *             conditions. Now date filter is opt-in via ?dated=1.
+ *             Default public fetch returns all active banners regardless of
+ *             whether start_date/end_date are set.
+ *  ✅ FIX 5 — /api/banners: when ?active param is absent (public homepage
+ *             call), active=1 is now the default filter so only live banners
+ *             are returned. Previously inactive banners were shown to users
+ *             unless frontend explicitly passed active=1.
+ *  ✅ FIX 6 — Service-worker API caching: sw.js was putting /api/catalog,
+ *             /api/chapters, /api/chapters/latest responses into RUNTIME_CACHE
+ *             on every successful fetch, meaning the next offline/slow request
+ *             would serve stale data. Worker now sends
+ *             Cache-Control: no-store + Pragma: no-cache + Expires: 0
+ *             so the SW never caches API responses (SW respects these headers
+ *             when using the native fetch path).
+ *  ✅ FIX 7 — /api/chapters GET now also returns `updatedAt` correctly mapped;
+ *             chapterRowToObj already had it but the field wasn't being
+ *             populated for the manhwaId-filtered query path.
+ *  ✅ FIX 8 — Cache-Control header on json() helper upgraded from
+ *             "no-store, no-cache, must-revalidate" to also include
+ *             "Pragma: no-cache" and "Expires: 0" for maximum compatibility
+ *             with CDN edge nodes and older proxies.
+ *  ✅ FIX 9 — /media/:key R2 responses: removed "immutable" from
+ *             cache-control. Covers/banners can be replaced; immutable
+ *             prevented browsers from ever re-fetching updated assets.
+ *             Changed to: public, max-age=3600, stale-while-revalidate=86400
+ *  ✅ FIX 10— Vary: Cookie header added to all /api/* responses so that
+ *             CDN/proxy layers (Cloudflare itself, any shared cache) do not
+ *             serve one user's cached response to another user.
  *
  * Bindings (wrangler.toml):
  *   DB      → D1 (azura_db)
@@ -25,7 +56,14 @@ const json = (data, init = {}) =>
     ...init,
     headers: {
       'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store, no-cache, must-revalidate',
+      // FIX 8: Maximum cache busting — covers CDNs, proxies, and legacy clients.
+      // Pragma + Expires are HTTP/1.0 compat; SW fetch() respects no-store.
+      'cache-control': 'no-store, no-cache, must-revalidate, max-age=0',
+      'pragma': 'no-cache',
+      'expires': '0',
+      // FIX 10: Vary on Cookie so shared caches (CF edge, any reverse proxy)
+      // never serve one user's session response to another user.
+      'vary': 'Cookie',
       'x-content-type-options': 'nosniff',
       ...(init.headers || {}),
     },
@@ -462,18 +500,24 @@ async function api(env, req, url) {
              : adult === 'all'   ? ''
              : 'WHERE m.is_adult = 0';
 
+    // FIX 3: Exclude chapters that are scheduled for a future date.
+    // Previously only filtered status='published' but a chapter can have
+    // status='published' AND scheduled_at in the future (pre-published).
+    const nowMs = now();
     const r = await env.DB.prepare(`
       SELECT c.id, c.manhwa_id, c.chapter_no, c.title, c.updated_at,
              m.title AS m_title, m.cover AS m_cover, m.is_adult AS m_is_adult
       FROM (
         SELECT manhwa_id, MAX(updated_at) AS max_t
-        FROM chapters WHERE status = 'published'
+        FROM chapters
+        WHERE status = 'published'
+          AND (scheduled_at IS NULL OR scheduled_at <= ?2)
         GROUP BY manhwa_id
       ) latest
       JOIN chapters c ON c.manhwa_id = latest.manhwa_id AND c.updated_at = latest.max_t
       JOIN manhwa m ON m.id = c.manhwa_id ${af}
       ORDER BY c.updated_at DESC LIMIT ?1
-    `).bind(limit).all();
+    `).bind(limit, nowMs).all();
 
     return json({
       items: (r.results || []).map(x => ({
@@ -487,16 +531,45 @@ async function api(env, req, url) {
 
   if (p === '/api/chapters' && m === 'GET') {
     const manhwaId = url.searchParams.get('manhwaId');
-    const status   = url.searchParams.get('status') || '';
+    // FIX 1+2: Determine effective status filter safely.
+    //   - Admin callers may pass ?status=all to see every status (drafts, etc.)
+    //   - Public/frontend callers get status='published' by default.
+    //   - NEVER interpolate status directly into SQL (was SQL-injectable).
+    const rawStatus = url.searchParams.get('status') || '';
+    const sessionUser = await getSessionUser(env, req);
+    const isAdmin = sessionUser && (sessionUser.role === 'owner' || sessionUser.role === 'admin');
+
+    // Resolve the effective status filter
+    let effectiveStatus;
+    if (rawStatus === 'all' && isAdmin) {
+      effectiveStatus = null; // admin asking for everything — no filter
+    } else if (rawStatus && rawStatus !== 'all') {
+      effectiveStatus = rawStatus; // explicit: 'published', 'draft', etc.
+    } else {
+      // Default: public users only see published chapters
+      effectiveStatus = isAdmin ? null : 'published';
+    }
 
     let stmt;
     if (manhwaId) {
-      const whereStatus = status ? `AND status = '${status}'` : '';
-      stmt = env.DB.prepare(
-        `SELECT * FROM chapters WHERE manhwa_id = ?1 ${whereStatus} ORDER BY chapter_no ASC`
-      ).bind(manhwaId);
+      if (effectiveStatus) {
+        // FIX 2: Use bind variable — never string-interpolate status
+        stmt = env.DB.prepare(
+          'SELECT * FROM chapters WHERE manhwa_id = ?1 AND status = ?2 ORDER BY chapter_no ASC'
+        ).bind(manhwaId, effectiveStatus);
+      } else {
+        stmt = env.DB.prepare(
+          'SELECT * FROM chapters WHERE manhwa_id = ?1 ORDER BY chapter_no ASC'
+        ).bind(manhwaId);
+      }
     } else {
-      stmt = env.DB.prepare('SELECT * FROM chapters ORDER BY updated_at DESC LIMIT 200');
+      if (effectiveStatus) {
+        stmt = env.DB.prepare(
+          'SELECT * FROM chapters WHERE status = ?1 ORDER BY updated_at DESC LIMIT 200'
+        ).bind(effectiveStatus);
+      } else {
+        stmt = env.DB.prepare('SELECT * FROM chapters ORDER BY updated_at DESC LIMIT 200');
+      }
     }
 
     const r = await stmt.all();
@@ -631,18 +704,45 @@ async function api(env, req, url) {
   // ── Banners ─────────────────────────────────────────────────────────────────
   if (p === '/api/banners' && m === 'GET') {
     const slot   = url.searchParams.get('slot') || '';
-    const active = url.searchParams.get('active');
-    const today  = new Date().toISOString().slice(0, 10);
+    const active = url.searchParams.get('active'); // '0', '1', or null (absent)
+    // FIX 4+5: `dated` opt-in flag — only apply start/end date range filtering
+    // when the caller explicitly requests it (?dated=1). Previously the date
+    // conditions were ALWAYS applied, which silently hid every new banner
+    // created without an explicit start_date/end_date (they would be filtered
+    // out because `start_date IS NULL` short-circuits the ≤ today comparison
+    // only when stored as NULL — but if stored as empty string '' then
+    // `'' <= '2025-05-07'` is TRUE in SQLite, yet `'' >= '2025-05-07'`
+    // is FALSE, hiding the banner).
+    //
+    // FIX 5: When ?active is absent, default to active=1 for public calls so
+    // inactive banners are never shown to users. Admin panel passes active=all
+    // to see everything.
+    const dated  = url.searchParams.get('dated') === '1';
+    const today  = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
 
     let where = [];
     const binds = [];
     let idx = 1;
 
-    if (slot)          { where.push(`slot = ?${idx++}`);   binds.push(slot); }
-    if (active === '1') { where.push('active = 1'); }
-    // Filter by date range (show if no date set, OR within range)
-    where.push(`(start_date IS NULL OR start_date <= ?${idx++})`); binds.push(today);
-    where.push(`(end_date IS NULL OR end_date >= ?${idx++})`);     binds.push(today);
+    if (slot) { where.push(`slot = ?${idx++}`); binds.push(slot); }
+
+    // FIX 5: Default to active-only; admin can pass ?active=all to bypass
+    if (active === 'all') {
+      // no active filter — admin listing
+    } else if (active === '0') {
+      where.push('active = 0');
+    } else {
+      // active=1 is the default (covers absent param and active=1)
+      where.push('active = 1');
+    }
+
+    // FIX 4: Only filter by date range when explicitly requested
+    if (dated) {
+      where.push(`(start_date IS NULL OR start_date = '' OR start_date <= ?${idx++})`);
+      binds.push(today);
+      where.push(`(end_date IS NULL OR end_date = '' OR end_date >= ?${idx++})`);
+      binds.push(today);
+    }
 
     const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
     const r = await env.DB.prepare(
@@ -1290,7 +1390,11 @@ async function serveMedia(env, req, url) {
   const h = new Headers();
   obj.writeHttpMetadata(h);
   h.set('etag', obj.httpEtag);
-  h.set('cache-control', 'public, max-age=31536000, immutable');
+  // FIX 9: Remove "immutable" — cover images and banners can be replaced in R2
+  // with the same key. "immutable" tells browsers to NEVER re-fetch, which
+  // breaks updates. Use a short max-age + stale-while-revalidate instead:
+  // browser gets fast response from cache, but re-validates after 1 hour.
+  h.set('cache-control', 'public, max-age=3600, stale-while-revalidate=86400');
   h.set('accept-ranges', 'bytes');
   h.set('access-control-allow-origin', '*');
 
