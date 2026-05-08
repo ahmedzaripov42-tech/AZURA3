@@ -1,17 +1,16 @@
-name = "azura"
-compatibility_date = "2025-05-01"
+name = "azura-api"
+main = "src/index.ts"
+compatibility_date = "2024-02-20"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = "."
 
 [[d1_databases]]
 binding = "DB"
-database_name = "azura_db"
-database_id = "58560d47-471d-4501-a7de-2a17c73673f6"
+database_name = "azura-db"
+database_id = "19a7f08a-d22d-48bc-9952-c71534c0f769"
 
 [[r2_buckets]]
-binding = "MEDIA"
+binding = "R2"
 bucket_name = "azura-media"
 
-[vars]
-AZURA_RUNTIME = "production"
-AZURA_OWNER_UID = "AZR-YJTF-QYGT"
+[triggers]
+crons = ["*/15 * * * *"]
