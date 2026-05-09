@@ -1,0 +1,3288 @@
+﻿
+<!DOCTYPE html>
+<html lang="uz">
+
+<!-- Mirrored from mangalab.uz/browse/?genre=Komediya&page=6 by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 09 May 2026 16:18:08 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="csrf-token" content="oYrGvTtLcT1Ww8tgjuVvHMVC8pPsBQfSsvCAFxK8fob6oQMNqAZ8fShJR5vDHmdR">
+  <meta name="description" content="MangaLab.uz saytida o&#x27;zbek tilidagi manga, manhwa va komikslarni o&#x27;qing.">
+  <link rel="canonical" href="index.html">
+  <meta property="og:site_name" content="MangaLab.uz">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="index.html">
+  <meta property="og:title" content="MangaLab.uz - O&#x27;zbek tilidagi komikslar platformasi">
+  <meta property="og:description" content="MangaLab.uz saytida o&#x27;zbek tilidagi manga, manhwa va komikslarni o&#x27;qing.">
+  <meta property="og:image" content="https://mangalab.uz/static/images/social-preview.69a66a9eaba1.png">
+  <meta property="og:image:secure_url" content="https://mangalab.uz/static/images/social-preview.69a66a9eaba1.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MangaLab.uz - O&#x27;zbek tilidagi komikslar platformasi">
+  <meta name="twitter:description" content="MangaLab.uz saytida o&#x27;zbek tilidagi manga, manhwa va komikslarni o&#x27;qing.">
+  <meta name="twitter:image" content="https://mangalab.uz/static/images/social-preview.69a66a9eaba1.png">
+  <link rel="icon" href="https://mangalab.uz/static/images/logo.7af4b7013056.png">
+  <title>MangaLab.uz - O&#x27;zbek tilidagi komikslar platformasi</title>
+  
+  
+  <script src="https://cdn.tailwindcss.com/"></script>
+  <script defer src="../../unpkg.com/alpinejs%403.15.12/dist/cdn.min.js"></script>
+  <script src="../../cdn.jsdelivr.net/npm/iconify-icon%401.0.8/dist/iconify-icon.min.js"></script>
+  <script src="../../cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" defer></script>
+  <link rel="stylesheet" href="../../cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <style>[x-cloak]{display:none!important}</style>
+
+</head>
+<style>
+  [x-cloak]{display:none!important}
+
+  /* Global: 75% (mobil va planshet) */
+  html { font-size: 75%; }
+
+  /* Desktop (>= 768px): 100% */
+  @media (min-width: 768px) {
+    html { font-size: 80%; }
+  }
+</style>
+
+<body
+  class="bg-[#0f1923] text-slate-100 min-h-screen flex flex-col"
+  x-data="siteShell()"
+  x-effect="document.body.style.overflow = (openDrawer || openSearch) ? 'hidden' : ''"
+  @keydown.window="handleWindowKeydown($event)"
+>
+
+  <!-- ===== HEADER ===== -->
+  <header class="sticky top-0 z-40 border-b border-white/10 bg-[#111c28]/95 backdrop-blur">
+    <div class="mx-auto px-3 sm:px-6 lg:px-16 h-14 md:h-20 flex items-center gap-3 w-full">
+
+      <!-- Logo -->
+      <a href="../index.html" class="flex items-center shrink-0">
+        <img src="https://mangalab.uz/static/images/logo.7af4b7013056.png" alt="MangaLab"
+            class="hidden md:block w-8 h-8 md:w-16 md:h-16">
+        <div class="leading-tight ml-1.5 md:ml-2">
+          <span class="font-bold tracking-wider text-xl md:text-3xl">
+            MANGA<span class="text-purple-400">LAB</span>
+          </span>
+        </div>
+      </a>
+
+
+      <!-- DESKTOP search trigger -->
+      <button type="button"
+              @click="openSearchModal()"
+              class="ml-auto hidden md:inline-flex p-2.5 rounded-full text-slate-100/90 transition hover:bg-white/10 hover:text-white"
+              data-header-search-trigger
+              data-header-search-trigger-desktop
+              aria-label="Qidiruvni ochish">
+        <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+
+      <a href="index.html"
+         class="hidden md:inline-flex p-2.5 rounded-full text-slate-100/90 transition hover:bg-white/10 hover:text-white"
+         title="Katalog"
+         aria-label="Katalog"
+         data-header-catalog-link>
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+        </svg>
+      </a>
+
+      <!-- DESKTOP menu (dropdown + accordion ichida ochiladi) -->
+      <div class="relative hidden md:block">
+
+        <button type="button"
+          @click="openMenu = !openMenu"
+          class="inline-flex p-2.5 rounded-full text-slate-100/90 transition hover:bg-white/10 hover:text-white"
+          aria-haspopup="menu" :aria-expanded="openMenu">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+
+        <div x-cloak x-show="openMenu" x-transition.origin.top.right
+             @click.outside="openMenu=false"
+             class="absolute right-0 mt-1 w-[200px] rounded-xl border border-white/10 bg-[#182434] shadow-2xl p-2">
+          <!-- nav list + accordion -->
+          <nav class="text-slate-200 divide-y divide-white/5">
+
+            <div class="py-1">
+              <a href="../random/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+                <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1"/>
+                  <circle cx="15.5" cy="8.5" r="1"/>
+                  <circle cx="8.5" cy="15.5" r="1"/>
+                  <circle cx="15.5" cy="15.5" r="1"/>
+                </svg>
+                <span class="flex-1">Tasodifiy taytl</span>
+              </a>
+              <a href="../history/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+                <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 8 3.05"/><path d="M12 7v5l4 2"/>
+                </svg>
+                <span class="flex-1">Ko'rish tarixi</span>
+              </a>
+            </div>
+
+
+            <!-- Qolgan bo'limlar (oddiy linklar) -->
+            <div class="py-1">
+              <a href="../accounts/tarjimon/top/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+                <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21 12 17.77 5.82 21 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <span class="flex-1">Tarjimonlar</span>
+              </a>
+              <a href="../genres/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+                <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18M3 12h18M3 18h18"/>
+                </svg>
+                <span class="flex-1">Janrlar</span>
+              </a>
+              <a href="../tags/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+                <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.59 13.41L12 22l-8.59-8.59A2 2 0 0 1 3 12V5a2 2 0 0 1 2-2h7a2 2 0 0 1 1.41.59l7.18 7.18a2 2 0 0 1 0 2.82z"/>
+                  <circle cx="7.5" cy="7.5" r="1.5"/>
+                </svg>
+                <span class="flex-1">Teglar</span>
+              </a>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- DESKTOP icons -->
+      <div class="hidden md:flex items-center gap-3">
+        
+      </div>
+
+      <!-- divider -->
+      <div class="hidden md:block h-6 w-px bg-white/10"></div>
+
+      <!-- DESKTOP profil -->
+      <div class="hidden md:flex items-center gap-3">
+        
+          <a href="../accounts/login/index.html" class="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 font-semibold">Kirish</a>
+        
+      </div>
+
+      <!-- MOBILE: o'ngdagi ikonlar -->
+      <div class="md:hidden flex items-center gap-1.5 ml-auto">
+
+        <!-- MOBILE search trigger -->
+        <button type="button"
+                @click="openSearchModal()"
+                class="inline-flex p-2 rounded text-slate-100/90 transition hover:bg-white/10 hover:text-white"
+                data-header-search-trigger
+                data-header-search-trigger-mobile
+                aria-label="Qidiruvni ochish">
+          <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+
+        <a href="index.html"
+           class="inline-flex p-2 rounded text-slate-100/90 transition hover:bg-white/10 hover:text-white"
+           title="Katalog"
+           aria-label="Katalog"
+           data-header-catalog-link>
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+          </svg>
+        </a>
+
+        <!-- MOBILE burger -->
+        <button type="button" @click="openDrawer=true"
+                class="md:hidden p-2 rounded hover:bg-white/10" aria-label="Menyu">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+
+        
+
+        
+          <a href="../accounts/login/index.html" class="p-2 rounded hover:bg-white/10" aria-label="Kirish">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>
+          </a>
+        
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MOBILE DRAWER (accordion) ===== -->
+  <div x-cloak x-show="openDrawer" x-transition.opacity @click="openDrawer=false" class="fixed inset-0 z-40 bg-black/50 md:hidden"></div>
+  <aside x-cloak x-show="openDrawer"
+         x-transition:enter="transform transition ease-out duration-200"
+         x-transition:enter-start="-translate-x-full"
+         x-transition:enter-end="translate-x-0"
+         x-transition:leave="transform transition ease-in duration-200"
+         x-transition:leave-start="translate-x-0"
+         x-transition:leave-end="-translate-x-full"
+         class="fixed top-0 left-0 bottom-0 z-50 w-80 max-w-[88vw] md:hidden bg-[#111c28] border-r border-white/10">
+
+    <div class="h-16 px-4 flex items-center justify-between border-b border-white/10">
+      <span class="font-bold">Menyu</span>
+      <button type="button" @click="openDrawer=false" class="p-2 rounded hover:bg-white/10" aria-label="Yopish">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="px-2 pb-6 text-slate-200 divide-y divide-white/5 overflow-y-auto" data-mobile-drawer-nav>
+      <div class="py-1">
+        <a href="../random/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+          <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1"/>
+            <circle cx="15.5" cy="8.5" r="1"/>
+            <circle cx="8.5" cy="15.5" r="1"/>
+            <circle cx="15.5" cy="15.5" r="1"/>
+          </svg>
+          <span class="flex-1">Tasodifiy taytl</span>
+        </a>
+        <a href="../history/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+          <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 8 3.05"/><path d="M12 7v5l4 2"/>
+          </svg>
+          <span class="flex-1">Ko'rish tarixi</span>
+        </a>
+      </div>
+
+
+      <!-- Qolgan bo'limlar -->
+      <div class="py-1">
+        <a href="../accounts/tarjimon/top/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+          <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21 12 17.77 5.82 21 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span class="flex-1">Tarjimonlar</span>
+        </a>
+        <a href="../genres/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+          <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+          </svg>
+          <span class="flex-1">Janrlar</span>
+        </a>
+        <a href="../tags/index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5">
+          <svg class="w-6 h-6 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.59 13.41L12 22l-8.59-8.59A2 2 0 0 1 3 12V5a2 2 0 0 1 2-2h7a2 2 0 0 1 1.41.59l7.18 7.18a2 2 0 0 1 0 2.82z"/>
+            <circle cx="7.5" cy="7.5" r="1.5"/>
+          </svg>
+          <span class="flex-1">Teglar</span>
+        </a>
+      </div>
+
+      <!-- Pastda: ijtimoiy ikonlar -->
+      <div class="p-4">
+        <div class="text-sm text-slate-300 mb-2">Biz bilan bo'ling</div>
+        <div class="flex items-center gap-2">
+          <a class="inline-flex items-center justify-center w-9 h-9 rounded-md bg-white/10 hover:bg-white/20" href="https://t.me/mangalabuz" aria-label="Telegram" target="_blank" rel="noopener"><iconify-icon icon="mdi:telegram" width="18" height="18"></iconify-icon></a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ===== HEADER SEARCH MODAL ===== -->
+  <div x-cloak x-show="openSearch" class="fixed inset-0 z-[70]" data-header-search-modal>
+    <div class="absolute inset-0 bg-slate-950/75 backdrop-blur-sm" @click="closeSearchModal()"></div>
+    <div class="relative flex h-full w-full items-start justify-center px-3 py-3 sm:px-6 sm:py-10">
+      <section
+        x-show="openSearch"
+        x-transition.opacity
+        @click.stop
+        class="flex h-full w-full flex-col overflow-hidden rounded-[1.6rem] border border-white/10 bg-[#111826] shadow-2xl sm:h-auto sm:max-h-[calc(100vh-5rem)] sm:max-w-4xl"
+        data-header-search-shell
+      >
+        <div class="border-b border-white/10 px-4 py-4 sm:px-5">
+          <div class="flex items-center gap-3">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#182131] px-3 py-2.5">
+                <svg class="h-5 w-5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input
+                  x-ref="headerSearchInput"
+                  x-model="searchQuery"
+                  @input="queueSearch()"
+                  @keydown.enter.prevent="submitSearch()"
+                  @keydown.arrow-down.prevent="moveSearchSelection(1)"
+                  @keydown.arrow-up.prevent="moveSearchSelection(-1)"
+                  type="text"
+                  autocomplete="off"
+                  placeholder="Nom bo'yicha qidiring"
+                  class="h-8 w-full bg-transparent text-base text-slate-100 placeholder:text-slate-500 outline-none"
+                  data-header-search-input
+                >
+              </div>
+            </div>
+            <button type="button"
+                    @click="closeSearchModal()"
+                    class="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10"
+                    aria-label="Qidiruvni yopish"
+                    data-header-search-close>
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6 6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="mt-4 flex items-center gap-2" data-header-search-scopes>
+            <button type="button"
+                    @click="setSearchScope('titles')"
+                    class="rounded-full border px-4 py-2 text-sm font-semibold transition"
+                    :class="searchScope === 'titles' ? 'border-purple-500 bg-purple-600 text-white' : 'border-white/10 bg-white/5 text-slate-300 hover:bg-white/10'"
+                    data-header-search-scope="titles">
+              Taytlar
+            </button>
+            <button type="button"
+                    @click="setSearchScope('translators')"
+                    class="rounded-full border px-4 py-2 text-sm font-semibold transition"
+                    :class="searchScope === 'translators' ? 'border-purple-500 bg-purple-600 text-white' : 'border-white/10 bg-white/5 text-slate-300 hover:bg-white/10'"
+                    data-header-search-scope="translators">
+              Tarjimonlar
+            </button>
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-3 py-3 sm:px-5 sm:py-4" data-header-search-results>
+          <template x-if="searchLoading">
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-8 text-center text-slate-400" data-header-search-loading>
+              Natijalar yuklanmoqda...
+            </div>
+          </template>
+
+          <template x-if="!searchLoading && searchQuery.trim().length < 2">
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-10 text-center" data-header-search-idle>
+              <p class="text-base font-semibold text-slate-100" x-text="searchScope === 'titles' ? 'Taytllarni qidiring' : 'Tarjimonlarni qidiring'"></p>
+              <p class="mt-2 text-sm text-slate-400" x-text="searchScope === 'titles' ? `Taytl yoki alternativ nom bo'yicha qidiring.` : `Username yoki tarjimon tavsifi bo'yicha qidiring.`"></p>
+            </div>
+          </template>
+
+          <template x-if="!searchLoading && searchQuery.trim().length >= 2 && !searchResults.length">
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-10 text-center" data-header-search-empty>
+              <p class="text-base font-semibold text-slate-100">Hech narsa topilmadi</p>
+              <p class="mt-2 text-sm text-slate-400" x-text="searchScope === 'titles' ? `Bu so'z bo'yicha taytl topilmadi.` : `Bu so'z bo'yicha tarjimon topilmadi.`"></p>
+            </div>
+          </template>
+
+          <div x-show="!searchLoading && searchResults.length" class="space-y-3" data-header-search-result-list>
+            <template x-for="(item, index) in searchResults" :key="`${searchScope}-${index}-${item.url}`">
+              <a
+                :href="item.url"
+                @mouseenter="activeResultIndex = index"
+                @click.prevent="goToSearchResult(item)"
+                class="flex items-center gap-3 rounded-2xl border px-3 py-3 transition"
+                :class="index === activeResultIndex ? 'border-white/15 bg-white/10' : 'border-transparent bg-white/5 hover:bg-white/10'"
+                data-header-search-result
+              >
+                <div class="h-20 w-14 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#202e44]" x-show="searchScope === 'titles'">
+                  <img :src="item.cover_url" :alt="item.title" class="h-full w-full object-cover">
+                </div>
+                <div class="h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/10 bg-[#202e44]" x-show="searchScope === 'translators'">
+                  <img :src="item.avatar_url" :alt="item.username" class="h-full w-full object-cover">
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-base font-semibold text-slate-100" x-text="searchScope === 'titles' ? item.title : item.username"></p>
+                  <p class="mt-1 text-sm text-slate-400" x-text="item.meta"></p>
+                </div>
+                <div class="text-right text-xs text-slate-500" x-show="searchScope === 'translators' && item.requires_login">
+                  Kirish talab qilinadi
+                </div>
+              </a>
+            </template>
+          </div>
+        </div>
+
+        <div class="border-t border-white/10 px-4 py-3 sm:px-5"
+             x-show="searchQuery.trim().length >= 2"
+             data-header-search-footer>
+          <a :href="searchResultsUrl"
+             @click="closeSearchModal()"
+             class="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10"
+             data-header-search-results-link>
+            <span>Barcha natijalarni ko'rish</span>
+            <svg class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ===== MAIN ===== -->
+  <main class="flex-1">
+    
+<div data-browse-layout class="mx-auto w-full max-w-[1720px] px-3 py-6 sm:px-6 lg:px-8">
+  <div id="sidebarOverlay" class="fixed inset-0 z-30 hidden bg-slate-950/75 backdrop-blur-sm xl:hidden"></div>
+
+  <div class="flex items-start gap-6 xl:gap-8">
+    <aside id="filterSidebar"
+       data-browse-sidebar
+       class="fixed inset-y-0 left-0 z-40 flex h-full w-[20rem] max-w-[88vw] -translate-x-full flex-col overflow-hidden bg-[#0b1220] transition-transform duration-300 xl:sticky xl:top-24 xl:z-10 xl:h-auto xl:max-h-[calc(100vh-7rem)] xl:w-[20rem] xl:max-w-none xl:translate-x-0 xl:self-start xl:rounded-[2rem] xl:border xl:border-white/[0.08] xl:shadow-[0_24px_80px_rgba(2,6,23,0.42)]">
+  <style>
+    .browse-filter-scroll::-webkit-scrollbar {
+      width: 6px;
+      background-color: #0f172a;
+    }
+
+    .browse-filter-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.35);
+      border-radius: 999px;
+    }
+
+    .browse-filter-scroll::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(168, 85, 247, 0.65);
+    }
+  </style>
+
+  <div class="flex items-center justify-between border-b border-white/[0.08] px-5 py-4">
+    <div>
+      <h2 class="text-xl font-bold text-white">Filtrlar</h2>
+    </div>
+    <button type="button"
+            class="toggle-filters inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] text-white transition hover:border-purple-400/50 hover:bg-white/[0.08] xl:hidden"
+            aria-label="Filtrlarni yopish">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <form id="filterForm" method="get" class="flex h-full flex-col overflow-hidden">
+    <div class="browse-filter-scroll flex-1 space-y-4 overflow-y-auto px-4 py-4">
+      <div class="filter-group overflow-hidden rounded-[1.5rem] border border-white/[0.08] bg-white/[0.03]">
+        <button type="button" class="filter-header flex w-full items-center justify-between px-4 py-3.5 text-left text-white">
+          <span class="font-semibold">Janrlar</span>
+          <svg class="filter-arrow h-5 w-5 text-purple-300 transition-transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="filter-content border-t border-white/[0.06] px-4 pb-4 pt-3 ">
+          <div class="grid grid-cols-2 gap-2">
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Aksiya"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Aksiya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Apokalipsis"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Apokalipsis</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Arvoh/ ruhlar"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Arvoh/ ruhlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Detektiv"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Detektiv</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Drama"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Drama</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Ekshn"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Ekshn</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Fan"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Fan</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Fantastika"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Fantastika</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Fantaziya"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Fantaziya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Fojea"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Fojea</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="G&#x27;ayritabiiylik"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>G&#x27;ayritabiiylik</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Garem"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Garem</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Haddan oshish"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Haddan oshish</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Ilmiy fantastika"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Ilmiy fantastika</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Isekai"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Isekai</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Jang san&#x27;atlari"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Jang san&#x27;atlari</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Jangari"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Jangari</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Josei"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Josei</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Komediya"
+                     checked
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Komediya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Maktab"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Maktab</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Mistika"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Mistika</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Murim"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Murim</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Musiqiy"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Musiqiy</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Oddiy hayot"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Oddiy hayot</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Psixologiya"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Psixologiya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Romantika"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Romantika</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Sarguzasht"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sarguzasht</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Sehr"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sehr</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Seynen"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Seynen</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Shoujo(G)"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Shoujo(G)</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Shounen"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Shounen</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Sirli"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sirli</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Sistema"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sistema</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Sport"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sport</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Super kuch"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Super kuch</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Tarix"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tarix</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Tragediya"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tragediya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="genre"
+                     value="Triller"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Triller</span>
+            </label>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group overflow-hidden rounded-[1.5rem] border border-white/[0.08] bg-white/[0.03]">
+        <button type="button" class="filter-header flex w-full items-center justify-between px-4 py-3.5 text-left text-white">
+          <span class="font-semibold">Yosh chegarasi</span>
+          <svg class="filter-arrow h-5 w-5 text-purple-300 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="filter-content border-t border-white/[0.06] px-4 pb-4 pt-3 hidden">
+          <div class="grid grid-cols-2 gap-2">
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="age_rating"
+                     value="Belgilanmagan"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Belgilanmagan</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="age_rating"
+                     value="6+"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>6+</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="age_rating"
+                     value="12+"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>12+</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="age_rating"
+                     value="16+"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>16+</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="age_rating"
+                     value="18+"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>18+</span>
+            </label>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group overflow-hidden rounded-[1.5rem] border border-white/[0.08] bg-white/[0.03]">
+        <button type="button" class="filter-header flex w-full items-center justify-between px-4 py-3.5 text-left text-white">
+          <span class="font-semibold">Turi</span>
+          <svg class="filter-arrow h-5 w-5 text-purple-300 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="filter-content border-t border-white/[0.06] px-4 pb-4 pt-3 hidden">
+          <div class="grid grid-cols-2 gap-2">
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="type"
+                     value="Manga"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Manga</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="type"
+                     value="Manhwa"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Manhwa</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="type"
+                     value="Manhua"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Manhua</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="type"
+                     value="Komiks"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Komiks</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="type"
+                     value="OEL-manga"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>OEL-manga</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="type"
+                     value="Rumanga"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Rumanga</span>
+            </label>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group overflow-hidden rounded-[1.5rem] border border-white/[0.08] bg-white/[0.03]">
+        <button type="button" class="filter-header flex w-full items-center justify-between px-4 py-3.5 text-left text-white">
+          <span class="font-semibold">Teglar</span>
+          <svg class="filter-arrow h-5 w-5 text-purple-300 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="filter-content border-t border-white/[0.06] px-4 pb-4 pt-3 hidden">
+          <div class="flex flex-wrap gap-2">
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Afsonaviy maxluqlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Afsonaviy maxluqlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Afsonaviy qurol"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Afsonaviy qurol</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Ajdaholar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Ajdaholar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Aka va singil"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Aka va singil</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Amneziya / Xotira yo‘qotish"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Amneziya / Xotira yo‘qotish</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Anti-qahramon"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Anti-qahramon</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Apokalipsis"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Apokalipsis</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Aqlli bosh qahramon"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Aqlli bosh qahramon</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Aqlli irqlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Aqlli irqlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Armiya"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Armiya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Artefaktlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Artefaktlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Askarlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Askarlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Bosh qahramon - ayol"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Bosh qahramon - ayol</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Bosh qahramon - erkak"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Bosh qahramon - erkak</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Boshqa dunyodan esdaliklar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Boshqa dunyodan esdaliklar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Daraja tizimi"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Daraja tizimi</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Dehqonchilik"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Dehqonchilik</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Demonlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Demonlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Do‘stlik"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Do‘stlik</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Dunyoni egallash"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Dunyoni egallash</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Dunyoni qutqarish"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Dunyoni qutqarish</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Elflar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Elflar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Falsafa"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Falsafa</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Fan"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Fan</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Farishtalar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Farishtalar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Gildiyalar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Gildiyalar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Go&#x27;blinlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Go&#x27;blinlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Harbiylar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Harbiylar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Hayotiy darslar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Hayotiy darslar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Hayvon do‘stlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Hayvon do‘stlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Hayvonsifat odamlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Hayvonsifat odamlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Hokimiyat uchun kurash"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Hokimiyat uchun kurash</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Iblis qizi"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Iblis qizi</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Iblislar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Iblislar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Iblislar malikasi"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Iblislar malikasi</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Imba bosh qahramon"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Imba bosh qahramon</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Imperiyalar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Imperiyalar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Irodali bosh qahramon"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Irodali bosh qahramon</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Jinlar hukmdori"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Jinlar hukmdori</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Kelajak"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Kelajak</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Ko‘nikmalar / Qobiliyatlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Ko‘nikmalar / Qobiliyatlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Kuch darajalari"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Kuch darajalari</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Kuchayish"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Kuchayish</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Kultivatsiya"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Kultivatsiya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Kutilmagan kuch"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Kutilmagan kuch</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Kvestlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Kvestlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Mafiya"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Mafiya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Maxluqlar / Yirtqichlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Maxluqlar / Yirtqichlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Murim"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Murim</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="O&#x27;yin elementlari"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>O&#x27;yin elementlari</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Ofis xodimlari"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Ofis xodimlari</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Omon qolish"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Omon qolish</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Oshpazlik"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Oshpazlik</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="O‘lim xavfi / xavfli ishlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>O‘lim xavfi / xavfli ishlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="O‘qotar qurol"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>O‘qotar qurol</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="O‘rta asrlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>O‘rta asrlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="O‘tmishga qaytish"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>O‘tmishga qaytish</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Politsiya"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Politsiya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Qahramon o&#x27;zgaradi"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Qahramon o&#x27;zgaradi</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Qasos"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Qasos</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Qayta tug‘ilish"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Qayta tug‘ilish</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Qilich janglari"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Qilich janglari</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Qiyomat"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Qiyomat</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Qullar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Qullar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Ritsarlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Ritsarlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Robotlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Robotlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Sehr"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sehr</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Sehrgarlar / jodugarlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sehrgarlar / jodugarlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Sehrli akademiya"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sehrli akademiya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Sehrli mavjudotlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sehrli mavjudotlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Sevgi"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sevgi</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Shafqatsiz dunyo"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Shafqatsiz dunyo</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Shantaj"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Shantaj</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Sistema"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sistema</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Siyosat"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Siyosat</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Sobir sevishganlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sobir sevishganlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Sovuq qurol"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sovuq qurol</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Sport tanasi"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Sport tanasi</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Tana almashuvi"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tana almashuvi</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Tarix"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tarix</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Tibbiyot"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tibbiyot</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Tirik o‘liklar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tirik o‘liklar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Tizim"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tizim</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Ustoz"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Ustoz</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Vampirlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Vampirlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Vaqt bo&#x27;ylab sayohat"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Vaqt bo&#x27;ylab sayohat</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Xizmatkorlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Xizmatkorlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Xudolar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Xudolar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Yakuza"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Yakuza</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Yaponiya"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Yaponiya</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Yashirin shaxsiyat"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Yashirin shaxsiyat</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Yo&#x27;ldosh hayvonlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Yo&#x27;ldosh hayvonlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Yolg‘izlik"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Yolg‘izlik</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Yollanma qotillar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Yollanma qotillar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Yovuz arvohlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Yovuz arvohlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Zamonaviy dunyo"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Zamonaviy dunyo</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Zindonlar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Zindonlar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Zombilar"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Zombilar</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="tag"
+                     value="Zo‘ravonlik / Shafqatsizlik"
+                     
+                     class="h-3.5 w-3.5 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Zo‘ravonlik / Shafqatsizlik</span>
+            </label>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group overflow-hidden rounded-[1.5rem] border border-white/[0.08] bg-white/[0.03]">
+        <button type="button" class="filter-header flex w-full items-center justify-between px-4 py-3.5 text-left text-white">
+          <span class="font-semibold">Chiqarilgan yili</span>
+          <svg class="filter-arrow h-5 w-5 text-purple-300 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="filter-content border-t border-white/[0.06] px-4 pb-4 pt-3 hidden">
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block">
+              <span class="mb-1 block text-xs text-slate-500">Dan</span>
+              <input type="number"
+                     name="min_year"
+                     value=""
+                     placeholder="1950"
+                     class="w-full rounded-2xl border border-white/10 bg-[#111a2b] px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20">
+            </label>
+            <label class="block">
+              <span class="mb-1 block text-xs text-slate-500">Gacha</span>
+              <input type="number"
+                     name="max_year"
+                     value=""
+                     placeholder="2026"
+                     class="w-full rounded-2xl border border-white/10 bg-[#111a2b] px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group overflow-hidden rounded-[1.5rem] border border-white/[0.08] bg-white/[0.03]">
+        <button type="button" class="filter-header flex w-full items-center justify-between px-4 py-3.5 text-left text-white">
+          <span class="font-semibold">Taytl holati</span>
+          <svg class="filter-arrow h-5 w-5 text-purple-300 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="filter-content border-t border-white/[0.06] px-4 pb-4 pt-3 hidden">
+          <div class="space-y-2">
+            
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="radio"
+                     name="status"
+                     value="Ongoing"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Davom etmoqda</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="radio"
+                     name="status"
+                     value="Completed"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>To&#x27;liq chiqarilgan</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="radio"
+                     name="status"
+                     value="Stopped"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Bekor qilingan</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="radio"
+                     name="status"
+                     value="Paused"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>To&#x27;xtatilgan</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="radio"
+                     name="status"
+                     value="Announced"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>E&#x27;lon qilingan</span>
+            </label>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group overflow-hidden rounded-[1.5rem] border border-white/[0.08] bg-white/[0.03]">
+        <button type="button" class="filter-header flex w-full items-center justify-between px-4 py-3.5 text-left text-white">
+          <span class="font-semibold">Tarjima holati</span>
+          <svg class="filter-arrow h-5 w-5 text-purple-300 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="filter-content border-t border-white/[0.06] px-4 pb-4 pt-3 hidden">
+          <div class="grid grid-cols-2 gap-2">
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="translation_status"
+                     value="Not Translated"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tarjima qilinmagan</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="translation_status"
+                     value="In Progress"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tarjima qilinmoqda</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="translation_status"
+                     value="Completed"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tarjima qilingan</span>
+            </label>
+            
+            <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-sm text-slate-300 transition hover:border-purple-400/30 hover:bg-white/[0.04]">
+              <input type="checkbox"
+                     name="translation_status"
+                     value="Dropped"
+                     
+                     class="h-4 w-4 appearance-none rounded-full border-2 border-slate-500 transition-colors checked:border-transparent checked:bg-purple-500 focus:outline-none">
+              <span>Tashlab qo&#x27;yilgan</span>
+            </label>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group overflow-hidden rounded-[1.5rem] border border-white/[0.08] bg-white/[0.03]">
+        <button type="button" class="filter-header flex w-full items-center justify-between px-4 py-3.5 text-left text-white">
+          <span class="font-semibold">Boblar</span>
+          <svg class="filter-arrow h-5 w-5 text-purple-300 transition-transform " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="filter-content border-t border-white/[0.06] px-4 pb-4 pt-3 hidden">
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block">
+              <span class="mb-1 block text-xs text-slate-500">Dan</span>
+              <input type="number"
+                     name="min_chapters"
+                     value=""
+                     placeholder="0"
+                     class="w-full rounded-2xl border border-white/10 bg-[#111a2b] px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20">
+            </label>
+            <label class="block">
+              <span class="mb-1 block text-xs text-slate-500">Gacha</span>
+              <input type="number"
+                     name="max_chapters"
+                     value=""
+                     placeholder="999+"
+                     class="w-full rounded-2xl border border-white/10 bg-[#111a2b] px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20">
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-white/[0.08] bg-[#0b1220] px-4 py-4">
+      <button type="submit"
+              class="w-full rounded-2xl bg-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(88,28,135,0.28)] transition hover:bg-purple-500">
+        Filtrlarni qo'llash
+      </button>
+      <a href="index.html"
+         class="mt-3 block text-center text-sm font-medium text-slate-300 transition hover:text-white">
+        Barcha filtrlarni tozalash
+      </a>
+    </div>
+  </form>
+</aside>
+
+
+    <main id="mainContent" data-browse-main class="min-w-0 flex-1">
+      <section class="mb-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <button type="button"
+                  class="toggle-filters inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white transition hover:border-purple-400/60 hover:bg-white/[0.08] xl:hidden"
+                  data-browse-mobile-toggle>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M7 12h10M10 18h4" />
+            </svg>
+            <span>Filtrlar</span>
+            
+            <span class="rounded-full bg-purple-500/90 px-2 py-0.5 text-xs font-bold text-white">1</span>
+            
+          </button>
+
+          <label for="catalogSearch" class="sr-only">Qidiruv</label>
+          <div class="relative min-w-0 flex-1 sm:max-w-xl">
+            <input id="catalogSearch"
+                   form="filterForm"
+                   type="text"
+                   name="search"
+                   value=""
+                   placeholder="Nom bo'yicha qidiring"
+                   class="w-full rounded-2xl border border-white/10 bg-[#111a2b] py-3 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          <div class="flex min-w-0 items-center gap-2 sm:ml-auto">
+            <label for="sortSelect" class="shrink-0 text-sm font-semibold text-slate-300">Saralash</label>
+            <div class="relative min-w-0 w-full sm:w-[12rem]">
+              <select id="sortSelect"
+                      class="min-w-0 w-full appearance-none rounded-xl border border-white/10 bg-[#0f172a] py-2.5 pl-3 pr-10 text-sm font-medium text-white outline-none transition focus:border-purple-400/60 focus:ring-2 focus:ring-purple-500/20"
+                      style="color-scheme: dark;">
+                <option value="chapters" selected style="background-color:#0f172a;color:#ffffff;">Boblar soni</option>
+                <option value="title_asc"  style="background-color:#0f172a;color:#ffffff;">Nomi (A-Z)</option>
+                <option value="title_desc"  style="background-color:#0f172a;color:#ffffff;">Nomi (Z-A)</option>
+              </select>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt-6" data-browse-results>
+        <div data-browse-grid class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          
+          <article data-browse-card class="group h-full">
+            <a href="../marshal-qiroli/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/27750.webp"
+                       alt="Marshal Qiroli"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Marshal Qiroli</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manga</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../qayta-tugilgach-pul-bilan-kuchayaman/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/5048590897054330609_120.webp"
+                       alt="Qayta tug‘ilgach: Pul bilan kuchayaman"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Qayta tug‘ilgach: Pul bilan kuchayaman</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manhwa</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../sivilizatsiya-donishmandlari/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/1000005834.webp"
+                       alt="Sivilizatsiya donishmandlari"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Sivilizatsiya donishmandlari</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manhwa</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../xayoliy-dunyodagi-yovvoyining-hayoti/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/1000082019.webp"
+                       alt="Xayoliy dunyodagi yovvoyining hayoti"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Xayoliy dunyodagi yovvoyining hayoti</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manhwa</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../yashirin-agent-timsoh-qushi/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/photo_2026-05-04_10-22-12.webp"
+                       alt="Yashirin agent: Timsoh-qushi"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Yashirin agent: Timsoh-qushi</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manhwa</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../dozoxiy-jannat/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/1000006132.webp"
+                       alt="Do&#x27;zoxiy Jannat"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Do&#x27;zoxiy Jannat</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manga</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../keling-janirni-ozgartiramiz/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/1000004023.webp"
+                       alt="Keling, Janirni o&#x27;zgartiramiz"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Keling, Janirni o&#x27;zgartiramiz</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manhwa</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../kor-gersog-bilan-unashuv/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/1000005132.webp"
+                       alt="Ko&#x27;r gersog bilan unashuv"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Ko&#x27;r gersog bilan unashuv</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manhwa</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../falokat-darajasidagi-olim-ritsarining-qaytishi/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/img_20260409_180349.webp"
+                       alt="Ming yil bir xil kunda qolib ketdim"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Ming yil bir xil kunda qolib ketdim</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manhua</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../sakamoto-kunlari/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/2025-07-06_222746138.webp"
+                       alt="Sakamoto Kunlari"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Sakamoto Kunlari</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manga</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../sevib-qoling-soxta-farishtalar/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/1000006837.webp"
+                       alt="Sevib qoling, soxta farishtalar"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Sevib qoling, soxta farishtalar</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manga</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+          <article data-browse-card class="group h-full">
+            <a href="../shifokorning-qayta-tugulishi/index.html" class="flex h-full flex-col gap-3">
+              <div class="relative overflow-hidden rounded-[1.5rem] bg-[#0b1020] shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_52px_rgba(2,6,23,0.5)]">
+                <div class="aspect-[0.72]">
+                  <img src="https://media.mangalab.uz/covers/img_1032.webp"
+                       alt="Shifokorning qayta tug&#x27;ulishi"
+                       class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]">
+                </div>
+
+                
+                  
+                
+              </div>
+
+              <div class="flex flex-1 flex-col px-1">
+                <div class="space-y-1.5">
+                  <h3 class="text-[15px] font-semibold leading-5 text-white">Shifokorning qayta tug&#x27;ulishi</h3>
+                  <div class="text-[12px] font-semibold text-slate-400">
+                    <span>Manhwa</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+          
+        </div>
+      </section>
+
+      
+      
+      <div class="mt-8 py-4">
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          
+          <a href="indexeef6.html?genre=Komediya&amp;page=5"
+             class="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-purple-400/50 hover:bg-purple-500/15 hover:text-white"
+             aria-label="Oldingi sahifa">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </a>
+          
+
+          
+            
+            <a href="indexc931.html?genre=Komediya&amp;page=1"
+               class="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-purple-400/50 hover:bg-purple-500/15 hover:text-white">
+              1
+            </a>
+            
+          
+            
+            <span class="px-3 py-2 text-slate-500">…</span>
+            
+          
+            
+            <a href="indexeef6.html?genre=Komediya&amp;page=5"
+               class="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-purple-400/50 hover:bg-purple-500/15 hover:text-white">
+              5
+            </a>
+            
+          
+            
+            <span class="rounded-2xl bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(88,28,135,0.28)]">6</span>
+            
+          
+
+          
+        </div>
+      </div>
+      
+      
+    </main>
+  </div>
+</div>
+
+
+<script src="../static/js/sidebar.ffbbc3f8b361.js"></script>
+<script>
+  (function () {
+    const select = document.getElementById('sortSelect');
+    if (!select) return;
+
+    select.addEventListener('change', function () {
+      const url = new URL(window.location.html);
+      url.searchParams.set('sort', this.value);
+      url.searchParams.delete('page');
+      window.location.href = url.toString();
+    });
+  })();
+</script>
+
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="border-t border-white/10 bg-[#111c28] sm:px-16 lg:px-16">
+    <div class="px-4 sm:px-0 pt-12 pb-2">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h4 class="text-white font-extrabold tracking-wide mb-4">KATALOG</h4>
+          <ul class="space-y-3 text-slate-300">
+            <li><a class="hover:text-purple-400" href="index.html">Taytllar</a></li>
+            <li><a class="hover:text-purple-400" href="../accounts/tarjimon/top/index.html">Tarjimonlar</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-extrabold tracking-wide mb-4">INFORMASIYA</h4>
+          <ul class="space-y-3 text-slate-300">
+            <li>
+              <a href="#"
+                class="hover:text-purple-400 js-open-coins"
+                role="button"
+                aria-controls="coinsModal">
+                Tanga sotib olish
+              </a>
+            </li>
+            <li>
+              <a href="#"
+                 class="hover:text-purple-400"
+                 role="button"
+                 data-footer-info-trigger="upload"
+                 data-footer-info-kind="upload">
+                Tarjimalaringizni saytga joylash uchun
+              </a>
+            </li>
+            <li>
+              <a href="#"
+                 class="hover:text-purple-400"
+                 role="button"
+                 data-footer-info-trigger="advertising"
+                 data-footer-info-kind="advertising">
+                Reklama
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-extrabold tracking-wide mb-4">AKKAUNT</h4>
+          <ul class="space-y-3 text-slate-300">
+            <li><a class="hover:text-purple-400" href="../accounts/login/index.html">Kirish</a></li>
+            <li><a class="hover:text-purple-400" href="../accounts/signup/index.html">Ro'yxatdan o'tish</a></li>
+            <li><a class="hover:text-purple-400" href="../accounts/password-reset/index.html">Parolni tiklash</a></li>
+            <li><a class="hover:text-purple-400" href="../accounts/settings/username/index.html">Usernameni o'zgartrish</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-extrabold tracking-wide mb-4">Bizning ijtimoiy tarmoq</h4>
+          <div class="flex items-center gap-3 text-white">
+            <a class="inline-flex items-center justify-center w-10 h-10 rounded-md bg-white/10 hover:bg-white/20"
+              href="https://t.me/mangalabuz" target="_blank" rel="noopener" aria-label="Telegram">
+              <iconify-icon icon="mdi:telegram" width="22" height="22"></iconify-icon>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 pt-2 border-t border-white/10">
+        <div class="flex w-full items-center justify-between gap-4">
+          <div class="flex items-center gap-3 flex-1">
+            <img src="https://mangalab.uz/static/images/logo.7af4b7013056.png" alt="Mangalab" class="w-14 h-14 shrink-0">
+            <span class="text-slate-300 truncate">
+              В© 2026<span class="hidden md:inline"> Barcha huquqlar himoyalangan</span>
+            </span>
+          </div>
+          <a href="../cdn-cgi/l/email-protection.html#2c55435e484d416c414d424b4d404d4e025956" class="inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-purple-600 hover:bg-purple-500 shrink-0">
+            Biz bilan bog'laning
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="footerInfoModal"
+       class="hidden fixed inset-0 z-[80] px-4 py-6"
+       data-footer-info-modal>
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"
+         data-footer-info-backdrop></div>
+    <div class="relative flex min-h-full items-center justify-center">
+      <section class="relative w-full max-w-lg rounded-[1.8rem] border border-white/10 bg-[#131d2b] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)] sm:p-7"
+               data-footer-info-sheet>
+        <button type="button"
+                class="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-slate-300 transition hover:bg-white/10 hover:text-white"
+                data-footer-info-close
+                aria-label="Yopish">
+          <i class="fas fa-times"></i>
+        </button>
+
+        <div class="pr-12">
+          <div class="inline-flex items-center rounded-full border border-purple-400/20 bg-purple-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-purple-200">
+            MangaLab
+          </div>
+          <h3 id="footerInfoTitle"
+              class="mt-4 text-2xl font-bold text-white"
+              data-footer-info-title></h3>
+          <div class="mt-4 space-y-3 text-sm leading-7 text-slate-300" data-footer-info-body></div>
+        </div>
+
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+          <a href="https://t.me/mangalabuzadmin"
+             target="_blank"
+             rel="noopener"
+             class="inline-flex items-center justify-center gap-2 rounded-[1rem] bg-purple-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-purple-500"
+             data-footer-info-action>
+            <i class="fa-brands fa-telegram text-base" aria-hidden="true"></i>
+            <span>Telegram orqali bog'lanish</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    function siteShell() {
+      return {
+        openMenu: false,
+        openDrawer: false,
+        openPanel: null,
+        mOpenPanel: null,
+        openSearch: false,
+        searchScope: "titles",
+        searchQuery: "",
+        searchLoading: false,
+        searchResults: [],
+        activeResultIndex: -1,
+        searchHasMore: false,
+        searchResultsUrl: "/browse/",
+        searchDebounce: null,
+        searchAbortController: null,
+
+        togglePanel(id) {
+          this.openPanel = this.openPanel === id ? null : id;
+        },
+
+        mTogglePanel(id) {
+          this.mOpenPanel = this.mOpenPanel === id ? null : id;
+        },
+
+        openSearchModal(scope = this.searchScope) {
+          this.searchScope = scope || this.searchScope;
+          this.openSearch = true;
+          this.searchResultsUrl = this.buildSearchResultsUrl(this.searchScope, this.searchQuery);
+          this.$nextTick(() => {
+            if (this.$refs.headerSearchInput) {
+              this.$refs.headerSearchInput.focus();
+              this.$refs.headerSearchInput.select();
+            }
+          });
+          this.queueSearch();
+        },
+
+        closeSearchModal() {
+          this.openSearch = false;
+          this.searchLoading = false;
+          this.activeResultIndex = -1;
+          if (this.searchDebounce) {
+            clearTimeout(this.searchDebounce);
+            this.searchDebounce = null;
+          }
+          if (this.searchAbortController) {
+            this.searchAbortController.abort();
+            this.searchAbortController = null;
+          }
+        },
+
+        setSearchScope(scope) {
+          if (!scope || this.searchScope === scope) {
+            this.$nextTick(() => this.$refs.headerSearchInput && this.$refs.headerSearchInput.focus());
+            return;
+          }
+          this.searchScope = scope;
+          this.searchResults = [];
+          this.searchHasMore = false;
+          this.activeResultIndex = -1;
+          this.searchResultsUrl = this.buildSearchResultsUrl(scope, this.searchQuery);
+          this.$nextTick(() => this.$refs.headerSearchInput && this.$refs.headerSearchInput.focus());
+          this.queueSearch();
+        },
+
+        buildSearchResultsUrl(scope, query) {
+          const cleanQuery = (query || "").trim();
+          const params = new URLSearchParams();
+          if (cleanQuery) {
+            params.set(scope === "titles" ? "search" : "q", cleanQuery);
+          }
+          const path = scope === "titles" ? "/browse/" : "/accounts/tarjimon/top/";
+          return params.toString() ? `${path}?${params.toString()}` : path;
+        },
+
+        queueSearch() {
+          if (this.searchDebounce) {
+            clearTimeout(this.searchDebounce);
+          }
+          const cleanQuery = (this.searchQuery || "").trim();
+          this.searchResultsUrl = this.buildSearchResultsUrl(this.searchScope, cleanQuery);
+          if (cleanQuery.length < 2) {
+            this.searchLoading = false;
+            this.searchResults = [];
+            this.searchHasMore = false;
+            this.activeResultIndex = -1;
+            if (this.searchAbortController) {
+              this.searchAbortController.abort();
+              this.searchAbortController = null;
+            }
+            return;
+          }
+          this.searchLoading = true;
+          this.searchDebounce = setTimeout(() => this.fetchSearchResults(), 250);
+        },
+
+        fetchSearchResults() {
+          const cleanQuery = (this.searchQuery || "").trim();
+          if (cleanQuery.length < 2) {
+            this.searchLoading = false;
+            this.searchResults = [];
+            this.searchHasMore = false;
+            this.activeResultIndex = -1;
+            return;
+          }
+          if (this.searchAbortController) {
+            this.searchAbortController.abort();
+          }
+          const controller = new AbortController();
+          this.searchAbortController = controller;
+          const params = new URLSearchParams({
+            scope: this.searchScope,
+            q: cleanQuery,
+          });
+
+          fetch(`/search/header/?${params.toString()}`, {
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            signal: controller.signal,
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`Search request failed: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then((data) => {
+              if (this.searchAbortController !== controller) {
+                return;
+              }
+              this.searchResults = Array.isArray(data.items) ? data.items : [];
+              this.searchHasMore = !!data.has_more;
+              this.searchResultsUrl = data.results_url || this.buildSearchResultsUrl(this.searchScope, cleanQuery);
+              this.activeResultIndex = this.searchResults.length ? 0 : -1;
+              this.$nextTick(() => this.scrollActiveSearchResultIntoView());
+            })
+            .catch((error) => {
+              if (error.name === "AbortError") {
+                return;
+              }
+              this.searchResults = [];
+              this.searchHasMore = false;
+              this.activeResultIndex = -1;
+              this.searchResultsUrl = this.buildSearchResultsUrl(this.searchScope, cleanQuery);
+            })
+            .finally(() => {
+              if (this.searchAbortController === controller) {
+                this.searchLoading = false;
+                this.searchAbortController = null;
+              }
+            });
+        },
+
+        moveSearchSelection(step) {
+          if (!this.searchResults.length) {
+            return;
+          }
+          const total = this.searchResults.length;
+          if (this.activeResultIndex < 0) {
+            this.activeResultIndex = step > 0 ? 0 : total - 1;
+          } else {
+            this.activeResultIndex = (this.activeResultIndex + step + total) % total;
+          }
+          this.$nextTick(() => this.scrollActiveSearchResultIntoView());
+        },
+
+        scrollActiveSearchResultIntoView() {
+          const items = document.querySelectorAll("[data-header-search-result]");
+          const activeItem = items[this.activeResultIndex];
+          if (activeItem) {
+            activeItem.scrollIntoView({ block: "nearest" });
+          }
+        },
+
+        goToSearchResult(item) {
+          if (!item || !item.url) {
+            return;
+          }
+          window.location.href = item.url;
+        },
+
+        submitSearch() {
+          if (this.activeResultIndex >= 0 && this.searchResults[this.activeResultIndex]) {
+            this.goToSearchResult(this.searchResults[this.activeResultIndex]);
+            return;
+          }
+          const cleanQuery = (this.searchQuery || "").trim();
+          if (cleanQuery.length < 2 || !this.searchResultsUrl) {
+            return;
+          }
+          window.location.href = this.searchResultsUrl;
+        },
+
+        handleWindowKeydown(event) {
+          const target = event.target;
+          const tagName = target && target.tagName ? target.tagName.toLowerCase() : "";
+          const isEditable = !!(
+            target &&
+            (target.isContentEditable || ["input", "textarea", "select"].includes(tagName))
+          );
+
+          if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+            event.preventDefault();
+            this.openSearchModal();
+            return;
+          }
+
+          if (event.key === "/" && !this.openSearch && !isEditable) {
+            event.preventDefault();
+            this.openSearchModal();
+            return;
+          }
+
+          if (event.key === "Escape") {
+            this.openMenu = false;
+            this.openDrawer = false;
+            if (this.openSearch) {
+              this.closeSearchModal();
+            }
+          }
+        },
+      };
+    }
+  </script>
+  <script>
+    (function () {
+      "use strict";
+
+      const modal = document.getElementById("footerInfoModal");
+      if (!modal) return;
+
+      const titleNode = modal.querySelector("[data-footer-info-title]");
+      const bodyNode = modal.querySelector("[data-footer-info-body]");
+      const actionNode = modal.querySelector("[data-footer-info-action]");
+      const triggers = document.querySelectorAll("[data-footer-info-trigger]");
+      const closeButtons = modal.querySelectorAll("[data-footer-info-close]");
+      const backdrop = modal.querySelector("[data-footer-info-backdrop]");
+
+      const contentMap = {
+        upload: {
+          title: "Tarjimalarni joylashtirish",
+          lines: [
+            "MangaLab'da tarjimalaringizni joylash bepul. Tarjimani saytga yuklash yoki jarayon bo'yicha qo'shimcha savollaringiz bo'lsa, Telegram'da @mangalabuzadmin ga yozing.",
+            "Sizga joylashtirish tartibi, kerakli ma'lumotlar va keyingi qadamlar bo'yicha tezkor yordam beriladi.",
+          ],
+        },
+        advertising: {
+          title: "Reklama joylashtirish",
+          lines: [
+            "MangaLab'da reklama joylashtirish, hamkorlik shartlari va mavjud formatlar bo'yicha ma'lumot olish uchun Telegram'da @mangalabuzadmin ga murojaat qiling.",
+            "So'rovingizga mos variantlar, narxlar va joylash tartibi bo'yicha sizga tezda javob beriladi.",
+          ],
+        },
+      };
+
+      const syncScrollState = () => {
+        const buyModal = document.getElementById("buyModal");
+        const coinsModal = document.getElementById("coinsModal");
+        const hasOpenModal = [modal, buyModal, coinsModal].some((node) => node && !node.classList.contains("hidden"));
+        if (hasOpenModal) {
+          document.documentElement.classList.add("overflow-hidden");
+        } else {
+          document.documentElement.classList.remove("overflow-hidden");
+        }
+      };
+
+      const renderBody = (lines) => {
+        if (!bodyNode) return;
+        bodyNode.innerHTML = "";
+        (Array.isArray(lines) ? lines : []).forEach((line) => {
+          const paragraph = document.createElement("p");
+          paragraph.textContent = line;
+          bodyNode.appendChild(paragraph);
+        });
+      };
+
+      const openModal = (kind) => {
+        const payload = contentMap[kind];
+        if (!payload) return;
+        if (titleNode) titleNode.textContent = payload.title;
+        renderBody(payload.lines);
+        if (actionNode) actionNode.setAttribute("href", "https://t.me/mangalabuzadmin");
+        modal.classList.remove("hidden");
+        syncScrollState();
+      };
+
+      const closeModal = () => {
+        modal.classList.add("hidden");
+        syncScrollState();
+      };
+
+      triggers.forEach((trigger) => {
+        trigger.addEventListener("click", (event) => {
+          event.preventDefault();
+          openModal(trigger.dataset.footerInfoKind || "");
+        });
+      });
+
+      closeButtons.forEach((button) => {
+        button.addEventListener("click", closeModal);
+      });
+
+      if (backdrop) {
+        backdrop.addEventListener("click", closeModal);
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !modal.classList.contains("hidden")) {
+          closeModal();
+        }
+      });
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script>
+    window.showSiteToast = function (text, type = "info", options = {}) {
+      if (typeof Toastify === "undefined") {
+        alert(text);
+        return;
+      }
+
+      const {
+        duration = 3500,
+        gravity = "top",
+        position = "center",
+        close = true,
+        stopOnFocus = true,
+      } = options;
+
+      Toastify({
+        text,
+        duration,
+        close,
+        gravity,
+        position,
+        stopOnFocus,
+        style: {
+          background: "rgba(18, 27, 42, 0.96)",
+          color: "#f8fafc",
+          borderRadius: "14px",
+          border: "1px solid rgba(168, 85, 247, 0.35)",
+          boxShadow: "0 14px 34px rgba(0, 0, 0, 0.28)",
+        },
+      }).showToast();
+    };
+  </script>
+  
+  
+  <div id="buyModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm p-4">
+  <div class="relative top-1/2 mx-auto w-full max-w-md -translate-y-1/2 rounded-2xl border border-purple-500/30 bg-[#182434] p-6 text-center shadow-2xl shadow-purple-500/10 sm:max-w-xl sm:p-8">
+    <div class="mb-4 flex justify-center">
+      <div class="rounded-full border border-yellow-500/40 bg-yellow-500/20 p-4">
+        <i class="fas fa-crown text-3xl text-yellow-400" aria-hidden="true"></i>
+      </div>
+    </div>
+
+    <h2 class="mb-3 text-2xl font-bold text-yellow-400">Premium bob</h2>
+    <p class="mb-4 leading-relaxed text-gray-300">
+      "<span id="pmTitle" class="font-medium text-white"></span>" mangasining
+      <span id="pmChapter" class="text-yellow-300"></span>-bobi pullik kontent hisoblanadi.
+    </p>
+
+    <div class="mb-5 rounded-lg border border-gray-600/50 bg-gray-700/50 p-4">
+      <p class="text-lg text-gray-200">
+        Narx: <span id="pmPrice" class="font-bold text-purple-400">0</span> tanga
+      </p>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-3">
+      <button id="pmBuyBtn"
+              class="flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-purple-600 px-4 py-3 transition-all hover:bg-purple-700 sm:w-auto sm:min-w-[12rem]">
+        <i class="fas fa-shopping-cart" data-pm-primary-icon aria-hidden="true"></i>
+        <span data-pm-primary-text>Sotib olish</span>
+      </button>
+      <button id="pmOpenCoinsBtn"
+              class="flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-amber-600 px-4 py-3 text-white transition-all hover:bg-amber-700 sm:w-auto sm:min-w-[14rem]">
+        <i class="fas fa-coins" aria-hidden="true"></i>
+        <span>Tangalar sotib olish</span>
+      </button>
+      <button data-close-modal="#buyModal"
+              class="flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-gray-600 px-4 py-3 text-white transition-all hover:bg-gray-700 sm:w-auto sm:min-w-[11rem]">
+        <i class="fas fa-times" aria-hidden="true"></i>
+        <span>Bekor qilish</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="coinsModal"
+     class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md p-4 sm:p-6"
+     data-coins-modal>
+  <div class="flex min-h-full items-center justify-center">
+    <div class="relative w-full max-w-lg overflow-hidden rounded-[2rem] border border-white/10 bg-[#182434] shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
+      <div class="absolute inset-x-0 top-0 h-px bg-white/10"></div>
+
+      <button data-close-modal="#coinsModal"
+              class="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white"
+              aria-label="Yopish">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+
+      <div class="p-5 sm:p-6">
+        <div class="pr-14">
+          <div class="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-yellow-400/20 bg-yellow-400/10 text-yellow-300">
+            <i class="fas fa-coins text-2xl" aria-hidden="true"></i>
+          </div>
+
+          <h3 class="text-2xl font-bold tracking-tight text-white sm:text-[2rem]">Tangalar sotib olish</h3>
+          <p class="mt-2 max-w-md text-sm leading-7 text-slate-300 sm:text-[15px]">
+            Tangalarni tez va qulay sotib olish uchun Telegram orqali bog'laning.
+            To'lov tasdiqlangach, tangalar akkountingizga qo'shiladi.
+          </p>
+        </div>
+
+        <div class="mt-5 rounded-[1.6rem] border border-sky-400/15 bg-[#111a29] p-4">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div class="text-xs font-semibold tracking-wide text-slate-400">Telegram operator</div>
+              <div class="mt-1 text-base font-semibold text-white">@mangalabuzadmin</div>
+            </div>
+            <a href="https://t.me/mangalabuzadmin"
+               target="_blank"
+               rel="noopener"
+               class="inline-flex items-center justify-center gap-2 rounded-xl bg-sky-500/15 px-4 py-3 text-sm font-semibold text-sky-300 transition hover:bg-sky-500/20 hover:text-sky-200">
+              <i class="fab fa-telegram-plane" aria-hidden="true"></i>
+              <span>Telegramga yozish</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-5 space-y-3">
+          <div class="rounded-[1.4rem] border border-white/10 bg-[#111a29] px-4 py-4 transition hover:border-yellow-400/25 hover:bg-[#132033]">
+            <div class="flex items-center justify-between gap-4">
+              <div class="min-w-0">
+                <div class="flex items-center gap-3 text-white">
+                  <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-yellow-400/10 text-yellow-300">
+                    <i class="fas fa-coins" aria-hidden="true"></i>
+                  </span>
+                  <div class="min-w-0">
+                    <div class="text-base font-semibold">100 ta tanga</div>
+                    <div class="text-sm text-slate-400">Boshlash uchun qulay paket</div>
+                  </div>
+                </div>
+              </div>
+              <div class="shrink-0 text-right">
+                <div class="text-lg font-bold text-yellow-300">10 000 so'm</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[1.4rem] border border-yellow-400/20 bg-[#111a29] px-4 py-4 transition hover:border-yellow-400/30 hover:bg-[#132033]">
+            <div class="mb-3 flex items-center justify-between gap-3">
+              <span class="inline-flex rounded-full bg-yellow-400/10 px-3 py-1 text-xs font-semibold text-yellow-300">
+                Eng qulay paket
+              </span>
+              <span class="text-xs font-medium text-slate-400">Ko'p tanlanadi</span>
+            </div>
+            <div class="flex items-center justify-between gap-4">
+              <div class="min-w-0">
+                <div class="flex items-center gap-3 text-white">
+                  <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-yellow-400/10 text-yellow-300">
+                    <i class="fas fa-coins" aria-hidden="true"></i>
+                  </span>
+                  <div class="min-w-0">
+                    <div class="text-base font-semibold">500 ta tanga</div>
+                    <div class="text-sm text-slate-400">Ko'proq premium boblar uchun</div>
+                  </div>
+                </div>
+              </div>
+              <div class="shrink-0 text-right">
+                <div class="text-lg font-bold text-yellow-300">50 000 so'm</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[1.4rem] border border-white/10 bg-[#111a29] px-4 py-4 transition hover:border-yellow-400/25 hover:bg-[#132033]">
+            <div class="flex items-center justify-between gap-4">
+              <div class="min-w-0">
+                <div class="flex items-center gap-3 text-white">
+                  <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-yellow-400/10 text-yellow-300">
+                    <i class="fas fa-coins" aria-hidden="true"></i>
+                  </span>
+                  <div class="min-w-0">
+                    <div class="text-base font-semibold">1000 ta tanga</div>
+                    <div class="text-sm text-slate-400">Faol o'quvchilar uchun katta paket</div>
+                  </div>
+                </div>
+              </div>
+              <div class="shrink-0 text-right">
+                <div class="text-lg font-bold text-yellow-300">100 000 so'm</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <a href="https://t.me/mangalabuzadmin"
+             target="_blank"
+             rel="noopener"
+             class="inline-flex items-center justify-center gap-2 rounded-xl bg-yellow-400 px-5 py-3 text-sm font-bold text-[#1b2434] transition hover:bg-yellow-300">
+            <i class="fab fa-telegram-plane" aria-hidden="true"></i>
+            <span>Hozir bog'lanish</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  (function () {
+    "use strict";
+
+    const buyModal = document.getElementById("buyModal");
+    const coinsModal = document.getElementById("coinsModal");
+    const pmTitle = document.getElementById("pmTitle");
+    const pmChapter = document.getElementById("pmChapter");
+    const pmPrice = document.getElementById("pmPrice");
+    const pmBuyBtn = document.getElementById("pmBuyBtn");
+    const pmOpenCoinsBtn = document.getElementById("pmOpenCoinsBtn");
+    const primaryText = pmBuyBtn ? pmBuyBtn.querySelector("[data-pm-primary-text]") : null;
+    const primaryIcon = pmBuyBtn ? pmBuyBtn.querySelector("[data-pm-primary-icon]") : null;
+
+    if (!buyModal || !coinsModal || !pmBuyBtn) return;
+
+    const IS_AUTHENTICATED = false;
+    let buyUrl = "";
+    let readUrl = "";
+    let loginUrl = "";
+
+    function getCookie(name) {
+      const match = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
+      return match ? match.pop() : "";
+    }
+
+    function openModal(el) {
+      if (!el) return;
+      el.classList.remove("hidden");
+      document.documentElement.classList.add("overflow-hidden");
+    }
+
+    function closeModal(el) {
+      if (!el) return;
+      el.classList.add("hidden");
+      if (buyModal.classList.contains("hidden") && coinsModal.classList.contains("hidden")) {
+        document.documentElement.classList.remove("overflow-hidden");
+      }
+    }
+
+    function toast(message, ok) {
+      const node = document.createElement("div");
+      node.className = "fixed right-5 top-5 z-50 rounded px-4 py-2 text-white shadow-lg transition duration-300 " + (ok ? "bg-green-600" : "bg-red-600");
+      node.textContent = message;
+      document.body.appendChild(node);
+      setTimeout(() => {
+        node.style.opacity = "0";
+        node.style.transform = "translateY(-20px)";
+        setTimeout(() => node.remove(), 300);
+      }, 2500);
+    }
+
+    function syncMode() {
+      if (!primaryText || !primaryIcon || !pmOpenCoinsBtn) return;
+      if (IS_AUTHENTICATED) {
+        primaryText.textContent = "Sotib olish";
+        primaryIcon.className = "fas fa-shopping-cart";
+        pmOpenCoinsBtn.classList.remove("hidden");
+      } else {
+        primaryText.textContent = "Kirish";
+        primaryIcon.className = "fas fa-right-to-bracket";
+        pmOpenCoinsBtn.classList.add("hidden");
+      }
+    }
+
+    function fillModal(payload) {
+      buyUrl = payload.buyUrl || "";
+      readUrl = payload.readUrl || "";
+      loginUrl = payload.loginUrl || "";
+      if (pmTitle) pmTitle.textContent = payload.title || "";
+      if (pmChapter) pmChapter.textContent = payload.chapter || "";
+      if (pmPrice) pmPrice.textContent = payload.price || "0";
+      syncMode();
+      openModal(buyModal);
+    }
+
+    document.addEventListener("click", (event) => {
+      const trigger = event.target.closest(".js-open-purchase");
+      if (!trigger) return;
+      event.preventDefault();
+      fillModal({
+        title: trigger.dataset.title || "",
+        chapter: trigger.dataset.chapter || trigger.dataset.ch || "",
+        price: trigger.dataset.price || "0",
+        buyUrl: trigger.dataset.buyUrl || trigger.dataset.url || "",
+        readUrl: trigger.dataset.readUrl || trigger.dataset.chapterUrl || "",
+        loginUrl: trigger.dataset.loginUrl || "",
+      });
+    });
+
+    document.addEventListener("click", (event) => {
+      const trigger = event.target.closest(".js-open-coins");
+      if (!trigger) return;
+      event.preventDefault();
+      openModal(coinsModal);
+    });
+
+    if (pmOpenCoinsBtn) {
+      pmOpenCoinsBtn.addEventListener("click", () => {
+        closeModal(buyModal);
+        openModal(coinsModal);
+      });
+    }
+
+    document.addEventListener("click", (event) => {
+      const closeBtn = event.target.closest("[data-close-modal]");
+      if (!closeBtn) return;
+      const target = document.querySelector(closeBtn.getAttribute("data-close-modal"));
+      closeModal(target);
+    });
+
+    [buyModal, coinsModal].forEach((modal) => {
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) closeModal(modal);
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      closeModal(buyModal);
+      closeModal(coinsModal);
+    });
+
+    pmBuyBtn.addEventListener("click", async function () {
+      if (!IS_AUTHENTICATED) {
+        if (loginUrl) {
+          window.location.href = loginUrl;
+        }
+        return;
+      }
+
+      if (!buyUrl || this.disabled) return;
+
+      const original = this.innerHTML;
+      this.disabled = true;
+      this.setAttribute("aria-busy", "true");
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Jarayonda...</span>';
+
+      try {
+        const response = await fetch(buyUrl, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+        });
+        const data = await response.json();
+
+        if (data.need_coins) {
+          closeModal(buyModal);
+          openModal(coinsModal);
+          toast(data.message || "Tangalar yetarli emas.", false);
+          this.innerHTML = original;
+          this.disabled = false;
+          this.removeAttribute("aria-busy");
+          return;
+        }
+
+        if (!data.success) {
+          toast(data.message || "Xarid amalga oshmadi.", false);
+          this.innerHTML = original;
+          this.disabled = false;
+          this.removeAttribute("aria-busy");
+          return;
+        }
+
+        toast(data.message || "Xarid muvaffaqiyatli.", true);
+        closeModal(buyModal);
+
+        window.dispatchEvent(new CustomEvent("premium:purchase-success", {
+          detail: { buyUrl, readUrl, payload: data }
+        }));
+
+        if (readUrl) {
+          setTimeout(() => {
+            window.location.href = readUrl;
+          }, 400);
+        }
+      } catch (error) {
+        console.error(error);
+        toast("Tarmoq xatosi. Qayta urinib ko'ring.", false);
+        this.innerHTML = original;
+        this.disabled = false;
+        this.removeAttribute("aria-busy");
+      }
+    });
+
+    window.ML = window.ML || {};
+    window.ML.openPremiumModal = function (payload) {
+      fillModal(payload || {});
+    };
+  })();
+</script>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"947bff972a7e4d3da218e4220debd4e2","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+<!-- Mirrored from mangalab.uz/browse/?genre=Komediya&page=6 by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 09 May 2026 16:18:08 GMT -->
+</html>
